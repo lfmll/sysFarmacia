@@ -310,7 +310,7 @@ return [
                 ],      
                 [
                     'text' => 'Presentaciones',
-                    'url'  => '#',
+                    'url'  => '/formato',
                 ]          
             ],
         ],
@@ -339,8 +339,8 @@ return [
             'url'        => '#',
             'submenu' => [
                 [
-                    'text' => 'Dosís',
-                    'url'  => '#',
+                    'text' => 'Dosis',
+                    'url'  => '/medida',
                 ],
                 [
                     'text' => 'Vías Administración',
