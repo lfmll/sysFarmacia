@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'sys Farmacia',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>sys</b>Farmacia',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -241,7 +241,7 @@ return [
             'url'  => 'admin/blog',
             'can'  => 'manage-blog',
         ],
-        [
+        /* [
             'text'        => 'pages',
             'url'         => 'admin/pages',
             'icon'        => 'far fa-fw fa-file',
@@ -258,8 +258,8 @@ return [
             'text' => 'change_password',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
+        ], */
+        /* [
             'text'    => 'multilevel',
             'icon'    => 'fas fa-fw fa-share',
             'submenu' => [
@@ -296,21 +296,68 @@ return [
                     'url'  => '#',
                 ],
             ],
-        ],
-        ['header' => 'labels'],
+        ], */
+        ['header' => 'Módulos'],
         [
-            'text'       => 'important',
-            'icon_color' => 'red',
+            'text'        => 'Medicamentos',
+            'icon_color'  => 'cyan',
+            'icon'        => 'fas fa-fw fa-prescription-bottle-alt',
+            'url'         => '#',
+            'submenu' => [
+                [
+                    'text' => 'Acciones Terateupicas',
+                    'url'  => '#',
+                ],      
+                [
+                    'text' => 'Presentaciones',
+                    'url'  => '#',
+                ]          
+            ],
+        ],
+        [
+            'text'       => 'Insumos',
+            'icon' => 'fas fa-fw fa-archive',
+            'icon_color'       => 'teal',            
             'url'        => '#',
         ],
         [
-            'text'       => 'warning',
+            'text'       => 'Laboratorios',
+            'icon'       => 'fas fa-fw fa-flask',
+            'icon_color' => 'green',
+            'url'        => '#',
+        ],
+        [
+            'text'       => 'Lotes',
+            'icon'       => 'fas fa-fw fa-receipt',
             'icon_color' => 'yellow',
             'url'        => '#',
         ],
         [
-            'text'       => 'information',
-            'icon_color' => 'cyan',
+            'text'       => 'Posología',
+            'icon'       => 'fas fa-fw fa-eye-dropper',
+            'icon_color' => 'orange',
+            'url'        => '#',
+            'submenu' => [
+                [
+                    'text' => 'Dosís',
+                    'url'  => '#',
+                ],
+                [
+                    'text' => 'Vías Administración',
+                    'url'  => '#',
+                ],
+            ],
+        ],
+        [
+            'text'       => 'Compras',
+            'icon'       => 'fas fa-fw  fa-minus-square',
+            'icon_color' => 'red',
+            'url'        => '#',
+        ],
+        [
+            'text'       => 'Ventas',
+            'icon'       => 'fas fa-fw fa-plus-square',
+            'icon_color' => 'blue',
             'url'        => '#',
         ],
     ],

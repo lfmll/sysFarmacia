@@ -1,4 +1,5 @@
-@inject('layoutHelper', \JeroenNoten\LaravelAdminLte\Helpers\LayoutHelper)
+
+@inject('menuItemHelper', '\JeroenNoten\LaravelAdminLte\Helpers\MenuItemHelper')
 
 @php( $dashboard_url = View::getSection('dashboard_url') ?? config('adminlte.dashboard_url', 'home') )
 
