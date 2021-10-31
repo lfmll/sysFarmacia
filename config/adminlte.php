@@ -324,7 +324,7 @@ return [
             'text'       => 'Laboratorios',
             'icon'       => 'fas fa-fw fa-flask',
             'icon_color' => 'green',
-            'url'        => '#',
+            'url'        => '/laboratorio',
         ],
         [
             'text'       => 'Lotes',
@@ -344,7 +344,7 @@ return [
                 ],
                 [
                     'text' => 'Vías Administración',
-                    'url'  => '#',
+                    'url'  => '/via',
                 ],
             ],
         ],

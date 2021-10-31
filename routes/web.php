@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LaboratorioController;
+use App\Http\Controllers\ViaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,4 @@ Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('laboratorio',LaboratorioController::class);
+Route::resource('via',ViaController::class);

@@ -9,7 +9,7 @@
     {{Form::number('telefono',$laboratorio->telefono,['class'=>'form-control', 'placeholder'=>'Teléfono'])}}
 </div>
 <div class="form-group">
-    {{Form::select('procedencia',['Bolivia'=>'Bolivia','Argentina'=>'Argentina','Chile'=>'Chile','Brasil'=>'Brasil','Perú'=>'Perú','India'=>'India','Estados Unidos'=>'Estados Unidos','Otros'=>'Otros'], null,['class'=>'form-control'])}}
+    {{Form::select('procedencia',['Bolivia'=>'Bolivia','Argentina'=>'Argentina','Chile'=>'Chile','Brasil'=>'Brasil','Perú'=>'Perú','Paraguay'=>'Paraguay','Colombia'=>'Colombia','China'=>'China','India'=>'India','Estados Unidos'=>'Estados Unidos','Otros'=>'Otros'], null,['class'=>'form-control'])}}
 </div>
 <div class="form-group">
     <a type="submit" class="btn btn-default" href="{{url('/laboratorio')}}">Cancelar</a>
