@@ -1,60 +1,50 @@
 @extends('adminlte::page')
 
-@section('title', 'Laboratorios')
-@section('content_header')
-    <h1></h1>
-@stop
+@section('title', 'Laboratorio')
+
 @section('content')
-    
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">Laboratorios</h3>
-      
-                    <div class="box-tools">
-                      <div class="input-group input-group-sm hidden-xs" style="width: 150px;">                              
-                        <div class="input-group">
-                            <input type="text" name="table_search" class="form-control pull-right" placeholder="Buscar">
-                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                        </div>
-                      </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Laboratorio</h3>                                                    
+                </div>
+                <div class="card-body">
+                    <div class="dataTables_wrapper dt-bootstrap4">
+                        <table id="tlaboratorio" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>ID</td>                
+                                    <td>Nombre</td>
+                                    <td>Dirección</td>
+                                    <td>Teléfono</td>
+                                    <td>Procedencia</td>
+                                    <td>Acciones</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($laboratorio as $lab)
+                                <tr>
+                                    <td>{{$lab->id}}</td>
+                                    <td>{{$lab->nombre}}</td>
+                                    <td>{{$lab->direccion}}</td>
+                                    <td>{{$lab->telefono}}</td>
+                                    <td>{{$lab->procedencia}}</td>
+                                    <td>
+                                    <a href="{{url('/laboratorio/'.$lab->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i>Editar</a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>                                      
                     </div>
                 </div>
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <td>ID</td>                
-                                <td>Nombre</td>
-                                <td>Dirección</td>
-                                <td>Teléfono</td>
-                                <td>Procedencia</td>
-                                <td>Acciones</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($laboratorio as $lab)
-                            <tr>
-                                <td>{{$lab->id}}</td>
-                                <td>{{$lab->nombre}}</td>
-                                <td>{{$lab->direccion}}</td>
-                                <td>{{$lab->telefono}}</td>
-                                <td>{{$lab->procedencia}}</td>
-                                <td>
-                                <a href="{{url('/laboratorio/'.$lab->id.'/edit')}}" class="btn btn-primary">Editar</a>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>    
-            </div>
-        </div>
-       
-    
-    <div class="container">
-        <a href="{{url('/laboratorio/create')}}" class="btn btn-primary">Nuevo</a>
-    </div>
+                <div class="card-footer">
+                    <a href="{{url('/laboratorio/create')}}" class="btn btn-success"><i class="fa fa-plus-circle"></i> Nuevo</a>
+                </div>
+            </div>    
+        </div>    
+    </div>        
 @stop
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">
@@ -62,5 +52,19 @@
 
 @section('js')
     <script> console.log('Hi!'); </script>
+    <script>
+        $(function () {
+            $('#tlaboratorio').DataTable({
+                "responsive" : false,
+                "paging": true,
+                "lengthMenu": [4, 8, "All"],
+                "searching": true,
+                "ordering": false,
+                "info": false,
+                "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+                "autoWidth": false
+            });
+        });
+    </script>
 @stop
 

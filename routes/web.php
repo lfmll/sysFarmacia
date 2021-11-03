@@ -6,6 +6,7 @@ use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\ViaController;
 use App\Http\Controllers\MedidaController;
 use App\Http\Controllers\FormatoController;
+use App\Http\Controllers\ClaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,3 +27,4 @@ Route::resource('laboratorio',LaboratorioController::class);
 Route::resource('via',ViaController::class);
 Route::resource('medida',MedidaController::class);
 Route::resource('formato',FormatoController::class);
+Route::resource('clase',ClaseController::class);
