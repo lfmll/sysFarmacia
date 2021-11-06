@@ -31,7 +31,7 @@
                                     <td>{{$lab->telefono}}</td>
                                     <td>{{$lab->procedencia}}</td>
                                     <td>
-                                    <a href="{{url('/laboratorio/'.$lab->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i>Editar</a>
+                                    <a href="{{url('/laboratorio/'.$lab->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i> Editar</a>
                                     </td>
                                 </tr>
                                 @endforeach

@@ -27,7 +27,7 @@
                                 <td>{{$cla->nombre}}</td>
                                 <td>{{$cla->descripcion}}</td>
                                 <td>
-                                <a href="{{url('/clase/'.$cla->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i>Editar</a>
+                                <a href="{{url('/clase/'.$cla->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Editar</a>
                                 </td>
                             </tr>
                             @endforeach

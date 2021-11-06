@@ -25,7 +25,7 @@
                                     <td>{{$med->id}}</td>
                                     <td>{{$med->descripcion}}</td>
                                     <td>
-                                    <a href="{{url('/medida/'.$med->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i>Editar</a>
+                                    <a href="{{url('/medida/'.$med->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i> Editar</a>
                                     </td>
                                 </tr>
                                 @endforeach

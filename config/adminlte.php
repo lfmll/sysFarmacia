@@ -318,7 +318,7 @@ return [
             'text'       => 'Insumos',
             'icon' => 'fas fa-fw fa-archive',
             'icon_color'       => 'teal',            
-            'url'        => '#',
+            'url'        => '/insumo',
         ],
         [
             'text'       => 'Laboratorios',
