@@ -9,6 +9,9 @@
     {{Form::text('descripcion',$insumo->descripcion,['class'=>'form-control', 'placeholder'=>'Descripción'])}}
 </div>
 <div class="form-group">
+    {{Form::number('stock_minimo',$insumo->stock_minimo,['class'=>'form-control','placeholder'=>0])}}
+</div>
+<div class="form-group">
     <a type="submit" class="btn btn-default" href="{{url('/insumo')}}">Cancelar</a>
     <input type="submit" value="Guardar" class="btn btn-success">  
 </div>

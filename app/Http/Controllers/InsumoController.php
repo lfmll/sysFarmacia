@@ -41,6 +41,8 @@ class InsumoController extends Controller
         $insumo->codigo=$request->codigo;
         $insumo->nombre=$request->nombre;
         $insumo->descripcion=$request->descripcion;
+        $insumo->stock=0;
+        $insumo->stock_minimo=$request->stock_minimo;
         if ($insumo->save()) {
             return redirect('/insumo');
         } else {
@@ -85,6 +87,7 @@ class InsumoController extends Controller
         $insumo->codigo=$request->codigo;
         $insumo->nombre=$request->nombre;
         $insumo->descripcion=$request->descripcion;
+        $insumo->stock_minimo=$request->stock_minimo;
         if ($insumo->save()) {
             return redirect('/insumo');
         } else {

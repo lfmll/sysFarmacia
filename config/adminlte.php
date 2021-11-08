@@ -299,27 +299,32 @@ return [
         ], */
         ['header' => 'Módulos'],
         [
-            'text'        => 'Medicamentos',
+            'text'        => 'Farmacología',
             'icon_color'  => 'cyan',
             'icon'        => 'fas fa-fw fa-prescription-bottle-alt',
-            'url'         => '#',
             'submenu' => [
+                [
+                    'text' => 'Medicamentos',
+                    'url'  => '/medicamento',
+                    'icon' => 'fas fa-fw fa-medkit',
+                ],
+                [
+                    'text' => 'Insumos',
+                    'icon' => 'fas fa-fw fa-archive',            
+                    'url'  => '/insumo',
+                ], 
                 [
                     'text' => 'Acciones Terapéuticas',
                     'url'  => '/clase',
+                    'icon' => 'fas fa-fw fa-notes-medical'
                 ],      
                 [
                     'text' => 'Presentaciones',
                     'url'  => '/formato',
-                ]          
+                    'icon' => 'fas fa-fw fa-pills',
+                ],                         
             ],
-        ],
-        [
-            'text'       => 'Insumos',
-            'icon' => 'fas fa-fw fa-archive',
-            'icon_color'       => 'teal',            
-            'url'        => '/insumo',
-        ],
+        ],        
         [
             'text'       => 'Laboratorios',
             'icon'       => 'fas fa-fw fa-flask',
@@ -341,10 +346,12 @@ return [
                 [
                     'text' => 'Dosis',
                     'url'  => '/medida',
+                    'icon' => 'fas fa-fw fa-vial',
                 ],
                 [
                     'text' => 'Vías Administración',
                     'url'  => '/via',
+                    'icon' => 'fas fa-fw fa-syringe',
                 ],
             ],
         ],

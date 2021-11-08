@@ -14,8 +14,7 @@
                 <h6>Código: </h6>{{$insumo->codigo}}
                 <h6>Cantidad Total: </h6>
             </div>
-            <div class="card-footer">
-                
+            <div class="card-footer">                
                 <h6>Precio de Compra: </h6>
                 <input type="text" name="precio" id="precio" placeholder="00.00" disabled>
                 <p>Ultimo Precio de Compra</p>

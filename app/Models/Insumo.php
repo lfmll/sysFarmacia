@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Insumo extends Model
 {
     protected $fillable=[
-        'codigo','nombre','descripcion'
+        'codigo','nombre','descripcion','stock','stock_minimo'
     ];
 }

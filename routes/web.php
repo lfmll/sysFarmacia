@@ -8,6 +8,7 @@ use App\Http\Controllers\MedidaController;
 use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\InsumoController;
+use App\Http\Controllers\MedicamentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,4 @@ Route::resource('medida',MedidaController::class);
 Route::resource('formato',FormatoController::class);
 Route::resource('clase',ClaseController::class);
 Route::resource('insumo',InsumoController::class);
+Route::resource('medicamento',MedicamentoController::class);
