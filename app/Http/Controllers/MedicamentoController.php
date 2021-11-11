@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Medicamento;
 use Illuminate\Http\Request;
+use App\Models\Laboratorio;
+use App\Models\Via;
+use App\Models\Formato;
+use App\Models\Clase;
 
 class MedicamentoController extends Controller
 {
@@ -13,7 +17,7 @@ class MedicamentoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {        
         $medicamento=Medicamento::all();
         return view('medicamento.index',['medicamento'=>$medicamento]);
     }
@@ -25,8 +29,16 @@ class MedicamentoController extends Controller
      */
     public function create()
     {
+        $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
+        $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
         $medicamento=new Medicamento();
-        return view('medicamento.create',['medicamento'=>$medicamento]);
+        return view('medicamento.create',['medicamento'=>$medicamento])        
+            ->with('laboratorios',$laboratorios)
+            ->with('vias',$vias)
+            ->with('formatos',$formatos)
+            ->with('clases',$clases);
     }
 
     /**
