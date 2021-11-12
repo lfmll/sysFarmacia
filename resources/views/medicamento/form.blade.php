@@ -73,7 +73,7 @@
                     <tbody>
                         <tr>
                             <th>
-                                {!! Form::select('dosis1', ["1 dosis x 24 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
+                                {!! Form::select('dosis1', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                             <th>
                                 {!! Form::select('dosis2', ["1 dosis x 24 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}

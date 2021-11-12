@@ -39,7 +39,7 @@ class ClaseController extends Controller
     {
         $clase = new Clase($request->all());
         $clase->nombre = $request->nombre;
-        $clase->descripcion = $request->descripcion;        
+        $clase->clase = $request->clase;        
         
         if ($clase->save()) {
             return redirect('/clase');
@@ -82,7 +82,7 @@ class ClaseController extends Controller
     {
         $clase = Clase::find($id);
         $clase->nombre = $request->nombre;
-        $clase->descripcion = $request->descripcion;
+        $clase->clase = $request->clase;
 
         if ($clase -> save()) {
             return redirect('/clase');
