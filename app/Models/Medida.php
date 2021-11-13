@@ -10,4 +10,9 @@ class Medida extends Model
     protected $fillable=[
         'descripcion'
     ];
+
+    public function medicamento()
+    {
+        return $this->hasMany(Medicamento::class);
+    }
 }

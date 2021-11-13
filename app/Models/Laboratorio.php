@@ -10,4 +10,9 @@ class Laboratorio extends Model
     protected $fillable=[
         'nombre','direccion','telefono','procedencia'
     ];
+
+    public function medicamento()
+    {
+        return $this->hasMany(Medicamento::class);
+    }
 }

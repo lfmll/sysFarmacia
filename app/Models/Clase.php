@@ -10,4 +10,8 @@ class Clase extends Model
     protected $fillable=[
         'nombre','clase'
     ];
+
+    public function medicamentos(){
+        return $this->belongsToMany(Medicamento::class)->using(ClaseMedicamento::class);
+    }
 }

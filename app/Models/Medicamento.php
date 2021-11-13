@@ -21,14 +21,22 @@ class Medicamento extends Model
     ];
 
     public function formato(){
-        return $this->hasMany(Formato::class);
+        return $this->belongsTo(Formato::class);
     }
 
     public function laboratorio(){
-        return $this->hasMany(Laboratorio::class);
+        return $this->belongsTo(Laboratorio::class);
     }
-    
+
     public function via(){
-        return $this->hasMany(Via::class);
+        return $this->belongsTo(Via::class);
+    }
+
+    public function clases(){
+        return $this->belongsToMany(Clase::class)->unsing(ClaseMedicamento::class);
+    }
+
+    public function medidas(){
+        return $this->belongsToMany(Medida::class)->using(MedidaMedicamento::class);
     }
 }

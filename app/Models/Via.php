@@ -13,6 +13,6 @@ class Via extends Model
 
     public function medicamento()
     {
-        return $this->belongsTo(Medicamento::class);
+        return $this->hasMany(Medicamento::class);
     }
 }

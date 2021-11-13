@@ -4,15 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ClaseMedicamento extends Model
+class ClaseMedicamento extends Pivot
 {
-    public function clase(){
-        return $this->belongsTo(Clase::class);
-    }
-    public function medicamento(){
-        return $this->belongsTo(Medicamento::class);
-    }
+    protected $table='clases_medicamentos';
+    
     protected $fillable=[
         'clase_id','medicamento_id'
     ];
