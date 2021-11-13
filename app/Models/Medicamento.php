@@ -15,8 +15,20 @@ class Medicamento extends Model
         'contraindicacion',
         'stock',
         'stock_minimo',
-        'id_formato',
-        'id_laboratorio',
-        'id_via'
+        'formato_id',
+        'laboratorio_id',
+        'via_id'
     ];
+
+    public function formato(){
+        return $this->hasMany(Formato::class);
+    }
+
+    public function laboratorio(){
+        return $this->hasMany(Laboratorio::class);
+    }
+    
+    public function via(){
+        return $this->hasMany(Via::class);
+    }
 }

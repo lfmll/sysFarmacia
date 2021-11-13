@@ -10,4 +10,9 @@ class Via extends Model
     protected $fillable=[
         'descripcion'
     ];
+
+    public function medicamento()
+    {
+        return $this->belongsTo(Medicamento::class);
+    }
 }

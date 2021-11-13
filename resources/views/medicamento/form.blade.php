@@ -18,22 +18,23 @@
                 <div class="form-group">
                     {{Form::textarea('indicación',$medicamento->indicacion,['class'=>'form-control', 'placeholder'=>'Indicación...'])}}    
                 </div>
-                <div class="form-group">
-                    {{-- {{Form::label('stock_mínimo','Stock Mínimo')}} --}}
+                <div class="form-group">                    
                     {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','required'])}}
                 </div>        
             </div>         
-        </div>
-        
+        </div>        
     </div>
+
     <div class="col-md-6">
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-flask"></i> Laboratorio</h3>
             </div>
             <div class="card-body">
-                <div class="form-group">
-                    {!! Form::select('laboratorios', $laboratorios, null, ['class'=>'form-control slaboratorio select2-hidden-accessible','data-width'=>'100%','placeholder'=>'','required','tabindex'=>'-1','aria-hidden'=>'true']) !!}
+                <div class="form-group">                    
+                    <div>
+                        {!! Form::select('laboratorios', $laboratorios, null, ['class'=>'slaboratorios form-control','placeholder'=>'','required']) !!}    
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,20 +77,14 @@
                                 {!! Form::select('dosis1', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                             <th>
-                                {!! Form::select('dosis2', ["1 dosis x 24 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
+                                {!! Form::select('dosis2', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                             <th>
-                                {!! Form::select('dosis3', ["1 dosis x 24 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
+                                {!! Form::select('dosis3', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                         </tr>
                     </tbody>
-                </table>                
-                {{-- <div class="input-group input-group-sm">                    
-                    {{Form::text('id_via',null,['class'=>'form-control','disabled'])}}
-                    <span class="input-group-append">
-                        <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-lab">Buscar</button>
-                    </span>
-                </div> --}}
+                </table>                                
             </div>
         </div>
         <div class="card card-danger">
@@ -97,8 +92,7 @@
                 <h3 class="card-title"><i class="fa fa-notes-medical"></i> Acciones Terapéuticas</h3>
             </div>
             <div class="card-body">
-                <div class="form-group">
-  
+                <div class="form-group">  
                     {!! Form::select('clases', $clases, null, ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple']) !!}
                 </div> 
             </div>
@@ -113,15 +107,12 @@
 @section('js')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
-$(document).ready(function() {
-    $('.slaboratorio').select2();
-});
-</script>
-<script>
-$(document).ready(function() {
-    $('.sclases').select2();
-});
+    $(document).ready(function() {
+        $('.sclases').select2();
+        // $('.slaboratorios').select2();
+    });
 </script>
 @stop
 {!! Form::close() !!}

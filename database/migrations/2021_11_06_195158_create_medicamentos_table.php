@@ -22,9 +22,9 @@ class CreateMedicamentosTable extends Migration
             $table->string('contradicacion',255)->nullable();
             $table->integer('stock')->unsigned();
             $table->integer('stock_minimo')->unsigned();
-            $table->smallinteger('id_formato')->unsigned();
-            $table->smallinteger('id_laboratorio')->unsigned();
-            $table->smallinteger('id_via')->unsigned();
+            $table->smallinteger('formato_id')->unsigned();
+            $table->smallinteger('laboratorio_id')->unsigned();
+            $table->smallinteger('via_id')->unsigned();
             $table->timestamps();
         });
     }
