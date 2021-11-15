@@ -49,18 +49,28 @@ class MedicamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $medicamento=new Medicamento($request->all());
-        $medicamento->nombre_comercial=$request->nombre_comercial;
-        $medicamento->nombre_generico=$request->nombre_generico;
-        $medicamento->composicion=$request->composicion;
-        $medicamento->indicacion=$request->indicacion;
-        $medicamento->contraindicacion=$request->contraindicacion;
-        $medicamento->stock=$request->stock;
-        $medicamento->stock_minimo=$request->stock_minimo;
+        try {
+            DB::beginTransaction();
+            $medicamento=new Medicamento($request->all());
+            $medicamento->nombre_comercial=$request->nombre_comercial;
+            $medicamento->nombre_generico=$request->nombre_generico;
+            $medicamento->composicion=$request->composicion;
+            $medicamento->indicacion=$request->indicacion;
+            $medicamento->contraindicacion=$request->contraindicacion;
+            $medicamento->stock=$request->stock;
+            $medicamento->stock_minimo=$request->stock_minimo;
 
-        $medicamento->id_formato=$request->id_formato;
-        $medicamento->id_laboratorio=$request->id_laboratorio;
-        $medicamento->id_via=$request->id_via;
+            $medicamento->id_formato=$request->id_formato;
+            $medicamento->id_laboratorio=$request->id_laboratorio;
+            $medicamento->id_via=$request->id_via;
+
+            $medidas=$request->get('medida_id');
+            $clases=$request->get('clase_id');
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+        
         if ($medicamento->save()) {
             return redirect('/medicamento');
         } else {

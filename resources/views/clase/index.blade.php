@@ -16,7 +16,7 @@
                             <tr>
                                 <td>ID</td>    
                                 <td>Nombre</td>            
-                                <td>Descripción</td>
+                                <td>Clase</td>
                                 <td>Modificar</td>
                             </tr>
                         </thead>
@@ -25,7 +25,7 @@
                             <tr>
                                 <td>{{$cla->id}}</td>
                                 <td>{{$cla->nombre}}</td>
-                                <td>{{$cla->descripcion}}</td>
+                                <td>{{$cla->clase}}</td>
                                 <td>
                                 <a href="{{url('/clase/'.$cla->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Editar</a>
                                 </td>
