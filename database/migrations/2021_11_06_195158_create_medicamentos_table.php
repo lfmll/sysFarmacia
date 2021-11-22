@@ -19,7 +19,7 @@ class CreateMedicamentosTable extends Migration
             $table->string('nombre_generico',50);
             $table->string('composicion',255)->nullable();
             $table->string('indicacion',255)->nullable();
-            $table->string('contradicacion',255)->nullable();
+            $table->string('contraindicacion',255)->nullable();
             $table->integer('stock')->unsigned();
             $table->integer('stock_minimo')->unsigned();
             $table->smallinteger('formato_id')->unsigned();

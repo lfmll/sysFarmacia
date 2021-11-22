@@ -33,10 +33,10 @@ class Medicamento extends Model
     }
 
     public function clases(){
-        return $this->belongsToMany(Clase::class)->unsing(ClaseMedicamento::class);
+        return $this->belongsTo(ClaseMedicamento::class);
     }
 
     public function medidas(){
-        return $this->belongsToMany(Medida::class)->using(MedidaMedicamento::class);
+        return $this->belongsTo(MedidaMedicamento::class);
     }
 }

@@ -8,6 +8,10 @@ use App\Models\Laboratorio;
 use App\Models\Via;
 use App\Models\Formato;
 use App\Models\Clase;
+use App\Models\Medida;
+use App\Models\ClaseMedicamento;
+use App\Models\MedidaMedicamento;
+use Illuminate\Support\Facades\DB;
 
 class MedicamentoController extends Controller
 {
@@ -33,12 +37,18 @@ class MedicamentoController extends Controller
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
-        $medicamento=new Medicamento();
+        $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $medicamento=new Medicamento();        
         return view('medicamento.create',['medicamento'=>$medicamento])        
             ->with('laboratorios',$laboratorios)
             ->with('vias',$vias)
             ->with('formatos',$formatos)
-            ->with('clases',$clases);
+            ->with('clases',$clases)
+            ->with('dosis1',$dosis1)
+            ->with('dosis2',$dosis2)
+            ->with('dosis3',$dosis3);
     }
 
     /**
@@ -49,6 +59,7 @@ class MedicamentoController extends Controller
      */
     public function store(Request $request)
     {
+        
         try {
             DB::beginTransaction();
             $medicamento=new Medicamento($request->all());
@@ -57,16 +68,40 @@ class MedicamentoController extends Controller
             $medicamento->composicion=$request->composicion;
             $medicamento->indicacion=$request->indicacion;
             $medicamento->contraindicacion=$request->contraindicacion;
-            $medicamento->stock=$request->stock;
+            $medicamento->stock=0;
             $medicamento->stock_minimo=$request->stock_minimo;
 
-            $medicamento->id_formato=$request->id_formato;
-            $medicamento->id_laboratorio=$request->id_laboratorio;
-            $medicamento->id_via=$request->id_via;
+            $medicamento->formato_id=$request->formatos;
+            $medicamento->laboratorio_id=$request->laboratorios;
+            $medicamento->via_id=$request->vias;
+            $medicamento->save();
+            
+            $clases=$request->clases;
 
-            $medidas=$request->get('medida_id');
-            $clases=$request->get('clase_id');
+            $dosis1=$request->dosis1;
+            $dosis2=$request->dosis2;
+            $dosis3=$request->dosis3;
+            
+            for ($i=1; $i <=3 ; $i++) {    
+                $daux=${"dosis".$i};   
+                if (!is_null($daux)) {
+                    $medidamedicamento = new MedidaMedicamento();
+                    $medidamedicamento->medicamento_id = $medicamento->id;
+                    $medidamedicamento->medida_id = $i;
+                    $medidamedicamento->descripcion = $daux;
+                    $medidamedicamento->save();
+                }
+            }
+            
+            for ($i=0; $i < count($clases); $i++) { 
+                $clasemedicamento = new ClaseMedicamento();
+                $clasemedicamento->medicamento_id = $medicamento->id;
+                $clasemedicamento->clase_id = $clases[$i];
+                $clasemedicamento->save();
+            }
+            
             DB::commit();
+            
         } catch (Exception $e) {
             DB::rollBack();
         }

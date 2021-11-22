@@ -19,7 +19,7 @@
                     {{Form::textarea('indicación',$medicamento->indicacion,['class'=>'form-control', 'placeholder'=>'Indicación...'])}}    
                 </div>
                 <div class="form-group">                    
-                    {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','required'])}}
+                    {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0','required'])}}
                 </div>        
             </div>         
         </div>        
@@ -74,13 +74,13 @@
                     <tbody>
                         <tr>
                             <th>
-                                {!! Form::select('dosis1', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
+                                {!! Form::select('dosis1', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                             <th>
-                                {!! Form::select('dosis2', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
+                                {!! Form::select('dosis2', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                             <th>
-                                {!! Form::select('dosis3', ["1 dosis x 24 hrs","2 dosis x 12 hrs","3 dosis x 8 hrs"], null, ['class'=>'form-control','placeholder'=>'']) !!}
+                                {!! Form::select('dosis3', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], null, ['class'=>'form-control','placeholder'=>'']) !!}
                             </th>
                         </tr>
                     </tbody>
@@ -93,7 +93,7 @@
             </div>
             <div class="card-body">
                 <div class="form-group">  
-                    {!! Form::select('clases', $clases, null, ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple']) !!}
+                    {!! Form::select('clases[]', $clases, null, ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple']) !!}
                 </div> 
             </div>
         </div>

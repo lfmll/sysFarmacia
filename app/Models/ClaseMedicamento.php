@@ -13,4 +13,13 @@ class ClaseMedicamento extends Pivot
     protected $fillable=[
         'clase_id','medicamento_id'
     ];
+
+    public function medicamentos(){
+        return $this->hasMany(Medicamento::class);
+    } 
+    
+    public function clases(){
+        return $this->hasMany(Medicamento::class);
+    } 
+    
 }
