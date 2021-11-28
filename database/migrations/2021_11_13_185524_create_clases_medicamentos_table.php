@@ -15,8 +15,9 @@ class CreateClasesMedicamentosTable extends Migration
     {
         Schema::create('clases_medicamentos', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->smallInteger('clase_id')->unsigned();
             $table->smallInteger('medicamento_id')->unsigned();
+            $table->smallInteger('clase_id')->unsigned();
+            $table->char('estado',1);
             $table->timestamps();
         });
     }

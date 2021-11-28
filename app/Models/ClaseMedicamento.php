@@ -11,7 +11,7 @@ class ClaseMedicamento extends Pivot
     protected $table='clases_medicamentos';
     
     protected $fillable=[
-        'clase_id','medicamento_id'
+        'medicamento_id', 'clase_id','estado'
     ];
 
     public function medicamentos(){

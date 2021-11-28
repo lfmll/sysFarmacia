@@ -13,10 +13,13 @@
                     {{Form::text('nombre_generico',$medicamento->nombre_generico,['class'=>'form-control', 'placeholder'=>'Nombre Genérico','required'])}}
                 </div>
                 <div class="form-group">
-                    {{Form::textarea('composición',$medicamento->composicion,['class'=>'form-control', 'placeholder'=>'Composición...'])}}    
+                    {{Form::textarea('composicion',$medicamento->composicion,['class'=>'form-control', 'rows'=>9, 'placeholder'=>'Composición...'])}}    
                 </div>
                 <div class="form-group">
-                    {{Form::textarea('indicación',$medicamento->indicacion,['class'=>'form-control', 'placeholder'=>'Indicación...'])}}    
+                    {{Form::textarea('indicacion',$medicamento->indicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Indicación...'])}}    
+                </div>
+                <div class="form-group">
+                    {{Form::textarea('contraindicacion',$medicamento->contraindicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Contra Indicación...'])}}    
                 </div>
                 <div class="form-group">                    
                     {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0','required'])}}
@@ -33,7 +36,7 @@
             <div class="card-body">
                 <div class="form-group">                    
                     <div>
-                        {!! Form::select('laboratorios', $laboratorios, null, ['class'=>'slaboratorios form-control','placeholder'=>'','required']) !!}    
+                        {!! Form::select('laboratorios', $laboratorios, $medicamento->laboratorio_id, ['class'=>'slaboratorios form-control','placeholder'=>'','required']) !!}    
                     </div>
                 </div>
             </div>
@@ -44,7 +47,7 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    {!! Form::select('formatos', $formatos, null, ['class'=>'form-control','placeholder'=>'','required']) !!}    
+                    {!! Form::select('formatos', $formatos, $medicamento->formato_id, ['class'=>'form-control','placeholder'=>'','required']) !!}    
                 </div>    
             </div>            
         </div>
@@ -54,7 +57,7 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    {!! Form::select('vias', $vias, null, ['class'=>'form-control','placeholder'=>'','required']) !!}
+                    {!! Form::select('vias', $vias, $medicamento->via_id, ['class'=>'form-control','placeholder'=>'','required']) !!}
                 </div>
             </div>
         </div>
@@ -93,7 +96,7 @@
             </div>
             <div class="card-body">
                 <div class="form-group">  
-                    {!! Form::select('clases[]', $clases, null, ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple']) !!}
+                    {!! Form::select('clases[]', $clases, $clasemedicamento->pluck('clase_id'), ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple']) !!}
                 </div> 
             </div>
         </div>

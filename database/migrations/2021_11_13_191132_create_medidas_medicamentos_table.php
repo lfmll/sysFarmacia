@@ -16,8 +16,9 @@ class CreateMedidasMedicamentosTable extends Migration
         Schema::create('medidas_medicamentos', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('descripcion','50');
-            $table->smallInteger('medida_id')->unsigned();
             $table->smallInteger('medicamento_id')->unsigned();
+            $table->smallInteger('medida_id')->unsigned();
+            $table->char('estado',1);
             $table->timestamps();
         });
     }
