@@ -211,7 +211,7 @@ class MedicamentoController extends Controller
             $medicamento->laboratorio_id=$request->laboratorios;
             $medicamento->via_id=$request->vias;
 
-            // $medicamento->save();
+            $medicamento->save();
             
             $clases=$request->clases;                                    
 
@@ -219,15 +219,23 @@ class MedicamentoController extends Controller
             $dosis2=$request->dosis2;
             $dosis3=$request->dosis3;
             
+            $medidamedicamento=MedidaMedicamento::where('medicamento_id',$medicamento->id)->where('estado','A')->get();
+            foreach ($medidamedicamento as $mmed) {
+                $mmed->estado='N';
+                $mmed->save();
+            }
             for ($i=1; $i <=3 ; $i++) {    
                 $daux=${"dosis".$i};   
                 if (!is_null($daux)) {
-                    $medidamedicamento = MedidaMedicamento::where('medicamento_id',$medicamento->id)->firstOrFail();
+                    $medidamedicamento = new MedidaMedicamento();
+                    $medidamedicamento->medicamento_id = $medicamento->id;
                     $medidamedicamento->medida_id = $i;
                     $medidamedicamento->descripcion = $daux;
-                    // $medidamedicamento->save();
+                    $medidamedicamento->estado = 'A';
+                    $medidamedicamento->save();
                 }
             }
+            
             $clasemedicamento=ClaseMedicamento::where('medicamento_id',$medicamento->id)->where('estado','A')->get();
             foreach ($clasemedicamento as $clm) {
                 $clm->estado='N';
