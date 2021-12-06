@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Medicamento;
 use Illuminate\Http\Request;
-use App\Models\Laboratorio;
 use App\Models\Via;
 use App\Models\Formato;
 use App\Models\Clase;
@@ -32,8 +31,7 @@ class MedicamentoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {        
-        $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
+    {                
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
@@ -42,8 +40,7 @@ class MedicamentoController extends Controller
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $medicamento=new Medicamento();        
         $clasemedicamento=new ClaseMedicamento();
-        return view('medicamento.create',['medicamento'=>$medicamento])        
-            ->with('laboratorios',$laboratorios)
+        return view('medicamento.create',['medicamento'=>$medicamento])                    
             ->with('vias',$vias)
             ->with('formatos',$formatos)
             ->with('clases',$clases)
@@ -72,8 +69,7 @@ class MedicamentoController extends Controller
             $medicamento->stock=0;
             $medicamento->stock_minimo=$request->stock_minimo;
 
-            $medicamento->formato_id=$request->formatos;
-            $medicamento->laboratorio_id=$request->laboratorios;
+            $medicamento->formato_id=$request->formatos;            
             $medicamento->via_id=$request->vias;
             $medicamento->save();
             
@@ -137,8 +133,7 @@ class MedicamentoController extends Controller
     public function edit($id)
     {        
         $medicamento = Medicamento::find($id);                 
-        
-        $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');        
+                
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
@@ -174,8 +169,7 @@ class MedicamentoController extends Controller
         if (!is_null($medidamedicamento3)) {
             $medidamedicamento3=$medidamedicamento3->descripcion;
         } 
-        return view("medicamento.edit",["medicamento"=>$medicamento, "clasemedicamento"=>$clasemedicamento])        
-            ->with('laboratorios',$laboratorios)
+        return view("medicamento.edit",["medicamento"=>$medicamento, "clasemedicamento"=>$clasemedicamento])                    
             ->with('vias',$vias)
             ->with('formatos',$formatos)
             ->with('clases',$clases)
@@ -208,7 +202,6 @@ class MedicamentoController extends Controller
             $medicamento->stock_minimo=$request->stock_minimo;
 
             $medicamento->formato_id=$request->formatos;
-            $medicamento->laboratorio_id=$request->laboratorios;
             $medicamento->via_id=$request->vias;
 
             $medicamento->save();

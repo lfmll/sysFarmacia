@@ -22,8 +22,7 @@ class CreateMedicamentosTable extends Migration
             $table->string('contraindicacion',255)->nullable();
             $table->integer('stock')->unsigned();
             $table->integer('stock_minimo')->unsigned();
-            $table->smallinteger('formato_id')->unsigned();
-            $table->smallinteger('laboratorio_id')->unsigned();
+            $table->smallinteger('formato_id')->unsigned();            
             $table->smallinteger('via_id')->unsigned();
             $table->timestamps();
         });

@@ -4,51 +4,57 @@
 
 @section('content')
     <div class="conatiner-fluid">
-        <h3 class="box-title">Editar Medicamento</h3>
-        {{-- @include('medicamento.form',['medicamento'=>$medicamento,'url'=>'/medicamento/'.$medicamento->id,'method'=>'PATCH']) --}}
+        <h3 class="box-title">Editar Medicamento</h3>        
         {!! Form::open(['medicamento'=>$medicamento, 'url' => '/medicamento/'.$medicamento->id, 'method' => 'PATCH']) !!}
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fa fa-medkit"></i> Medicamento</h3>    
                         </div>   
                         <div class="card-body">
-                            <div class="form-group">
-                                {{Form::text('nombre_comercial',$medicamento->nombre_comercial,['class'=>'form-control', 'placeholder'=>'Nombre Comercial','required'])}}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{Form::text('nombre_comercial',$medicamento->nombre_comercial,['class'=>'form-control', 'placeholder'=>'Nombre Comercial','required'])}}
+                                    </div>        
+                                </div>    
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{Form::text('nombre_generico',$medicamento->nombre_generico,['class'=>'form-control', 'placeholder'=>'Nombre Genérico','required'])}}
+                                    </div>        
+                                </div>                            
                             </div>
-                            <div class="form-group">
-                                {{Form::text('nombre_generico',$medicamento->nombre_generico,['class'=>'form-control', 'placeholder'=>'Nombre Genérico','required'])}}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{Form::textarea('composicion',$medicamento->composicion,['class'=>'form-control', 'rows'=>9, 'placeholder'=>'Composición...'])}}    
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                {{Form::textarea('composicion',$medicamento->composicion,['class'=>'form-control', 'rows'=>9, 'placeholder'=>'Composición...'])}}    
-                            </div>
-                            <div class="form-group">
-                                {{Form::textarea('indicacion',$medicamento->indicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Indicación...'])}}    
-                            </div>
-                            <div class="form-group">
-                                {{Form::textarea('contraindicacion',$medicamento->contraindicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Contra Indicación...'])}}    
-                            </div>
-                            <div class="form-group">                    
-                                {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0','required'])}}
-                            </div>        
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{Form::textarea('indicacion',$medicamento->indicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Indicación...'])}}    
+                                    </div>        
+                                </div>    
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{Form::textarea('contraindicacion',$medicamento->contraindicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Contra Indicación...'])}}    
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">                    
+                                        {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0','required'])}}
+                                    </div>
+                                </div>
+                            </div>            
                         </div>         
                     </div>        
                 </div>
-
-                <div class="col-md-6">
-                    <div class="card card-success">
-                        <div class="card-header">
-                            <h3 class="card-title"><i class="fa fa-flask"></i> Laboratorio</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">                    
-                                <div>
-                                    {!! Form::select('laboratorios', $laboratorios, $medicamento->laboratorio_id, ['class'=>'slaboratorios form-control','placeholder'=>'','required']) !!}    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">                    
                     <div class="card card-warning">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fa fa-pills"></i> Presentación</h3>
@@ -59,6 +65,8 @@
                             </div>    
                         </div>            
                     </div>
+                </div>
+                <div class="col-md-6">
                     <div class="card card-warning">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fa fa-syringe"></i> Vía de Administración</h3>
@@ -69,6 +77,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12">
                     <div class="card card-danger">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fa fa-vial"></i> Dosís</h3>
@@ -98,6 +108,8 @@
                             </table>                                
                         </div>
                     </div>
+                </div>
+                <div class="col-md-12">
                     <div class="card card-danger">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fa fa-notes-medical"></i> Acciones Terapéuticas</h3>
@@ -108,12 +120,12 @@
                             </div> 
                         </div>
                     </div>
-                </div>        
+                </div>                                                
             </div>
-            <div class="form-group">
-                <a type="submit" class="btn btn-default" href="{{url('/medicamento')}}">Cancelar</a>    
-                <button type="submit" class="btn btn-success pull-right">Guardar</button>  
-            </div>
+        <div class="form-group">
+            <a type="submit" class="btn btn-default" href="{{url('/medicamento')}}">Cancelar</a>    
+            <button type="submit" class="btn btn-success pull-right">Guardar</button>  
+        </div>
     </div>  
 @stop
 

@@ -16,16 +16,11 @@ class Medicamento extends Model
         'stock',
         'stock_minimo',
         'formato_id',
-        'laboratorio_id',
         'via_id'
     ];
 
     public function formato(){
         return $this->belongsTo(Formato::class);
-    }
-
-    public function laboratorio(){
-        return $this->belongsTo(Laboratorio::class);
     }
 
     public function via(){
