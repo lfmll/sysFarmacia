@@ -121,7 +121,49 @@ class MedicamentoController extends Controller
     public function show($id)
     {
         $medicamento=Medicamento::findOrFail($id);
-        return view('medicamento.show',['medicamento'=>$medicamento]);
+        $formatos=Formato::where('id',$medicamento->formato_id)->first();        
+        $vias=Via::where('id',$medicamento->via_id)->first();
+        
+        $clases = DB::table('clases')
+                    ->join('clases_medicamentos','clases.id','=','clases_medicamentos.clase_id')
+                    ->where('clases_medicamentos.medicamento_id','=',$medicamento->id) 
+                    ->where('clases_medicamentos.estado','=','A') 
+                    ->select('clases.nombre')
+                    ->get();                                               
+        
+        $medidamedicamento1=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                            ->where('medida_id',1)
+                            ->where('estado','A')                            
+                            ->first();
+
+        $medidamedicamento2=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                            ->where('medida_id',2)
+                            ->where('estado','A')
+                            ->first();                            
+        
+        $medidamedicamento3=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                            ->where('medida_id',3)
+                            ->where('estado','A')
+                            ->first();      
+                            
+                            if (!is_null($medidamedicamento1)) {
+                                $medidamedicamento1=$medidamedicamento1->descripcion;
+                            }
+                            if (!is_null($medidamedicamento2)) {
+                                $medidamedicamento2=$medidamedicamento2->descripcion;
+                            }
+                            if (!is_null($medidamedicamento3)) {
+                                $medidamedicamento3=$medidamedicamento3->descripcion;
+                            }
+                            
+        return view('medicamento.show',['medicamento'=>$medicamento])
+            ->with('vias',$vias)
+            ->with('formatos',$formatos)
+            ->with('clases',$clases)            
+            ->with('medidamedicamento1',$medidamedicamento1)
+            ->with('medidamedicamento2',$medidamedicamento2)
+            ->with('medidamedicamento3',$medidamedicamento3);
+
     }
 
     /**
@@ -169,7 +211,7 @@ class MedicamentoController extends Controller
         if (!is_null($medidamedicamento3)) {
             $medidamedicamento3=$medidamedicamento3->descripcion;
         } 
-        return view("medicamento.edit",["medicamento"=>$medicamento, "clasemedicamento"=>$clasemedicamento])                    
+        return view("medicamento.edit",["medicamento"=>$medicamento])                    
             ->with('vias',$vias)
             ->with('formatos',$formatos)
             ->with('clases',$clases)

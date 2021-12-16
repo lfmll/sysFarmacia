@@ -94,15 +94,15 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <th>
+                                        <td>
                                             {!! Form::select('dosis1', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], $medidamedicamento1, ['class'=>'form-control','placeholder'=>'']) !!}
-                                        </th>
-                                        <th>
+                                        </td>
+                                        <td>
                                             {!! Form::select('dosis2', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], $medidamedicamento2, ['class'=>'form-control','placeholder'=>'']) !!}
-                                        </th>
-                                        <th>
+                                        </td>
+                                        <td>
                                             {!! Form::select('dosis3', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], $medidamedicamento3, ['class'=>'form-control','placeholder'=>'']) !!}
-                                        </th>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>                                
