@@ -8,10 +8,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Registro de Presentaciones</h3>                
             </div> 
-            <div class="box-body">
-                @include('formato.form',['formato'=>$formato,'url'=>'/formato','method'=>'POST'])
-            </div>
-            
+            @include('formato.form',['formato'=>$formato,'url'=>'/formato','method'=>'POST'])            
         </div>            
     </div>
 @stop

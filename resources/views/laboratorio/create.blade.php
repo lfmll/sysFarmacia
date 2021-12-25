@@ -3,17 +3,19 @@
 @section('title', 'Laboratorios')
 
 @section('content')
-    <div class="col-md-6">   
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">Registro Nuevo Laboratorio</h3>                
+
+    <div class="col-md-6">           
+        <div class="card card-success">            
+            <div class="card-header">    
+                <h5 class="box-title"><i class="fas fa-fw fa-flask"></i> Registro Nuevo Laboratorio</h5>                
             </div> 
-            <div class="box-body">
-                @include('laboratorio.form',['laboratorio'=>$laboratorio,'url'=>'/laboratorio','method'=>'POST'])
-            </div>
             
+                @include('laboratorio.form',['laboratorio'=>$laboratorio,'url'=>'/laboratorio','method'=>'POST'])
+            
+                     
         </div>            
     </div>
+
 @stop
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">

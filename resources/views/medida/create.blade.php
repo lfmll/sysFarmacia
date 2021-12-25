@@ -8,10 +8,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Registro de Dosis</h3>                
             </div> 
-            <div class="box-body">
-                @include('medida.form',['medida'=>$medida,'url'=>'/medida','method'=>'POST'])
-            </div>
-            
+            @include('medida.form',['medida'=>$medida,'url'=>'/medida','method'=>'POST'])            
         </div>            
     </div>
 @stop

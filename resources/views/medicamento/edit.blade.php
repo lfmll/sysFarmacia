@@ -123,8 +123,12 @@
                 </div>                                                
             </div>
         <div class="form-group">
-            <a type="submit" class="btn btn-default" href="{{url('/medicamento')}}">Cancelar</a>    
-            <button type="submit" class="btn btn-success pull-right">Guardar</button>  
+            <div class="float-left">
+                <a type="submit" class="btn btn-default btn-lg" href="{{url('/medicamento')}}">Cancelar</a>    
+            </div>
+            <div class="float-right">
+                <button type="submit" class="btn btn-success btn-lg">Guardar</button>  
+            </div>            
         </div>
     </div>  
 @stop

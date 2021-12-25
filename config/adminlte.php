@@ -335,7 +335,7 @@ return [
             'text'       => 'Lotes',
             'icon'       => 'fas fa-fw fa-receipt',
             'icon_color' => 'yellow',
-            'url'        => '#',
+            'url'        => '/lote',
         ],
         [
             'text'       => 'Posología',

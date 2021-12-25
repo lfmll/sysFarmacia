@@ -8,10 +8,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Registro Acción Terapéutica</h3>                
             </div> 
-            <div class="box-body">
                 @include('clase.form',['clase'=>$clase,'url'=>'/clase','method'=>'POST'])
-            </div>
-            
         </div>            
     </div>
 @stop

@@ -4,13 +4,11 @@
 
 @section('content')
     <div class="col-md-6">   
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">Registro Insumo</h3>                
+        <div class="card card-info">
+            <div class="card-header">
+                <h5 class="card-title"><i class="fas fa-fw fa-archive"></i> Registrar Insumo</h5>                
             </div> 
-            <div class="box-body">
-                @include('insumo.form',['insumo'=>$insumo,'url'=>'/insumo','method'=>'POST'])
-            </div>            
+            @include('insumo.form',['insumo'=>$insumo,'url'=>'/insumo','method'=>'POST'])     
         </div>            
     </div>
 @stop

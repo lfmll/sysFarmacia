@@ -45,7 +45,7 @@
                                 </div>  
                                 <div class="col-md-6">
                                     <div class="form-group">                    
-                                        {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0','required'])}}
+                                        {{Form::number('stock_minimo',$medicamento->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo', 'min'=>'0', 'required'])}}
                                     </div>
                                 </div>                                                               
                             </div>                                                                                                                                                   
@@ -94,15 +94,15 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <th>
+                                        <td>
                                             {!! Form::select('dosis1', [''=>'Lactantes','1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], null, ['class'=>'form-control','placeholder'=>'']) !!}
-                                        </th>
-                                        <th>
+                                        </td>
+                                        <td>
                                             {!! Form::select('dosis2', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], null, ['class'=>'form-control','placeholder'=>'']) !!}
-                                        </th>
-                                        <th>
+                                        </td>
+                                        <td>
                                             {!! Form::select('dosis3', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], null, ['class'=>'form-control','placeholder'=>'']) !!}
-                                        </th>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>                                
@@ -134,8 +134,12 @@
                 </div>        
             </div>
         <div class="form-group">
-            <a type="submit" class="btn btn-default" href="{{url('/medicamento')}}">Cancelar</a>    
-            <button type="submit" class="btn btn-success pull-right">Guardar</button>  
+            <div class="float-left">
+                <a type="submit" class="btn btn-default btn-lg" href="{{url('/medicamento')}}">Cancelar</a>    
+            </div>
+            <div class="float-right">
+                <button type="submit" class="btn btn-success btn-lg">Guardar</button>  
+            </div>            
         </div>
     </div>  
 @stop

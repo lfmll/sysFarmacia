@@ -7,11 +7,8 @@
         <div class="box box-info">
             <div class="box-header with-border">
                 <h3 class="box-title">Editar Presentaciones</h3>                
-            </div> 
-            <div class="box-body">
-                @include('formato.form',['formato'=>$formato,'url'=>'/formato/'.$formato->id,'method'=>'PATCH'])
-            </div>
-            
+            </div>             
+            @include('formato.form',['formato'=>$formato,'url'=>'/formato/'.$formato->id,'method'=>'PATCH'])                        
         </div>            
     </div>
 @stop

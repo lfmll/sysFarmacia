@@ -34,4 +34,7 @@ class Medicamento extends Model
     public function medidas(){
         return $this->belongsTo(MedidaMedicamento::class);
     }
+    public function lotes(){
+        return $this->hasMany(Lote::class);
+    }
 }

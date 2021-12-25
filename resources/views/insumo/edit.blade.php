@@ -3,17 +3,14 @@
 @section('title', 'Insumo')
 
 @section('content')
-    <div class="col-md-6">   
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">Editar Insumo</h3>                
-            </div> 
-            <div class="box-body">
-                @include('insumo.form',['insumo'=>$insumo,'url'=>'/insumo/'.$insumo->id,'method'=>'PATCH'])
-            </div>
-            
-        </div>            
-    </div>
+<div class="col-md-6">   
+    <div class="card card-info">
+        <div class="card-header">
+            <h5 class="card-title"><i class="fas fa-fw fa-archive"></i> Editar Insumo</h5>                
+        </div>              
+        @include('insumo.form',['insumo'=>$insumo,'url'=>'/insumo/'.$insumo->id,'method'=>'PATCH'])            
+    </div>            
+</div>
 @stop
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">

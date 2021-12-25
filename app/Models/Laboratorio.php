@@ -11,8 +11,8 @@ class Laboratorio extends Model
         'nombre','direccion','telefono','procedencia'
     ];
 
-    public function medicamento()
+    public function lote()
     {
-        return $this->hasMany(Medicamento::class);
+        return $this->hasMany(Lote::class);
     }
 }

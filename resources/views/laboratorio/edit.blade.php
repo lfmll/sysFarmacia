@@ -4,13 +4,12 @@
 
 @section('content')
     <div class="col-md-6">   
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">Editar Laboratorio</h3>                
+        <div class="card card-success"> 
+            <div class="card-header with-border">
+                <h3 class="card-title"><i class="fas fa-fw fa-flask"></i> Editar Laboratorio</h3>                
             </div> 
-            <div class="box-body">
-                @include('laboratorio.form',['laboratorio'=>$laboratorio,'url'=>'/laboratorio/'.$laboratorio->id,'method'=>'PATCH'])
-            </div>
+            
+            @include('laboratorio.form',['laboratorio'=>$laboratorio,'url'=>'/laboratorio/'.$laboratorio->id,'method'=>'PATCH'])            
             
         </div>            
     </div>

@@ -20,8 +20,12 @@
                                 'V: Varios'=>'V: Varios'], null, 
                                 ['class'=>'form-control','placeholder'=>'Clase ATQ', 'required']) !!}
 </div>
-<div class="form-group">
-    <a type="submit" class="btn btn-default" href="{{url('/clase')}}">Cancelar</a>
-    <input type="submit" value="Guardar" class="btn btn-success">  
+<div class="box-footer">
+    <div class="float-left">
+        <a type="submit" class="btn btn-default" href="{{url('/clase')}}">Cancelar</a>
+    </div>
+    <div class="float-right">
+        <input type="submit" value="Guardar" class="btn btn-success">   
+    </div>
 </div>
 {!! Form::close() !!}

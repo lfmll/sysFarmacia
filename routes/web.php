@@ -9,6 +9,7 @@ use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\MedicamentoController;
+use App\Http\Controllers\LoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,3 +33,4 @@ Route::resource('formato',FormatoController::class);
 Route::resource('clase',ClaseController::class);
 Route::resource('insumo',InsumoController::class);
 Route::resource('medicamento',MedicamentoController::class);
+Route::resource('lote', LoteController::class);

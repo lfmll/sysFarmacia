@@ -8,10 +8,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Editar Vías de Administración</h3>                
             </div> 
-            <div class="box-body">
-                @include('via.form',['via'=>$via,'url'=>'/via/'.$via->id,'method'=>'PATCH'])
-            </div>
-            
+            @include('via.form',['via'=>$via,'url'=>'/via/'.$via->id,'method'=>'PATCH'])           
         </div>            
     </div>
 @stop

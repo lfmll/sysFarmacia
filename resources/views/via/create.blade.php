@@ -8,10 +8,7 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Registro Vías de Administración</h3>                
             </div> 
-            <div class="box-body">
-                @include('via.form',['via'=>$via,'url'=>'/via','method'=>'POST'])
-            </div>
-            
+            @include('via.form',['via'=>$via,'url'=>'/via','method'=>'POST'])
         </div>            
     </div>
 @stop

@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Lote extends Model
+{
+    protected $fillable=[
+        'numero',
+        'cantidad',
+        'fecha_vencimiento',
+        'laboratorio_id',
+        'medicamento_id',
+        'insumo_id',
+        'precio_compra',
+        'precio_venta',
+        'ganancia',
+        'estado'
+    ];
+
+    public function laboratorio(){
+        return $this->belongsTo(Laboratorio::class);
+    }
+    public function insumo(){
+        return $this->belongsTo(Insumo::class);
+    }
+    public function medicamento(){
+        return $this->belongsTo(Medicamento::class);
+    }
+}
