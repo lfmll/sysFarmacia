@@ -13,6 +13,7 @@ class Medicamento extends Model
         'composicion',
         'indicacion',
         'contraindicacion',
+        'observacion',
         'stock',
         'stock_minimo',
         'formato_id',

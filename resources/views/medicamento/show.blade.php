@@ -18,9 +18,13 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <h5>Composición:</h5>
                         <span>{{$medicamento->composicion}}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Observación:</h5>
+                        <span>{{$medicamento->observacion}}</span>
                     </div>
                 </div>      
                 <hr>              
@@ -49,22 +53,26 @@
                             <li class="list-group-item disabled">{{$vias->descripcion}}</li>
                         </ul>                        
                     </div>
-                    <div class="col-md-3">
-                        <ul class="list-group">
-                            <li class="list-group-item">Dosís:</li>
-                            <li class="list-group-item disabled">Lactantes: {{$medidamedicamento1}}</li>
-                            <li class="list-group-item disabled">Infantes: {{$medidamedicamento2}}</li>
-                            <li class="list-group-item disabled">Adultos: {{$medidamedicamento3}}</li>
-                        </ul>  
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <ul class="list-group">
                             <li class="list-group-item">Acciones Terapéuticas:</li>
                             @foreach ($clases as $cl)
                             <li class="list-group-item disabled">{{$cl->nombre}}</li>
                             @endforeach                            
                         </ul>  
-                    </div>                    
+                    </div> 
+                </div>
+                <hr style="border: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group">
+                            <li class="list-group-item">Dosís:</li>
+                            <li class="list-group-item disabled">Lactantes: {{$medidamedicamento1}} <br> {{$dosis_estandar1}}</li>
+                            <li class="list-group-item disabled">Infantes:  {{$medidamedicamento2}} <br> {{$dosis_estandar2}}</li>
+                            <li class="list-group-item disabled">Adultos:   {{$medidamedicamento3}} <br> {{$dosis_estandar3}}</li>
+                        </ul>  
+                    </div>
+                                       
                 </div>                   
             </div>                         
             <div class="card-footer">

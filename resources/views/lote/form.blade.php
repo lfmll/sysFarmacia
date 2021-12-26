@@ -33,7 +33,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 {!! Form::label('laboratorio', 'Laboratorio') !!}
-                {{ Form::select('laboratorios',$laboratorios, $lote->laboratorio_id, ['class'=>'laboratorios form-control','placeholder'=>'','required','style'=>'width: 100%;']) }}
+                {{ Form::select('laboratorios',$laboratorios, $lote->laboratorio_id, ['class'=>'laboratorios form-control','placeholder'=>'','required','style'=>'weight: 100%;']) }}
             </div>
             <div class="form-group">
                 <div class="form-check">

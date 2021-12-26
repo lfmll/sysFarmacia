@@ -38,6 +38,9 @@ class MedicamentoController extends Controller
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $dosis_estandar1=null;
+        $dosis_estandar2=null;
+        $dosis_estandar3=null;
         $medicamento=new Medicamento();        
         $clasemedicamento=new ClaseMedicamento();
         return view('medicamento.create',['medicamento'=>$medicamento])                    
@@ -47,6 +50,9 @@ class MedicamentoController extends Controller
             ->with('dosis1',$dosis1)
             ->with('dosis2',$dosis2)
             ->with('dosis3',$dosis3)
+            ->with('dosis_estandar1',$dosis_estandar1)
+            ->with('dosis_estandar2',$dosis_estandar2)
+            ->with('dosis_estandar3',$dosis_estandar3)       
             ->with('clasemedicamento',$clasemedicamento);
     }
 
@@ -66,6 +72,7 @@ class MedicamentoController extends Controller
             $medicamento->composicion=$request->composicion;
             $medicamento->indicacion=$request->indicacion;
             $medicamento->contraindicacion=$request->contraindicacion;
+            $medicamento->observacion=$request->observacion;
             $medicamento->stock=0;
             $medicamento->stock_minimo=$request->stock_minimo;
 
@@ -78,6 +85,10 @@ class MedicamentoController extends Controller
             $dosis1=$request->dosis1;
             $dosis2=$request->dosis2;
             $dosis3=$request->dosis3;
+
+            $dosis_estandar1=$request->dosis_estandar1;
+            $dosis_estandar2=$request->dosis_estandar2;
+            $dosis_estandar3=$request->dosis_estandar3;
             
             for ($i=1; $i <=3 ; $i++) {    
                 $daux=${"dosis".$i};   
@@ -86,6 +97,9 @@ class MedicamentoController extends Controller
                     $medidamedicamento->medicamento_id = $medicamento->id;
                     $medidamedicamento->medida_id = $i;
                     $medidamedicamento->descripcion = $daux;
+                    if (!is_null(${"dosis_estandar".$i})) {
+                        $medidamedicamento->dosis_estandar=${"dosis_estandar".$i};
+                    }
                     $medidamedicamento->estado = 'A';
                     $medidamedicamento->save();
                 }
@@ -144,17 +158,45 @@ class MedicamentoController extends Controller
         $medidamedicamento3=MedidaMedicamento::where('medicamento_id',$medicamento->id)
                             ->where('medida_id',3)
                             ->where('estado','A')
-                            ->first();      
-                            
-                            if (!is_null($medidamedicamento1)) {
-                                $medidamedicamento1=$medidamedicamento1->descripcion;
-                            }
-                            if (!is_null($medidamedicamento2)) {
-                                $medidamedicamento2=$medidamedicamento2->descripcion;
-                            }
-                            if (!is_null($medidamedicamento3)) {
-                                $medidamedicamento3=$medidamedicamento3->descripcion;
-                            }
+                            ->first();
+                                    
+        $dosis_estandar1=null;
+        $dosis_estandar2=null;
+        $dosis_estandar3=null;
+        
+        if (!is_null($medidamedicamento1)) {
+            $medidamedicamento1=$medidamedicamento1->descripcion;
+            $dosis_estandar1=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                                                ->where('medida_id',1)
+                                                ->where('estado','A')
+                                                ->where('dosis_estandar','<>',null)
+                                                ->first();
+            if (!is_null($dosis_estandar1)) {
+                $dosis_estandar1=$dosis_estandar1->dosis_estandar;
+            }                                                                    
+        }
+        if (!is_null($medidamedicamento2)) {
+            $medidamedicamento2=$medidamedicamento2->descripcion;
+            $dosis_estandar2=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                                                ->where('medida_id',2)
+                                                ->where('estado','A')
+                                                ->where('dosis_estandar','<>',null)
+                                                ->first();
+            if (!is_null($dosis_estandar2)) {
+                $dosis_estandar2=$dosis_estandar2->dosis_estandar;
+            } 
+        }
+        if (!is_null($medidamedicamento3)) {
+            $medidamedicamento3=$medidamedicamento3->descripcion;
+            $dosis_estandar3=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                                                ->where('medida_id',3)
+                                                ->where('estado','A')
+                                                ->where('dosis_estandar','<>',null)
+                                                ->first();
+            if (!is_null($dosis_estandar3)) {
+                $dosis_estandar3=$dosis_estandar3->dosis_estandar;
+            } 
+        }
                             
         return view('medicamento.show',['medicamento'=>$medicamento])
             ->with('vias',$vias)
@@ -162,7 +204,10 @@ class MedicamentoController extends Controller
             ->with('clases',$clases)            
             ->with('medidamedicamento1',$medidamedicamento1)
             ->with('medidamedicamento2',$medidamedicamento2)
-            ->with('medidamedicamento3',$medidamedicamento3);
+            ->with('medidamedicamento3',$medidamedicamento3)
+            ->with('dosis_estandar1',$dosis_estandar1)
+            ->with('dosis_estandar2',$dosis_estandar2)
+            ->with('dosis_estandar3',$dosis_estandar3);
 
     }
 
@@ -182,7 +227,7 @@ class MedicamentoController extends Controller
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
-
+        
         $clasemedicamento = ClaseMedicamento::where('medicamento_id',$medicamento->id)
                                             ->where('estado','A')
                                             ->get('clase_id');  
@@ -195,21 +240,49 @@ class MedicamentoController extends Controller
         $medidamedicamento2=MedidaMedicamento::where('medicamento_id',$medicamento->id)
                             ->where('medida_id',2)
                             ->where('estado','A')
-                            ->first();                            
+                            ->first();                                                    
         
         $medidamedicamento3=MedidaMedicamento::where('medicamento_id',$medicamento->id)
                             ->where('medida_id',3)
                             ->where('estado','A')
-                            ->first();                                                             
+                            ->first();                                                                   
+        
+        $dosis_estandar1=null;
+        $dosis_estandar2=null;
+        $dosis_estandar3=null;                   
 
         if (!is_null($medidamedicamento1)) {
             $medidamedicamento1=$medidamedicamento1->descripcion;
+            $dosis_estandar1=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                                                ->where('medida_id',1)
+                                                ->where('estado','A')
+                                                ->where('dosis_estandar','<>',null)
+                                                ->first();
+            if (!is_null($dosis_estandar1)) {
+                $dosis_estandar1=$dosis_estandar1->dosis_estandar;
+            }                        
         }
         if (!is_null($medidamedicamento2)) {
             $medidamedicamento2=$medidamedicamento2->descripcion;
+            $dosis_estandar2=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                                                ->where('medida_id',2)
+                                                ->where('estado','A')
+                                                ->where('dosis_estandar','<>',null)
+                                                ->first();
+            if (!is_null($dosis_estandar2)) {
+                $dosis_estandar2=$dosis_estandar2->dosis_estandar;
+            }                        
         }
         if (!is_null($medidamedicamento3)) {
             $medidamedicamento3=$medidamedicamento3->descripcion;
+            $dosis_estandar3=MedidaMedicamento::where('medicamento_id',$medicamento->id)
+                                                ->where('medida_id',3)
+                                                ->where('estado','A')
+                                                ->where('dosis_estandar','<>',null)
+                                                ->first();
+            if (!is_null($dosis_estandar3)) {
+                $dosis_estandar3=$dosis_estandar3->dosis_estandar;
+            }                        
         } 
         return view("medicamento.edit",["medicamento"=>$medicamento])                    
             ->with('vias',$vias)
@@ -218,6 +291,9 @@ class MedicamentoController extends Controller
             ->with('dosis1',$dosis1)
             ->with('dosis2',$dosis2)
             ->with('dosis3',$dosis3)
+            ->with('dosis_estandar1',$dosis_estandar1)
+            ->with('dosis_estandar2',$dosis_estandar2)
+            ->with('dosis_estandar3',$dosis_estandar3)
             ->with('clasemedicamento',$clasemedicamento)
             ->with('medidamedicamento1',$medidamedicamento1)
             ->with('medidamedicamento2',$medidamedicamento2)
@@ -241,6 +317,7 @@ class MedicamentoController extends Controller
             $medicamento->composicion=$request->composicion;
             $medicamento->indicacion=$request->indicacion;
             $medicamento->contraindicacion=$request->contraindicacion;
+            $medicamento->observacion=$request->observacion;
             $medicamento->stock_minimo=$request->stock_minimo;
 
             $medicamento->formato_id=$request->formatos;
@@ -253,6 +330,10 @@ class MedicamentoController extends Controller
             $dosis1=$request->dosis1;
             $dosis2=$request->dosis2;
             $dosis3=$request->dosis3;
+
+            $dosis_estandar1=$request->dosis_estandar1;
+            $dosis_estandar2=$request->dosis_estandar2;
+            $dosis_estandar3=$request->dosis_estandar3;
             
             $medidamedicamento=MedidaMedicamento::where('medicamento_id',$medicamento->id)->where('estado','A')->get();
             foreach ($medidamedicamento as $mmed) {
@@ -266,6 +347,9 @@ class MedicamentoController extends Controller
                     $medidamedicamento->medicamento_id = $medicamento->id;
                     $medidamedicamento->medida_id = $i;
                     $medidamedicamento->descripcion = $daux;
+                    if (!is_null(${"dosis_estandar".$i})) {
+                        $medidamedicamento->dosis_estandar=${"dosis_estandar".$i};
+                    }
                     $medidamedicamento->estado = 'A';
                     $medidamedicamento->save();
                 }

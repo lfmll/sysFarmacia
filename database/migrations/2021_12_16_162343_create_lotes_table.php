@@ -21,8 +21,8 @@ class CreateLotesTable extends Migration
             $table->smallInteger('laboratorio_id')->unsigned();
             $table->smallInteger('medicamento_id')->unsigned()->nullable();
             $table->smallInteger('insumo_id')->unsigned()->nullable();
-            $table->decimal('precio_compra',8,2);
-            $table->decimal('precio_venta',8,2);
+            $table->decimal('precio_compra',8,2)->nullable();
+            $table->decimal('precio_venta',8,2)->nullable();
             $table->tinyInteger('ganancia');
             $table->char('estado',1);
             $table->timestamps();

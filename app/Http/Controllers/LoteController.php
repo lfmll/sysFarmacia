@@ -48,7 +48,7 @@ class LoteController extends Controller
      */
     public function store(Request $request)
     {
-        try {
+        try {                      
             DB::beginTransaction();
             $lote=new Lote($request->all());
             $lote->numero=$request->numero;
@@ -62,7 +62,11 @@ class LoteController extends Controller
             $lote->medicamento_id=$request->medicamentos;
             $lote->insumo_id=$request->insumos;                                        
             $lote->save();            
-                        
+            
+            $medicamento=Medicamento::find($lote->medicamento_id);
+            
+            $medicamento->stock = $medicamento->stock + $lote->cantidad;
+            $medicamento->save();
             DB::commit();
             
         } catch (Exception $e) {
@@ -74,6 +78,21 @@ class LoteController extends Controller
         } else {
             return view('lote.create',['lote'=>$lote]);
         }
+    }
+    /**
+     * @param Medicamento $medicamento_id
+     */
+    public function create_medicamento($medicamento_id)
+    {
+        $lote=new Lote();
+        $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
+        $insumos=Insumo::orderBy('nombre','ASC')->pluck('nombre','id');
+        $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
+        return view('lote.create_medicamento',['lote'=>$lote])
+                ->with('medicamento_id',$medicamento_id)
+                ->with('laboratorios',$laboratorios)
+                ->with('insumos',$insumos)
+                ->with('medicamentos',$medicamentos);
     }
 
     /**

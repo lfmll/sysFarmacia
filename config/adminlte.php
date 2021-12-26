@@ -360,6 +360,13 @@ return [
             'icon'       => 'fas fa-fw  fa-minus-square',
             'icon_color' => 'red',
             'url'        => '#',
+            'submenu'    => [
+                [
+                    'text'  =>  'Proveedor',
+                    'url'   =>  '#',
+                    'icon'  =>  'fa fa-fw fa-ambulance',
+                ]                
+            ],
         ],
         [
             'text'       => 'Ventas',

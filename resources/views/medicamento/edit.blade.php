@@ -26,9 +26,14 @@
                                 </div>                            
                             </div>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        {{Form::textarea('composicion',$medicamento->composicion,['class'=>'form-control', 'rows'=>9, 'placeholder'=>'Composición...'])}}    
+                                        {{Form::textarea('composicion',$medicamento->composicion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Composición...'])}}    
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        {{Form::textarea('observacion',$medicamento->observacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Observacion...'])}}
                                     </div>
                                 </div>
                             </div>
@@ -40,7 +45,7 @@
                                 </div>    
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        {{Form::textarea('contraindicacion',$medicamento->contraindicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Contra Indicación...'])}}    
+                                        {{Form::textarea('contraindicacion',$medicamento->contraindicacion,['class'=>'form-control', 'rows'=>5, 'placeholder'=>'Contraindicación...'])}}    
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -95,13 +100,19 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            {!! Form::select('dosis1', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], $medidamedicamento1, ['class'=>'form-control','placeholder'=>'']) !!}
+                                            {!! Form::select('dosis1', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs','4 dosis x 6hrs'=>'4 dosis x 6hrs','6 dosis x 4hrs'=>'6 dosis x 4hrs'], $medidamedicamento1, ['class'=>'form-control','placeholder'=>'']) !!}
+                                            <hr style="border: none;">
+                                            {!! Form::text('dosis_estandar1', $dosis_estandar1, ['class'=>'form-control','placeholder'=>'Dosis Estandar']) !!}
                                         </td>
                                         <td>
-                                            {!! Form::select('dosis2', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], $medidamedicamento2, ['class'=>'form-control','placeholder'=>'']) !!}
+                                            {!! Form::select('dosis2', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs','4 dosis x 6hrs'=>'4 dosis x 6hrs','6 dosis x 4hrs'=>'6 dosis x 4hrs'], $medidamedicamento2, ['class'=>'form-control','placeholder'=>'']) !!}
+                                            <hr style="border: none;">
+                                            {!! Form::text('dosis_estandar2', $dosis_estandar2, ['class'=>'form-control','placeholder'=>'Dosis Estandar']) !!}
                                         </td>
                                         <td>
-                                            {!! Form::select('dosis3', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs'], $medidamedicamento3, ['class'=>'form-control','placeholder'=>'']) !!}
+                                            {!! Form::select('dosis3', ['1 dosis x 24 hrs'=>'1 dosis x 24 hrs','2 dosis x 12 hrs'=>'2 dosis x 12 hrs','3 dosis x 8 hrs'=>'3 dosis x 8 hrs','4 dosis x 6hrs'=>'4 dosis x 6hrs','6 dosis x 4hrs'=>'6 dosis x 4hrs'], $medidamedicamento3, ['class'=>'form-control','placeholder'=>'']) !!}
+                                            <hr style="border: none;">
+                                            {!! Form::text('dosis_estandar3', $dosis_estandar3, ['class'=>'form-control','placeholder'=>'Dosis Estandar']) !!}
                                         </td>
                                     </tr>
                                 </tbody>
