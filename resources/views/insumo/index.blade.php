@@ -31,6 +31,7 @@
                                 <td>
                                     <a href="{{url('/insumo/'.$ins->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bullseye"></i> Mostrar</a>
                                     <a href="{{url('/insumo/'.$ins->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Editar</a>
+                                    <a href="{{url('/lote/'.$ins->id.'/create_insumo')}}" class="btn btn-warning btn-sm"><i class="fa fa-fw fa-receipt"></i></a>
                                 </td>
                             </tr>
                             @endforeach

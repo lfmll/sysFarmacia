@@ -35,3 +35,4 @@ Route::resource('insumo',InsumoController::class);
 Route::resource('medicamento',MedicamentoController::class);
 Route::resource('lote', LoteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
+Route::get('/lote/{id}/create_insumo',[LoteController::class,'create_insumo']);

@@ -12,7 +12,7 @@
             <div class="card-body">                                
                 {{$insumo->descripcion}}
                 <h6>Código: </h6>{{$insumo->codigo}}
-                <h6>Cantidad Total: </h6>
+                <h6>Cantidad Total: </h6>{{$insumo->stock}}
             </div>
             <div class="card-footer">                
                 <h6>Precio de Compra: </h6>
