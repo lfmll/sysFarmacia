@@ -136,7 +136,7 @@ class LoteController extends Controller
      */
     public function edit($id)
     {
-        $lote=Lote::find($id);
+        $lote=Lote::find($id);        
         $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
         $insumos=Insumo::orderBy('nombre','ASC')->pluck('nombre','id');        
         $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
@@ -158,8 +158,9 @@ class LoteController extends Controller
     {
         try {
             DB::beginTransaction();
-            $lote= Lote::find($id);
+            $lote= Lote::find($id);            
             $lote->numero=$request->numero;
+            $lote_cantidad_anterior=$lote->cantidad;
             $lote->cantidad=$request->cantidad;
             $lote->fecha_vencimiento=$request->fecha_vencimiento;
             $lote->precio_compra=$request->precio_compra;
@@ -170,8 +171,18 @@ class LoteController extends Controller
             $lote->medicamento_id=$request->medicamentos;
             $lote->insumo_id=$request->insumos;     
                                
-            $lote->save();            
-                        
+            $lote->save();  
+                 
+            if (is_null($request->insumos)) {
+                $medicamento=Medicamento::find($lote->medicamento_id);
+                $medicamento->stock = ($medicamento->stock - $lote_cantidad_anterior) + $lote->cantidad;                
+                $medicamento->save();    
+            }
+            if (is_null($request->medicamentos)) {
+                $insumo=Insumo::find($lote->insumo_id);
+                $insumo->stock = ($insumo->stock - $lote_cantidad_anterior) + $lote->cantidad;
+                $insumo->save();
+            }                        
             DB::commit();
             
         } catch (Exception $e) {

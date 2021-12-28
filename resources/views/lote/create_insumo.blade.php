@@ -9,7 +9,7 @@
             <div class="card-header">
                 <h5 class="card-title"><i class="fas fa-fw fa-receipt"></i> Nuevo Lote</h5>                
             </div>        
-            {!! Form::open(['url' => '/lote', 'method' => 'POST']) !!}                 
+            {!! Form::open(['url' => '/lote', 'method' => 'POST']) !!}                
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
