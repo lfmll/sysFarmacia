@@ -11,7 +11,7 @@ class Formato extends Model
         'descripcion'
     ];
 
-    public function medicamento()
+    public function medicamentos()
     {
         return $this->hasMany(Medicamento::class);
     }

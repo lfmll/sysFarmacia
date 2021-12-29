@@ -19,7 +19,7 @@ class ClaseMedicamento extends Pivot
     } 
     
     public function clases(){
-        return $this->hasMany(Medicamento::class);
+        return $this->hasMany(Clase::class);
     } 
     
 }

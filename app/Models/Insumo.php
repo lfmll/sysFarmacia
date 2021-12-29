@@ -10,4 +10,8 @@ class Insumo extends Model
     protected $fillable=[
         'codigo','nombre','descripcion','stock','stock_minimo'
     ];
+
+    public function insumos(){
+        return $this->hasMany(Lote::class);        
+    }
 }

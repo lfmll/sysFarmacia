@@ -10,6 +10,7 @@ use App\Http\Controllers\ClaseController;
 use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\MedicamentoController;
 use App\Http\Controllers\LoteController;
+use App\Http\Controllers\AgenteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,5 +35,6 @@ Route::resource('clase',ClaseController::class);
 Route::resource('insumo',InsumoController::class);
 Route::resource('medicamento',MedicamentoController::class);
 Route::resource('lote', LoteController::class);
+Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
 Route::get('/lote/{id}/create_insumo',[LoteController::class,'create_insumo']);

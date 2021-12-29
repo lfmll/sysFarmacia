@@ -15,4 +15,9 @@ class Laboratorio extends Model
     {
         return $this->hasMany(Lote::class);
     }
+    
+    public function agentes()
+    {
+        return $this->hasMany(Agente::class);
+    }
 }

@@ -11,7 +11,7 @@ class Clase extends Model
         'nombre','clase'
     ];
 
-    public function medicamentos(){
+    public function medicamento(){
         return $this->belongsToMany(Medicamento::class)->using(ClaseMedicamento::class);
     }
 }

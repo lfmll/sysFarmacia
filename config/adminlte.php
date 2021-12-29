@@ -363,7 +363,7 @@ return [
             'submenu'    => [
                 [
                     'text'  =>  'Proveedor',
-                    'url'   =>  '#',
+                    'url'   =>  '/agente',
                     'icon'  =>  'fa fa-fw fa-ambulance',
                 ]                
             ],
