@@ -356,7 +356,7 @@ return [
             ],
         ],
         [
-            'text'       => 'Compras',
+            'text'       => 'Egresos',
             'icon'       => 'fas fa-fw  fa-minus-square',
             'icon_color' => 'red',
             'url'        => '#',
@@ -365,14 +365,26 @@ return [
                     'text'  =>  'Proveedor',
                     'url'   =>  '/agente',
                     'icon'  =>  'fa fa-fw fa-ambulance',
-                ]                
+                ],
+                [
+                    'text'  =>  'Comprar',
+                    'url'   =>  '/compra',
+                    'icon'  =>  'fas fa-fw fa-tag',
+                ]         
             ],
         ],
         [
-            'text'       => 'Ventas',
+            'text'       => 'Ingresos',
             'icon'       => 'fas fa-fw fa-plus-square',
             'icon_color' => 'blue',
             'url'        => '#',
+            'submenu'    => [
+                [
+                    'text'  =>  'Venta',
+                    'url'   =>  '/venta',
+                    'icon'  =>  'fas fa-fw fa-tag',
+                ]         
+            ],
         ],
     ],
 

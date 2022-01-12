@@ -162,7 +162,6 @@
     <script>
         $(document).ready(function() {
             $('.sclases').select2();
-            // $('.slaboratorios').select2();
         });
     </script>
 @stop

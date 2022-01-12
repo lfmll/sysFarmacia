@@ -206,4 +206,14 @@ class LoteController extends Controller
     {
         //
     }
+    /**
+     * @param  \Illuminate\Http\Request  $request 
+     */
+    public function buscarProducto(Request $request)
+    {
+        if ($request->ajax()) {
+            $data=DB::table('lote')->where('id',$request->search)->get();
+        }
+        return response()->json($data);
+    }
 }
