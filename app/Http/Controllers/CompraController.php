@@ -112,9 +112,10 @@ class CompraController extends Controller
      * @param  \App\Models\Compra  $compra
      * @return \Illuminate\Http\Response
      */
-    public function show(Compra $compra)
+    public function show($compra)
     {
-        //
+        $detallecompras=DetalleCompra::where('compra_id',$compra)->get();        
+        return view("compra.detalle",["detallecompras"=>$detallecompras]);
     }
 
     /**

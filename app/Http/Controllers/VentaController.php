@@ -119,9 +119,10 @@ class VentaController extends Controller
      * @param  \App\Models\Venta  $venta
      * @return \Illuminate\Http\Response
      */
-    public function show(Venta $venta)
+    public function show($venta)
     {
-        //
+        $detalleventas=DetalleVenta::where('venta_id',$venta)->get();        
+        return view("venta.detalle",["detalleventas"=>$detalleventas]); 
     }
 
     /**
@@ -157,4 +158,5 @@ class VentaController extends Controller
     {
         //
     }
+
 }
