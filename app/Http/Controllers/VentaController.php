@@ -77,6 +77,7 @@ class VentaController extends Controller
             $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
             $venta->pago_venta=$request->Pago;
             $venta->cambio_venta=$request->Cambio;
+            $venta->forma_pago=$request->forma_pago;
             $venta->save();
 
             $dcantidad = $request->get('dcantidad');

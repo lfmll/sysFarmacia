@@ -25,8 +25,8 @@
                                 <tr>
                                     <td>{{$detallecompra->id}}</td>
                                     <td>{{$detallecompra->cantidad}}</td>
-                                    <td>{{$detallecompra->precio_venta}}</td>
-                                    <td>{{$detallecompra->cantidad * $detallecompra->precio_venta}}</td>                            
+                                    <td>{{$detallecompra->precio_compra}}</td>
+                                    <td>{{$detallecompra->cantidad * $detallecompra->precio_compra}}</td>                            
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -27,7 +27,11 @@
                                 <td>{{$compra->id}}</td>
                                 <td>{{$compra->comprobante}}</td>
                                 <td>{{$compra->fecha_compra}}</td>
+                                @if (is_null($compra->agente))
+                                <td></td>
+                                @else
                                 <td>{{$compra->agente->nombre}}|{{$compra->agente->telefonos}}</td>
+                                @endif                                
                                 <td>                                
                                     <a href="{{url('/compra/'.$compra->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bars"></i> Detalle</a>
                                 </td>

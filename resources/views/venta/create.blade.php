@@ -81,6 +81,29 @@
                             </div>                                    
                         </div> 
                         <div class="card-footer">
+                            <div class="container">
+                                <div class="checkbox form-group">
+                                    <label><i class="fa fa-credit-card"></i> Forma de Pago</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" checked>
+                                        <label class="form-check-label" for="chkefectivo">
+                                            Efectivo
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" >
+                                        <label class="form-check-label" for="chktarjeta">
+                                            Tarjeta
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="forma_pago" value="QR" id="chkqr" >
+                                        <label class="form-check-label" for="chkqr">
+                                            QR
+                                        </label>
+                                    </div>
+                                </div> 
+                            </div>                            
                             <div class="form-group">
                                 <div class="float-left">
                                     {!! Form::label('Pago', 'Pago') !!}

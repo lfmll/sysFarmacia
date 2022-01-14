@@ -32,8 +32,6 @@ class CompraController extends Controller
     {
         $compra=new Compra();
         $agentes=Agente::orderBy('nombre','ASC')->pluck('nombre','id');
-        $medicamentos=Lote::where('estado','A')->where('insumo_id','<>','null')->pluck('medicamento_id','id');
-        $insumos=Lote::where('estado','A')->where('insumo_id','<>','null')->pluck('insumo_id','id');
         
         $fecha_compra = Carbon::now('America/La_Paz')->toDateString();
         $hoy=date("Y-m-d");
@@ -46,10 +44,21 @@ class CompraController extends Controller
                           
         $comprobante = str_replace('-','',$hoy).$c;
         
-        $lotes=Lote::where('estado','A')->get();        
+        $lotes=Lote::where('estado','A')->get(); 
+        
+        $medicamentos=DB::table('medicamentos')
+                        ->select('nombre_comercial','id')
+                        ->where('stock','>','stock_minimo');
+
+        $productos=DB::table('insumos')
+                    ->select('nombre','id')
+                    ->where('stock','>','stock_minimo')
+                    ->union($medicamentos)
+                    ->get();
 
         return view('compra.create',['compra'=>$compra, 'comprobante'=>$comprobante])
                 ->with('agentes',$agentes)
+                ->with('productos',$productos)
                 ->with('lotes',$lotes);
     }
 
@@ -60,16 +69,16 @@ class CompraController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {       
         try {
             DB::beginTransaction();
             $compra = new Compra($request->all());
             $compra->comprobante=$request->comprobante;
             $compra->fecha_compra=Carbon::now('America/La_Paz')->toDateTimeString();            
-            $compra->agente_id =$request->agente_id;            
-            
-            $compra->pago_compra=$request->pago;
-            $compra->cambio_compra=$request->cambio;
+            $compra->agente_id =$request->agentes;                        
+            $compra->pago_compra=$request->Pago;
+            $compra->cambio_compra=$request->Cambio;
+            $compra->forma_pago=$request->forma_pago;
             $compra->save();
 
             $dcantidad = $request->get('dcantidad');

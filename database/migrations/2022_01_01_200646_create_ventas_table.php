@@ -15,10 +15,12 @@ class CreateVentasTable extends Migration
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('comprobante',15);
+            $table->string('comprobante',15)->nullable();
             $table->datetime('fecha_venta');
             $table->decimal('pago_venta',10,2);
-            $table->decimal('cambio_venta',10,2);       
+            $table->decimal('cambio_venta',10,2);    
+            $table->string('glosa')->nullable();
+            $table->string('forma_pago');   
             $table->timestamps();
         });
     }

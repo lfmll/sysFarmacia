@@ -15,11 +15,13 @@ class CreateComprasTable extends Migration
     {
         Schema::create('compras', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('comprobante',15);
+            $table->string('comprobante',15)->nullable();
             $table->datetime('fecha_compra');
             $table->smallInteger('agente_id')->unsigned()->nullable();
             $table->decimal('pago_compra',10,2);
             $table->decimal('cambio_compra',10,2);
+            $table->string('glosa')->nullable();
+            $table->string('forma_pago');
             $table->timestamps();
         });
     }
