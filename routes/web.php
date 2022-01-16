@@ -43,4 +43,6 @@ Route::get('/lote/{id}/create_insumo',[LoteController::class,'create_insumo']);
 Route::resource('compra', CompraController::class);
 Route::resource('venta', VentaController::class);
 
-Route::get('/buscarProducto',[LoteController::class,'buscarProducto'])->name('buscarProducto');
+Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
+Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
+// Route::get('/lote/buscarProducto',[LoteController::class,'buscarProducto'])->name('lote.buscarProducto');

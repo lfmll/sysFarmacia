@@ -13,28 +13,38 @@
                 <div class="dataTables_wrapper dt-bootstrap4">
                     <table id="tcompras" class="table table-bordered">
                         <thead>
-                            <tr>
-                                <td>ID</td>    
+                            <tr>                                
                                 <td>Comprobante</td>
                                 <td>Fecha Compra</td>            
-                                <td>Proveedor</td>                                
+                                <td>Proveedor</td> 
+                                <td>Forma Pago</td> 
+                                <td>Total</td>    
+                                <td>Glosa</td>                          
                                 <td>Acciones</td>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($compras as $compra)
-                            <tr>
-                                <td>{{$compra->id}}</td>
+                            <tr>                                
                                 <td>{{$compra->comprobante}}</td>
                                 <td>{{$compra->fecha_compra}}</td>
                                 @if (is_null($compra->agente))
-                                <td></td>
+                                    <td></td>
                                 @else
-                                <td>{{$compra->agente->nombre}}|{{$compra->agente->telefonos}}</td>
-                                @endif                                
-                                <td>                                
-                                    <a href="{{url('/compra/'.$compra->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bars"></i> Detalle</a>
-                                </td>
+                                    <td>{{$compra->agente->nombre}}<br>{{$compra->agente->telefonos}}</td>
+                                @endif   
+                                <td>{{$compra->forma_pago}}</td>
+                                <td>{{$compra->pago_compra - $compra->cambio_compra}}</td>
+                                @if (is_null($compra->glosa)) 
+                                    <td></td>
+                                    <td>                                
+                                        <a href="{{url('/compra/'.$compra->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bars"></i> Detalle</a>
+                                    </td>
+                                @else
+                                    <td>{{$compra->glosa}}</td>
+                                    <td></td>
+                                @endif
+                                
                             </tr>
                             @endforeach
                         </tbody>

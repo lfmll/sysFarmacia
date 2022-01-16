@@ -69,42 +69,51 @@ class CompraController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {       
+    {     
         try {
             DB::beginTransaction();
             $compra = new Compra($request->all());
-            $compra->comprobante=$request->comprobante;
-            $compra->fecha_compra=Carbon::now('America/La_Paz')->toDateTimeString();            
-            $compra->agente_id =$request->agentes;                        
-            $compra->pago_compra=$request->Pago;
-            $compra->cambio_compra=$request->Cambio;
-            $compra->forma_pago=$request->forma_pago;
-            $compra->save();
-
-            $dcantidad = $request->get('dcantidad');
-            $dprecio = $request->get('dprecio');
-            $dlote = $request->get('dcodigo');
             
-            $cont = 0;
-            while ($cont < count($dcantidad)) {
-                $detalle = new DetalleCompra();
-                $detalle->compra_id = $compra->id;
-                $detalle->cantidad = $dcantidad[$cont];
-                $detalle->precio_compra = $dprecio[$cont];
-                $detalle->lote_id = $dlote[$cont];
-                $detalle->save();
+            if (is_null($compra->glosa)) {
+                $compra->comprobante=$request->comprobante;
+                $compra->fecha_compra=Carbon::now('America/La_Paz')->toDateTimeString();            
+                $compra->agente_id =$request->agentes;                        
+                $compra->pago_compra=$request->Pago;
+                $compra->cambio_compra=$request->Cambio;
+                $compra->forma_pago=$request->forma_pago;
+                $compra->save();
 
-                $lote = Lote::find($dlote[$cont]);
-                $cantlote = $lote->cantidad;
-                $cantlote = $cantlote + $dcantidad[$cont];
-                $lote->cantidad = $cantlote;
-                $lote->precio_compra = $dprecio[$cont];
-                $lote->save();
+                $dcantidad = $request->get('dcantidad');
+                $dprecio = $request->get('dprecio');
+                $dlote = $request->get('dcodigo');
                 
-                $cont = $cont + 1;
-            }
-            DB::commit();
+                $cont = 0;
+                while ($cont < count($dcantidad)) {
+                    $detalle = new DetalleCompra();
+                    $detalle->compra_id = $compra->id;
+                    $detalle->cantidad = $dcantidad[$cont];
+                    $detalle->precio_compra = $dprecio[$cont];
+                    $detalle->lote_id = $dlote[$cont];
+                    $detalle->save();
 
+                    $lote = Lote::find($dlote[$cont]);
+                    $cantlote = $lote->cantidad;
+                    $cantlote = $cantlote + $dcantidad[$cont];
+                    $lote->cantidad = $cantlote;
+                    $lote->precio_compra = $dprecio[$cont];
+                    $lote->save();
+                    
+                    $cont = $cont + 1;
+                }                
+            }else {
+                $compra->fecha_compra=Carbon::now('America/La_Paz')->toDateTimeString();
+                $compra->pago_compra=$request->Pago;
+                $compra->cambio_compra=0;
+                $compra->glosa=$request->glosa;
+                $compra->forma_pago=$request->forma_pago;
+                $compra->save();                
+            }                        
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
         }
@@ -159,5 +168,16 @@ class CompraController extends Controller
     public function destroy(Compra $compra)
     {
         //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function salida()
+    {                
+        return view("compra.salida");
     }
 }

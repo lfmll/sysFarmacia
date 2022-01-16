@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Compra extends Model
 {
     protected $fillable=[
-        'fecha_compra','agente_id', 'pago_compra', 'cambio_compra'
+        'comprobante','fecha_compra','agente_id', 'pago_compra', 'cambio_compra','glosa','forma_pago'
     ];
     public function agente(){
         return $this->belongsTo(Agente::class);

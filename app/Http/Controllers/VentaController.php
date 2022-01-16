@@ -72,36 +72,47 @@ class VentaController extends Controller
     {   
         try {
             DB::beginTransaction();
-            $venta = new Venta($request->all());            
-            $venta->comprobante=$request->comprobante;
-            $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
-            $venta->pago_venta=$request->Pago;
-            $venta->cambio_venta=$request->Cambio;
-            $venta->forma_pago=$request->forma_pago;
-            $venta->save();
-
-            $dcantidad = $request->get('dcantidad');
-            $dprecio = $request->get('dprecio');
-            $dlote = $request->get('dcodigo');
+            $venta = new Venta($request->all());
             
-            $cont = 0;
-            while ($cont < count($dcantidad)) {
-                $detalle = new DetalleVenta();
-                $detalle->venta_id = $venta->id;
-                $detalle->cantidad = $dcantidad[$cont];
-                $detalle->precio_venta = $dprecio[$cont];                
-                $detalle->lote_id = $dlote[$cont];                                                       
-                $detalle->save();
+            if (is_null($venta->glosa)) {
+                $venta->comprobante=$request->comprobante;
+                $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
+                $venta->pago_venta=$request->Pago;
+                $venta->cambio_venta=$request->Cambio;
+                $venta->forma_pago=$request->forma_pago;
+                $venta->save();
 
-                $lote = Lote::find($dlote[$cont]);
-                $cantlote = $lote->cantidad;
-                $cantlote = $cantlote - $dcantidad[$cont];                
-                $lote->cantidad = $cantlote;
-                $lote->precio_venta = $dprecio[$cont];
-                $lote->save();
+                $dcantidad = $request->get('dcantidad');
+                $dprecio = $request->get('dprecio');
+                $dlote = $request->get('dcodigo');
                 
-                $cont = $cont + 1;
+                $cont = 0;
+                while ($cont < count($dcantidad)) {
+                    $detalle = new DetalleVenta();
+                    $detalle->venta_id = $venta->id;
+                    $detalle->cantidad = $dcantidad[$cont];
+                    $detalle->precio_venta = $dprecio[$cont];                
+                    $detalle->lote_id = $dlote[$cont];                                                       
+                    $detalle->save();
+
+                    $lote = Lote::find($dlote[$cont]);
+                    $cantlote = $lote->cantidad;
+                    $cantlote = $cantlote - $dcantidad[$cont];                
+                    $lote->cantidad = $cantlote;
+                    $lote->precio_venta = $dprecio[$cont];
+                    $lote->save();
+                    
+                    $cont = $cont + 1;
+                }
+            }else {
+                $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
+                $venta->pago_venta=$request->Pago;
+                $venta->cambio_venta=0;
+                $venta->glosa=$request->glosa;
+                $venta->forma_pago=$request->forma_pago;
+                $venta->save();
             }
+            
             DB::commit();
 
         } catch (\Exception $e) {
@@ -158,6 +169,10 @@ class VentaController extends Controller
     public function destroy(Venta $venta)
     {
         //
+    }
+
+    public function entrada(){
+        return view("venta.entrada");
     }
 
 }

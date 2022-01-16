@@ -119,11 +119,11 @@
                             <div class="form-group">
                                 <div class="float-left">
                                     {!! Form::label('Pago', 'Pago') !!}
-                                    {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()']) !!}
+                                    {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
                                 </div>
                                 <div class="float-right">
                                     {!! Form::label('Cambio', 'Cambio') !!}
-                                    {!! Form::number('Cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly']) !!}
+                                    {!! Form::number('Cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly', 'step'=>'any']) !!}
                                 </div>            
                             </div>
                         </div>                                                                                                                                                                                                                                                                                                                                                                            
@@ -131,7 +131,7 @@
                 <div class="card-footer">
                     <div class="form-group">
                         <div class="float-left">
-                            <a type="submit" class="btn btn-default btn-lg" href="{{url('/venta')}}">Cancelar</a>    
+                            <a type="submit" class="btn btn-default btn-lg" href="{{url('/compra')}}">Cancelar</a>    
                         </div>
                         <div class="float-right">
                             <button type="submit" class="btn btn-success btn-lg">Guardar</button>  

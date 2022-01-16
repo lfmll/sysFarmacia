@@ -364,13 +364,19 @@ return [
                 [
                     'text'  =>  'Proveedor',
                     'url'   =>  '/agente',
-                    'icon'  =>  'fa fa-fw fa-ambulance',
+                    'icon'  =>  'fas fa-fw fa-ambulance',
                 ],
                 [
-                    'text'  =>  'Comprar',
+                    'text'  =>  'Compra',
                     'url'   =>  '/compra',
                     'icon'  =>  'fas fa-fw fa-tag',
-                ]         
+                ],
+                [
+                    'text'  =>  'Salida',
+                    'url'   =>  '/compra/0/salida',
+                    'icon'  =>  'fas fa-arrow-circle-up',
+
+                ]
             ],
         ],
         [
@@ -383,7 +389,12 @@ return [
                     'text'  =>  'Venta',
                     'url'   =>  '/venta',
                     'icon'  =>  'fas fa-fw fa-tag',
-                ]         
+                ],
+                [
+                    'text'  =>  'Entrada',
+                    'url'   =>  '/venta/0/entrada',
+                    'icon'  =>  'fas fa-arrow-circle-down'
+                ]     
             ],
         ],
     ],

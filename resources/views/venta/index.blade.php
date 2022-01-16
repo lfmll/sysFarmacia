@@ -14,21 +14,30 @@
                     <table id="tventa" class="table table-bordered">
                         <thead>
                             <tr>
-                                <td>ID</td>    
                                 <td>Comprobante</td>
-                                <td>Fecha Venta</td>                                                                         
+                                <td>Fecha Venta</td>            
+                                <td>Forma Pago</td> 
+                                <td>Total</td>    
+                                <td>Glosa</td>                   
                                 <td>Acciones</td>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($ventas as $venta)
                             <tr>
-                                <td>{{$venta->id}}</td>
                                 <td>{{$venta->comprobante}}</td>
-                                <td>{{$venta->fecha_venta}}</td>                                
-                                <td>                                
-                                    <a href="{{url('/venta/'.$venta->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bars"></i> Detalle</a>
-                                </td>
+                                <td>{{$venta->fecha_venta}}</td>
+                                <td>{{$venta->forma_pago}}</td>
+                                <td>{{$venta->pago_venta - $venta->cambio_venta}}</td>
+                                @if (is_null($venta->glosa))
+                                    <td></td>
+                                    <td>                                
+                                        <a href="{{url('/venta/'.$venta->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bars"></i> Detalle</a>
+                                    </td>
+                                @else
+                                    <td>{{$venta->glosa}}</td>
+                                    <td></td>
+                                @endif                                
                             </tr>
                             @endforeach
                         </tbody>
