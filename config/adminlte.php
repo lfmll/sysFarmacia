@@ -397,6 +397,22 @@ return [
                 ]     
             ],
         ],
+        [
+            'text'      =>  'Contabilidad',
+            'icon'      =>  'fas fa-fw fa-briefcase',            
+            'submenu'   =>  [
+                [
+                    'text'  =>  'Arqueo de Caja',
+                    'url'   =>  '#',
+                    'icon'  =>  'fas fa-fw fa-database'
+                ]
+            ],
+        ],
+        [
+            'text'      =>  'Reportes',
+            'icon'      =>  'fas fa-fw fa-file',
+            'url'       =>  'generate-pdf',
+        ],
     ],
 
     /*
