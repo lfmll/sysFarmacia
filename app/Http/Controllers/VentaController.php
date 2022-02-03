@@ -34,15 +34,14 @@ class VentaController extends Controller
         $venta=new Venta();
 
         $fecha_venta = Carbon::now('America/La_Paz')->toDateString();
-        $hoy=date("Y-m-d");
         $horai=date('00:00:00');
         $horaf=date('23:59:59');
 
         $c=DB::table('ventas')
-                ->whereBetween('fecha_venta',[$hoy.' '.$horai, $hoy.' '.$horaf])
+                ->whereBetween('fecha_venta',[$fecha_venta.' '.$horai, $fecha_venta.' '.$horaf])
                 ->count();
                           
-        $comprobante = str_replace('-','',$hoy).$c;
+        $comprobante = str_replace('-','',$fecha_venta).$c;
 
         $lotes=Lote::where('estado','A')->get();
 

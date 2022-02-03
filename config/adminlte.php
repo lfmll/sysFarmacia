@@ -402,9 +402,19 @@ return [
             'icon'      =>  'fas fa-fw fa-briefcase',            
             'submenu'   =>  [
                 [
+                    'text'  =>  'Listado de Arqueos',
+                    'url'   =>  '/caja',
+                    'icon'  =>  'fas fa-fw fa-clone'
+                ],
+                [
+                    'text'  =>  'Apertura de Caja',
+                    'url'   =>  '/caja/create',
+                    'icon'  =>  'fas fa-fw fa-unlock'
+                ],
+                [
                     'text'  =>  'Arqueo de Caja',
-                    'url'   =>  '#',
-                    'icon'  =>  'fas fa-fw fa-database'
+                    'url'   =>  '/caja/0/edit/',
+                    'icon'  =>  'fas fa-fw fa-calculator'
                 ]
             ],
         ],

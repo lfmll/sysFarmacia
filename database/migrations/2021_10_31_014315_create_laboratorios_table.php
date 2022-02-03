@@ -19,6 +19,7 @@ class CreateLaboratoriosTable extends Migration
             $table->string('direccion',100)->nullable();
             $table->string('telefono',20)->nullable();
             $table->string('procedencia',15)->nullable();
+            $table->string('anotacion')->nullable();
             $table->timestamps();
         });
     }

@@ -14,6 +14,7 @@ use App\Http\Controllers\AgenteController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\CajaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,3 +49,4 @@ Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
 // Route::get('/lote/buscarProducto',[LoteController::class,'buscarProducto'])->name('lote.buscarProducto');
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+Route::resource('caja', CajaController::class);

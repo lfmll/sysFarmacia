@@ -34,15 +34,14 @@ class CompraController extends Controller
         $agentes=Agente::orderBy('nombre','ASC')->pluck('nombre','id');
         
         $fecha_compra = Carbon::now('America/La_Paz')->toDateString();
-        $hoy=date("Y-m-d");
         $horai=date('00:00:00');
         $horaf=date('23:59:59');
 
         $c=DB::table('compras')
-                ->whereBetween('fecha_compra',[$hoy.' '.$horai, $hoy.' '.$horaf])
+                ->whereBetween('fecha_compra',[$fecha_compra.' '.$horai, $fecha_compra.' '.$horaf])
                 ->count();
                           
-        $comprobante = str_replace('-','',$hoy).$c;
+        $comprobante = str_replace('-','',$fecha_compra).$c;
         
         $lotes=Lote::where('estado','A')->get(); 
         

@@ -32,14 +32,7 @@
                             <div class="row">
                                 <div class="col-lg-3 col-md-3 col-xs-12">
                                     <div class="form-group">                                        
-                                        {!! Form::label('Producto', 'Producto') !!}                                          
-                                        {{-- <div class="row">
-                                            {!! Form::select('lotes', $lotes->pluck('numero','id'), null, ['id'=>'plote','class'=>'lotes form-control', 'placeholder'=>'', 'style'=>'width:80%']) !!}                                                                      
-                                            <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal">
-                                                <i class="fa fa-fw fa-receipt"></i>
-                                            </a>
-                                        </div>  --}}       
-                                                                              
+                                        {!! Form::label('Producto', 'Producto') !!}                                                                                                                              
                                             <div class="row">                                                                                                                                   
                                                 {!! Form::select('productos', $productos->pluck('nombre','id'), null, ['id'=>'pproducto', 'class'=>'productos form-control','style'=>'width:80%;']) !!}                                            
                                                 <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" style='padding: display;'>
@@ -207,7 +200,6 @@
 
 <script>    
     $(document).ready(function() {
-        // $('.lotes').select2();
         $('.productos').select2();
     });
 
@@ -229,23 +221,7 @@
     let subtotal=[];
     
     function agregar(){
-        // slote=document.getElementById("plote");
         
-        /* if (slote.options[slote.selectedIndex].value=="") {
-            alert("vacio");
-        }else{
-            codigo=slote.options[slote.selectedIndex].value;
-            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
-            $.ajax({
-                type:'get',
-                url:'{{URL::to('buscarProducto')}}',
-                data:{'buscarProducto': codigo},
-                dataType:'json',
-                success:function(data, textStatus, jqXHR){
-                    console.log(data.error);
-                }
-            });
-        } */
         codigo = document.getElementById("pcodigo").innerText;
         producto=document.getElementById("pproducto");
         concepto=producto.options[producto.selectedIndex].text;    
