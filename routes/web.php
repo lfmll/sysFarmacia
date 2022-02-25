@@ -53,3 +53,5 @@ Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
 // Route::get('/lote/buscarProducto',[LoteController::class,'buscarProducto'])->name('lote.buscarProducto');
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 Route::resource('caja', CajaController::class);
+
+Route::get('listaLaboratorios',[PDFController::class,'listaLaboratorios']);

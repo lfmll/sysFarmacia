@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Laboratorio;
 use Illuminate\Http\Request;
+use PDF;
 
 class LaboratorioController extends Controller
 {
