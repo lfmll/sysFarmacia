@@ -21,8 +21,7 @@
                                 </div>                                                                                    
                             </div>
                         </div>
-                    </div>                                                                                                    
-                    <hr class="dotted">                       
+                    </div>                                                                                                                                             
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -82,28 +81,53 @@
                         </div> 
                         <div class="card-footer">
                             <div class="container">
-                                <div class="checkbox form-group">
-                                    <label><i class="fa fa-credit-card"></i> Forma de Pago</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" checked>
-                                        <label class="form-check-label" for="chkefectivo">
-                                            Efectivo
-                                        </label>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="checkbox form-group">
+                                            <label><i class="fa fa-credit-card"></i> Forma de Pago</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" checked>
+                                                <label class="form-check-label" for="chkefectivo">
+                                                    Efectivo
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" >
+                                                <label class="form-check-label" for="chktarjeta">
+                                                    Tarjeta
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="forma_pago" value="QR" id="chkqr" >
+                                                <label class="form-check-label" for="chkqr">
+                                                    QR
+                                                </label>
+                                            </div>
+                                        </div>                                        
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" >
-                                        <label class="form-check-label" for="chktarjeta">
-                                            Tarjeta
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="forma_pago" value="QR" id="chkqr" >
-                                        <label class="form-check-label" for="chkqr">
-                                            QR
-                                        </label>
-                                    </div>
-                                </div> 
-                            </div>                            
+                                    <div class="col">
+                                        <div class="form-group">                                    
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="fcheck" onclick="onFactura()"/>
+                                                <label>Facturar</label>
+                                            </div>    
+                                        </div>
+                                        <div class="form-group">
+                                            {!! Form::number('Nit', null, ['id'=>'fnit','class'=>'form-control','placeholder'=>'NIT', 'style'=>'display: none;']) !!}
+                                        </div>                                                                            
+                                        <div class="form-group">
+                                            {!! Form::number('Razon', null, ['id'=>'frazon','class'=>'form-control','placeholder'=>'Razón Social', 'style'=>'display: none;']) !!}    
+                                        </div>                                            
+                                        <div class="form-group">
+                                            {!! Form::number('Autorizacion', null, ['id'=>'fautorizacion','class'=>'form-control','placeholder'=>'Autorización', 'style'=>'display: none;']) !!}
+                                        </div>
+                                        <div class="form-group">
+                                            {!! Form::text('Factura', '', ['id'=>'ffactura','hidden']) !!}
+                                        </div>
+                                    </div>    
+                                </div>                                                                                                                                                                                                     
+                            </div>          
+                            <hr>                  
                             <div class="form-group">
                                 <div class="float-left">
                                     {!! Form::label('Pago', 'Pago') !!}
@@ -116,18 +140,19 @@
                             </div>
                         </div>                                                                                                                                                                                                                                                                                                                                                                            
                     </div>
-                <div class="card-footer">
-                    <div class="form-group">
-                        <div class="float-left">
-                            <a type="submit" class="btn btn-default btn-lg" href="{{url('/venta')}}">Cancelar</a>    
+                    <div class="card-footer">
+                        <div class="form-group">
+                            <div class="float-left">
+                                <a type="submit" class="btn btn-default btn-lg" href="{{url('/venta')}}">Cancelar</a>    
+                            </div>
+                            <div class="float-right">
+                                <button type="submit" class="btn btn-success btn-lg">Guardar</button>  
+                            </div>            
                         </div>
-                        <div class="float-right">
-                            <button type="submit" class="btn btn-success btn-lg">Guardar</button>  
-                        </div>            
-                    </div>
-                </div>      
-            </div>        
-        </div>                                
+                    </div>      
+                </div>        
+            </div>     
+        </div>                           
     {!! Form::close() !!}
     
     <div class="modal fade" id="myModal" role="dialog">
@@ -263,6 +288,37 @@
     function pagar(){
         pago=document.getElementById('ppago').value;
         document.getElementById('pcambio').value = pago-total;
+    }
+
+    function onFactura(){
+        var chkFactura=document.getElementById("fcheck");        
+        var txtNit = document.getElementById("fnit");
+        var txtRazon = document.getElementById("frazon");
+        var txtAutorizacion = document.getElementById("fautorizacion");
+
+            document.getElementById("ffactura").value="factura" ;
+        if (chkFactura.checked == true) {
+            txtNit.style.display = "block";
+            txtRazon.style.display = "block";
+            txtAutorizacion.style.display = "block";
+
+            txtNit.required=true;
+            txtRazon.required=true;
+            txtAutorizacion.required=true;
+        } else {
+            document.getElementById("ffactura").value="";
+            txtNit.style.display = "none";
+            txtRazon.style.display = "none";
+            txtAutorizacion.style.display = "none";     
+
+            txtNit.value='';
+            txtRazon.value='';
+            txtAutorizacion.value='';
+
+            txtNit.required=false;
+            txtRazon.required=false;
+            txtAutorizacion.required=false;
+        }
     }
 </script>
 

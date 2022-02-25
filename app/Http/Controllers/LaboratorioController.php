@@ -42,6 +42,7 @@ class LaboratorioController extends Controller
         $laboratorio->direccion = $request->direccion;
         $laboratorio->telefono = $request->telefono;
         $laboratorio->procedencia = $request->procedencia;
+        $laboratorio->anotacion = $request->anotacion;
         if ($laboratorio->save()) {
             return redirect('/laboratorio');
         } else {
@@ -86,6 +87,7 @@ class LaboratorioController extends Controller
         $laboratorio->direccion = $request->direccion;
         $laboratorio->telefono = $request->telefono;
         $laboratorio->procedencia = $request->procedencia;
+        $laboratorio->anotacion = $request->anotacion;
         if ($laboratorio->save()) {
             return redirect('/laboratorio');
         } else {

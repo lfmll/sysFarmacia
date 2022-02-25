@@ -399,7 +399,8 @@ return [
         ],
         [
             'text'      =>  'Contabilidad',
-            'icon'      =>  'fas fa-fw fa-briefcase',            
+            'icon'      =>  'fas fa-fw fa-briefcase',  
+            'icon_color'=>  'purple',
             'submenu'   =>  [
                 [
                     'text'  =>  'Listado de Arqueos',
@@ -419,9 +420,22 @@ return [
             ],
         ],
         [
-            'text'      =>  'Reportes',
+            'text'      =>  'Documentos',
             'icon'      =>  'fas fa-fw fa-file',
-            'url'       =>  'generate-pdf',
+            'icon_color'=>  'white',
+            'submenu'   =>  [
+                [
+                    'text'  =>  'Exportar',
+                    'url'   =>  '#',
+                    'icon'  =>  'fas fa-fw fa-upload'
+                ],
+                [
+                    'text'  =>  'Importar',
+                    'url'   =>  '#',
+                    'icon'  =>  'fas fa-fw fa-download'
+                ]
+
+            ],
         ],
     ],
 

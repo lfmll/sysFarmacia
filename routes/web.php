@@ -15,6 +15,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\CajaController;
+use App\Http\Controllers\FacturaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +45,11 @@ Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medica
 Route::get('/lote/{id}/create_insumo',[LoteController::class,'create_insumo']);
 Route::resource('compra', CompraController::class);
 Route::resource('venta', VentaController::class);
+Route::resource('factura', FacturaController::class);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
+
 // Route::get('/lote/buscarProducto',[LoteController::class,'buscarProducto'])->name('lote.buscarProducto');
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 Route::resource('caja', CajaController::class);

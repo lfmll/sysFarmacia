@@ -19,6 +19,7 @@
                                     <td>Dirección</td>
                                     <td>Teléfono</td>
                                     <td>Procedencia</td>
+                                    <td>Anotaciones</td>
                                     <td>Acciones</td>
                                 </tr>
                             </thead>
@@ -30,6 +31,7 @@
                                     <td>{{$lab->direccion}}</td>
                                     <td>{{$lab->telefono}}</td>
                                     <td>{{$lab->procedencia}}</td>
+                                    <td>{{$lab->anotacion}}</td>
                                     <td>
                                     <a href="{{url('/laboratorio/'.$lab->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i> Editar</a>
                                     </td>

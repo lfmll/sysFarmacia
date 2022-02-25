@@ -72,7 +72,7 @@ class VentaController extends Controller
         try {
             DB::beginTransaction();
             $venta = new Venta($request->all());
-            
+            // dd($request);
             if (is_null($venta->glosa)) {
                 $venta->comprobante=$request->comprobante;
                 $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
@@ -102,6 +102,11 @@ class VentaController extends Controller
                     $lote->save();
                     
                     $cont = $cont + 1;
+                }
+                if ($request->Factura=="factura") {
+                    $nit=$request->Nit;
+                    $razon=$request->Razon;
+                    $autorizacion=$request->Autorizacion;
                 }
             }else {
                 $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();

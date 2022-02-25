@@ -26,12 +26,12 @@
                     <div class="row">    
                         <div class="col-md-6">
                             <div class="form-group">
-                                {{ Form::number('precio_compra',$lote->precio_compra,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Compra']) }}
+                                {{ Form::number('precio_compra',$lote->precio_compra,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Compra','step'=>'any']) }}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                {{ Form::number('precio_venta',$lote->precio_venta,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Venta']) }}
+                                {{ Form::number('precio_venta',$lote->precio_venta,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Venta','step'=>'any']) }}
                             </div> 
                         </div>
                         <div class="col-md-6">

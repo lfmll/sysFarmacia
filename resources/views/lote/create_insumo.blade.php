@@ -14,12 +14,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                {{Form::text('numero', $lote->numero, ['class'=>'form-control', 'placeholder'=>'Numero de lote','required'])}}
+                                {{Form::text('numero', $lote->numero, ['class'=>'form-control', 'placeholder'=>'Numero de lote','required','step'=>'any'])}}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                {{Form::number('cantidad', $lote->cantidad, ['class'=>'form-control','min'=>'0', 'placeholder'=>'Cantidad'])}}    
+                                {{Form::number('cantidad', $lote->cantidad, ['class'=>'form-control','min'=>'0', 'placeholder'=>'Cantidad','step'=>'any'])}}    
                             </div>        
                         </div>
                     </div>
