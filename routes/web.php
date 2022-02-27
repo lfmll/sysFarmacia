@@ -55,3 +55,8 @@ Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 Route::resource('caja', CajaController::class);
 
 Route::get('listaLaboratorios',[PDFController::class,'listaLaboratorios']);
+Route::get('listaMedicamentos',[PDFController::class,'listaMedicamentos']);
+Route::get('listaInsumos',[PDFController::class,'listaInsumos']);
+Route::get('listaAcciones',[PDFController::class,'listaAcciones']);
+Route::get('listaLotes',[PDFController::class,'listaLotes']);
+Route::get('detalleMedicamento/{id}',[PDFController::class,'detalleMedicamento']);

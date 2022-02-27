@@ -18,7 +18,7 @@ class LoteController extends Controller
      */
     public function index()
     {
-        $lotes=Lote::all();
+        $lotes=Lote::where('estado','A')->get();
         return view('lote.index',['lotes' => $lotes]);
     }
 

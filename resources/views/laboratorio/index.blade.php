@@ -9,13 +9,12 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-10">                            
-                            <a href="{{url('#')}}" class="btn btn-success"><i class="fa fa-flask"></i></a>
+                            <a href="{{url('#')}}" class="btn btn-success"><i class="fa fa-flask fa-lg"></i></a>
                         </div>
                         <div class="col-sm-2">
                             <a href="{{url('listaLaboratorios')}}" class="btn btn-success"><i class="fa fa-print"></i> Imprimir</a>
                         </div>                    
-                    </div>
-                    
+                    </div>                    
                 </div>
                 <div class="card-body">
                     <div class="dataTables_wrapper dt-bootstrap4">

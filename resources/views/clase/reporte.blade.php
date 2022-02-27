@@ -10,11 +10,11 @@
           border-collapse: collapse;
         }
     </style>
-    <title>Reporte de Laboratorios</title>
+    <title>Reporte de Insumos</title>
 </head>
 <body>
     <header>
-        <h2 style="text-align:center">Listado de Laboratorios</h2>
+        <h2 style="text-align:center">Listado de Insumos</h2>
     </header>
     <main>
         <table width="100%">
@@ -22,21 +22,15 @@
                 <tr>
                     <th>No</th>                
                     <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Procedencia</th>
-                    <th>Anotaciones</th>
+                    <th>Clase</th>                    
                 </tr>
             </thead>
             <tbody>
-                @foreach($laboratorios as $laboratorio)
+                @foreach($clases as $clase)
                 <tr>
                     <td>{{$loop->index+1}}</td>
-                    <td>{{$laboratorio->nombre}}</td>
-                    <td>{{$laboratorio->direccion}}</td>
-                    <td>{{$laboratorio->telefono}}</td>
-                    <td>{{$laboratorio->procedencia}}</td>
-                    <td>{{$laboratorio->anotacion}}</td>
+                    <td>{{$clase->nombre}}</td>
+                    <td>{{$clase->clase}}</td>
                 </tr>
                 @endforeach
             </tbody>

@@ -8,13 +8,13 @@
         <div class="card card-primary">
             <div class="card-header">
                 <div class="row">
-                    <h1 class="card-title">{{$medicamento->nombre_comercial}}</h1>                    
-                </div>                  
-                <hr style="border: none;">
-                <div class="row">
-                    <h6 class="card-subtitle">{{$medicamento->nombre_generico}}</h6>                                                                 
-                </div>              
-                
+                    <div class="col-sm-10">
+                        <h1 class="card-title">{{$medicamento->nombre_comercial}} - {{$medicamento->nombre_generico}}</h1>
+                    </div>
+                    <div class="col-sm-2">
+                        <a href="{{url('/detalleMedicamento/'.$medicamento->id)}}" class="btn btn-primary"><i class="fa fa-print"></i> Imprimir</a>
+                    </div>                                        
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">

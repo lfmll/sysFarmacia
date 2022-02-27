@@ -10,33 +10,35 @@
           border-collapse: collapse;
         }
     </style>
-    <title>Reporte de Laboratorios</title>
+    <title>Reporte de Medicamento</title>
 </head>
 <body>
     <header>
-        <h2 style="text-align:center">Listado de Laboratorios</h2>
+        <h2 style="text-align:center">Listado de Medicamento</h2>
     </header>
     <main>
         <table width="100%">
             <thead>
                 <tr>
                     <th>No</th>                
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Procedencia</th>
-                    <th>Anotaciones</th>
+                    <th>N. Comercial</th>
+                    <th>N. Genérico</th>
+                    <th>Stock</th>
+                    <th>Stock Min</th>
+                    <th>Presentación</th>
+                    <th>Vía Adm</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($laboratorios as $laboratorio)
+                @foreach($medicamentos as $medicamento)
                 <tr>
                     <td>{{$loop->index+1}}</td>
-                    <td>{{$laboratorio->nombre}}</td>
-                    <td>{{$laboratorio->direccion}}</td>
-                    <td>{{$laboratorio->telefono}}</td>
-                    <td>{{$laboratorio->procedencia}}</td>
-                    <td>{{$laboratorio->anotacion}}</td>
+                    <td>{{$medicamento->nombre_comercial}}</td>
+                    <td>{{$medicamento->nombre_generico}}</td>
+                    <td>{{$medicamento->stock}}</td>
+                    <td>{{$medicamento->stock_minimo}}</td>
+                    <td>{{$medicamento->formato->descripcion}}</td>
+                    <td>{{$medicamento->via->descripcion}}</td>
                 </tr>
                 @endforeach
             </tbody>

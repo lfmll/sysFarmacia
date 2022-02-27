@@ -5,9 +5,16 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card card-warning">
                 <div class="card-header">
-                    <h3 class="card-title">Lote</h3>                                                    
+                    <div class="row">
+                        <div class="col-sm-10">                            
+                            <a href="{{url('#')}}" class="btn btn-warning"><i class="fa fa-receipt fa-lg"></i></a>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="{{url('listaLotes')}}" class="btn btn-warning"><i class="fa fa-print"></i> Imprimir</a>
+                        </div>                    
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="dataTables_wrapper dt-bootstrap4">
