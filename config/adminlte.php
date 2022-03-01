@@ -426,7 +426,7 @@ return [
             'submenu'   =>  [
                 [
                     'text'  =>  'Exportar',
-                    'url'   =>  '#',
+                    'url'   =>  '/reporte',
                     'icon'  =>  'fas fa-fw fa-upload'
                 ],
                 [
