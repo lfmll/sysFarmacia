@@ -29,12 +29,14 @@
                                     <div class="form-group">                                        
                                         {!! Form::label('Producto', 'Producto') !!}                                          
                                         <div class="row">                                                                                                                                   
-                                            {!! Form::select('productos', $productos->pluck('nombre','id'), null, ['id'=>'pproducto', 'class'=>'productos form-control','style'=>'width:80%;']) !!}                                            
-                                            <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" style='padding: display;'>
+                                            {{-- {!! Form::select('productos', $productos->pluck('nombre','id'), null, ['id'=>'pproducto', 'class'=>'productos form-control','style'=>'width:80%;']) !!}                                             --}}
+                                            {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control','style'=>'width:80%;']) !!}                                            
+                                            <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" >
                                                 <i class="fa fa-lg fa-receipt"></i>
                                             </a>
                                         </div>
-                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none;']) !!}
+                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
+                                        {!! Form::label('productoid', 'productoid', ['id'=>'pcodigoprod']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12">
@@ -155,24 +157,37 @@
         </div>                           
     {!! Form::close() !!}
     
-    <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal fade" id="myModal" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Escoger Lote</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="">
-                        <span aria-hidden="true">x</span>
-                    </button>                    
+                    <h4 class="modal-title" id="myModalLabel">Buscar Medicamento-Insumo-Producto</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>                                        
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <table id="tlote" class="table">
+                <div class="modal-body">                                                                      
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#tab01" aria-controls="tab01" role="tab" data-toggle="tab">Medicamentos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tab02" aria-controls="tab02" role="tab" data-toggle="tab">Insumos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tab03" aria-controls="tab03" role="tab" data-toggle="tab">Productos</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="tab01">
+                                <br>
+                                <table id="tlotem" class="table">
                                     <thead>
                                         <tr>
                                             <th></th>
                                             <th>Nro Lote</th>
+                                            <th>Medicamento</th>
                                             <th>Fecha Vencimiento</th>
                                             <th>Cantidad</th>
                                             <th>Precio</th>
@@ -180,18 +195,81 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($lotes as $lote)
+                                        @foreach ($lotesm as $lotem)
                                             <tr>
                                                 <td>
                                                     <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lote->id}}">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}}">
                                                     </div>
                                                 </td>
-                                                <td>{{$lote->numero}}</td>
-                                                <td>{{$lote->fecha_vencimiento}}</td>
-                                                <td>{{$lote->cantidad}}</td>
-                                                <td>{{$lote->precio_venta}}</td>
-                                                <td>{{$lote->laboratorio->nombre}}</td>
+                                                <td>{{$lotem->numero}}</td>
+                                                <td>{{$lotem->medicamento->nombre_comercial}}</td>
+                                                <td>{{$lotem->fecha_vencimiento}}</td>
+                                                <td>{{$lotem->cantidad}}</td>
+                                                <td>{{$lotem->precio_venta}}</td>
+                                                <td>{{$lotem->laboratorio->nombre}}</td>
+                                            </tr>                                            
+                                        @endforeach                                                                                
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="tab02">
+                                <br>
+                                <table id="tlotei" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nro Lote</th>
+                                            <th>Insumo</th>
+                                            <th>Fecha Vencimiento</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio</th>
+                                            <th>Laboratorio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($lotesi as $lotei)
+                                            <tr>
+                                                <td>
+                                                    <div class="chk">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotei->id}}">
+                                                    </div>
+                                                </td>
+                                                <td>{{$lotei->numero}}</td>
+                                                <td>{{$lotei->insumo->nombre}}</td>
+                                                <td>{{$lotei->fecha_vencimiento}}</td>
+                                                <td>{{$lotei->cantidad}}</td>
+                                                <td>{{$lotei->precio_venta}}</td>
+                                                <td>{{$lotei->laboratorio->nombre}}</td>
+                                            </tr>                                            
+                                        @endforeach                                                                                
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="tab03">
+                                <br>
+                                <table id="tproducto" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Producto</th>
+                                            <th>Fecha Vencimiento</th>
+                                            <th>Stock</th>
+                                            <th>Precio Venta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($productos as $producto)
+                                            <tr>
+                                                <td>
+                                                    <div class="chk">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$producto->id}}">
+                                                    </div>
+                                                </td>
+                                                <td>{{$producto->nombre}}</td>                                                
+                                                <td>{{$producto->fecha_vencimiento}}</td>
+                                                <td>{{$producto->stock}}</td>
+                                                <td>{{$producto->precio_venta}}</td>
                                             </tr>                                            
                                         @endforeach                                                                                
                                     </tbody>
@@ -210,6 +288,11 @@
 @stop
 
 @section('js')
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -223,7 +306,33 @@
     });
     
     $(function () {
-        $('#tlote').DataTable({
+        $('#tlotem').DataTable({
+            "responsive" : false,
+            "paging": true,
+            "lengthMenu": [4, 8, "All"],
+            "searching": true,
+            "ordering": false,
+            "info": false,
+            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+            "autoWidth": false
+        });
+    });
+
+    $(function () {
+        $('#tlotei').DataTable({
+            "responsive" : false,
+            "paging": true,
+            "lengthMenu": [4, 8, "All"],
+            "searching": true,
+            "ordering": false,
+            "info": false,
+            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+            "autoWidth": false
+        });
+    });
+
+    $(function () {
+        $('#tproducto').DataTable({
             "responsive" : false,
             "paging": true,
             "lengthMenu": [4, 8, "All"],
@@ -242,6 +351,14 @@
     var cont=0;
     let total=0;
     let subtotal=[];
+
+    $('#myModal .save').click(function (e) {
+        e.preventDefault();
+        addImage(5);
+        $('#myModal').modal('hide');
+        //$(this).tab('show')
+        return false;
+    })
 
     function agregar(){
         codigo = document.getElementById("pcodigo").innerText;

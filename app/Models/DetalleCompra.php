@@ -20,4 +20,8 @@ class DetalleCompra extends Model
     public function compra(){
         return $this->belongsTo(Compra::class);
     }
+
+    public function producto(){
+        return $this->belongsTo(Producto::class);
+    }
 }

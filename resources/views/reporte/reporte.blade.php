@@ -45,13 +45,13 @@
         <div class="col-lg-3 col-xs-6">
             <div class="small-box bg-warning text-white">
                 <div class="inner">
-                    <h3>0000</h3>
+                    <h3>{{$cantCierres}}</h3>
                     <p>Caja</p>
                 </div>
                 <div class="icon">
                     <ion-icon name="calculator-outline"></ion-icon>
                 </div>
-                <a href="#" class="small-box-footer">Reporte <i class="fa fa-arrow-circle-down"></i></a>
+                <a href="{{url('reporteCierreAnterior')}}" class="small-box-footer">Reporte <i class="fa fa-arrow-circle-down"></i></a>
             </div>            
         </div>
         <div class="col-lg-3 col-xs-6">

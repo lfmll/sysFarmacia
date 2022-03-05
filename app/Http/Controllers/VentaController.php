@@ -7,6 +7,7 @@ use App\Models\DetalleVenta;
 use App\Models\Lote;
 use App\Models\Medicamento;
 use App\Models\Insumo;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -43,21 +44,22 @@ class VentaController extends Controller
                           
         $comprobante = str_replace('-','',$fecha_venta).$c;
 
-        $lotes=Lote::where('estado','A')->get();
+        $lotesm=Lote::where('estado','A')
+                    ->where('medicamento_id','<>',null)                    
+                    ->get();
+        
+        $lotesi=Lote::where('estado','A')
+                    ->where('insumo_id','<>',null)                                        
+                    ->get();
 
-        $medicamentos=DB::table('medicamentos')
-                        ->select('nombre_comercial','id')
-                        ->where('stock','>','stock_minimo');
-
-        $productos=DB::table('insumos')
-                    ->select('nombre','id')
-                    ->where('stock','>','stock_minimo')
-                    ->union($medicamentos)
+        $productos=Producto::where('estado','A')
+                    ->where('stock','>','stock_minimo')                    
                     ->get(); 
 
         return view('venta.create',['venta'=>$venta, 'comprobante'=>$comprobante])
                 ->with('productos',$productos)
-                ->with('lotes',$lotes);
+                ->with('lotesm',$lotesm)
+                ->with('lotesi',$lotesi);
                 
     }
 

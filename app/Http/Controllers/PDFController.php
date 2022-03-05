@@ -15,6 +15,8 @@ use App\Models\Lote;
 use App\Models\Medida;
 use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
+use App\Models\Caja;
+use App\Models\Producto;
 
 class PDFController extends Controller
 {
@@ -59,6 +61,13 @@ class PDFController extends Controller
         $lotes=Lote::where('estado','A')->get();
         $pdf=PDF::loadView('lote.reporte',['lotes'=>$lotes,'fecha'=>$fecha]);
         return $pdf->download('lote.pdf');
+    }
+    public function listaProductos()
+    {
+        $fecha=Carbon::now('America/La_Paz')->format('d/m/Y h:i A');
+        $productos=Producto::where('estado','A')->get();
+        $pdf=PDF::loadView('producto.reporte',['productos'=>$productos,'fecha'=>$fecha]);
+        return $pdf->download('Productos.pdf');
     }
     public function detalleMedicamento($idMedicamento)
     {
@@ -156,9 +165,13 @@ class PDFController extends Controller
 
         $cantLotes=DB::table('lotes')
                 ->whereBetween('fecha_vencimiento',[$fechai,$fechaf])
-                ->count();               
+                ->count();    
+        
+        $cantCierres=DB::table('cajas')
+                ->where('hora_fin','<>',null)
+                ->count();                           
 
-        return view('reporte.reporte',['cantVentas'=>$cantVentas,'cantCompras'=>$cantCompras,'cantLotes'=>$cantLotes]);
+        return view('reporte.reporte',['cantVentas'=>$cantVentas,'cantCompras'=>$cantCompras,'cantLotes'=>$cantLotes,'cantCierres'=>$cantCierres]);
     }
     public function reporteVentaDia()
     {
@@ -260,5 +273,13 @@ class PDFController extends Controller
         
         $pdf = PDF::loadView('lote.reporteLotesVencimiento',['lotes' => $lotes,'fecha'=>$fecha]);
         return $pdf->download('Lotes_en_Vencimiento.pdf');
+    }
+    public function reporteCierreAnterior()
+    {
+        $fecha = Carbon::now('America/La_Paz')->toDateString();
+        $fechaAnt=Carbon::yesterday('America/La_Paz')->toDateString();    
+        $cajas=Caja::where('fecha',$fechaAnt);
+        $pdf = PDF::loadView('caja.reporteCierreAnterior',['cajas' => $cajas,'fecha'=>$fecha]);
+        return $pdf->download('Cierre_Anterior.pdf');
     }
 }
