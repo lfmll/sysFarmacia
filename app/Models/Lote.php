@@ -30,6 +30,9 @@ class Lote extends Model
         return $this->belongsTo(Medicamento::class);
     }
 
+    public function producto(){
+        return $this->belongsTo(Producto::class);
+    }
     public function detalle_compras(){
         return $this->hasMany(DetalleCompra::class);
     }

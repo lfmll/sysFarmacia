@@ -45,6 +45,7 @@ Route::resource('lote', LoteController::class);
 Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
 Route::get('/lote/{id}/create_insumo',[LoteController::class,'create_insumo']);
+Route::get('/lote/{id}/create_producto',[LoteController::class,'create_producto']);
 Route::resource('compra', CompraController::class);
 Route::resource('venta', VentaController::class);
 Route::resource('factura', FacturaController::class);

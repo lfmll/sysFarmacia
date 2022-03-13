@@ -11,7 +11,7 @@ class Insumo extends Model
         'codigo','nombre','descripcion','stock','stock_minimo'
     ];
 
-    public function insumos(){
+    public function lotes(){
         return $this->hasMany(Lote::class);        
     }
 }

@@ -16,13 +16,9 @@ class CreateProductosTable extends Migration
         Schema::create('productos', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('nombre',50);
+            $table->string('descripcion')->nullable();
             $table->integer('stock');
-            $table->integer('stock_minimo');
-            $table->date('fecha_vencimiento');
-            $table->decimal('precio_compra',8,2)->nullable();
-            $table->decimal('precio_venta',8,2)->nullable();
-            $table->tinyInteger('ganancia');
-            $table->char('estado',1);
+            $table->integer('stock_minimo');            
             $table->timestamps();
         });
     }

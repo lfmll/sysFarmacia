@@ -18,12 +18,13 @@ class CreateLotesTable extends Migration
             $table->string('numero');
             $table->integer('cantidad');
             $table->date('fecha_vencimiento');
-            $table->smallInteger('laboratorio_id')->unsigned();
+            $table->smallInteger('laboratorio_id')->unsigned()->nullable();
             $table->smallInteger('medicamento_id')->unsigned()->nullable();
             $table->smallInteger('insumo_id')->unsigned()->nullable();
+            $table->smallInteger('producto_id')->unsigned()->nullable();
             $table->decimal('precio_compra',8,2)->nullable();
             $table->decimal('precio_venta',8,2)->nullable();
-            $table->tinyInteger('ganancia');
+            $table->decimal('ganancia',8,2);
             $table->char('estado',1);
             $table->timestamps();
         });

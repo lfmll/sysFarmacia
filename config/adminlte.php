@@ -307,7 +307,7 @@ return [
         ],
         [
             'text'       => 'Egresos',
-            'icon'       => 'fas fa-fw  fa-minus-square',
+            'icon'       => 'fas fa-sign-out-alt',
             'icon_color' => 'red',
             'url'        => '#',
             'submenu'    => [
@@ -331,7 +331,7 @@ return [
         ],
         [
             'text'       => 'Ingresos',
-            'icon'       => 'fas fa-fw fa-plus-square',
+            'icon'       => 'fas fa-sign-in-alt',
             'icon_color' => 'blue',
             'url'        => '#',
             'submenu'    => [
@@ -348,9 +348,9 @@ return [
             ],
         ],
         [
-            'text'      =>  'Contabilidad',
-            'icon'      =>  'fas fa-fw fa-briefcase',  
-            'icon_color'=>  'purple',
+            'text'      =>  'Caja',
+            'icon'      =>  'fas fa-donate',  
+            'icon_color'=>  'yellow',
             'submenu'   =>  [
                 [
                     'text'  =>  'Listado de Arqueos',
@@ -377,12 +377,12 @@ return [
                 [
                     'text'  =>  'Exportar',
                     'url'   =>  '/reporte',
-                    'icon'  =>  'fas fa-fw fa-upload'
+                    'icon'  =>  'fas fa-file-export'
                 ],
                 [
                     'text'  =>  'Importar',
                     'url'   =>  'importMedicamento',
-                    'icon'  =>  'fas fa-fw fa-download'
+                    'icon'  =>  'fas fa-file-import'
                 ]
 
             ],

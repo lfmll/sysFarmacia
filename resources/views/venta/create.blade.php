@@ -29,14 +29,12 @@
                                     <div class="form-group">                                        
                                         {!! Form::label('Producto', 'Producto') !!}                                          
                                         <div class="row">                                                                                                                                   
-                                            {{-- {!! Form::select('productos', $productos->pluck('nombre','id'), null, ['id'=>'pproducto', 'class'=>'productos form-control','style'=>'width:80%;']) !!}                                             --}}
                                             {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control','style'=>'width:80%;']) !!}                                            
                                             <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" >
                                                 <i class="fa fa-lg fa-receipt"></i>
                                             </a>
                                         </div>
                                         {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
-                                        {!! Form::label('productoid', 'productoid', ['id'=>'pcodigoprod']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12">
@@ -161,7 +159,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Buscar Medicamento-Insumo-Producto</h4>
+                    <h4 class="modal-title" id="myModalLabel">Buscar Produtos</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>                                        
@@ -196,10 +194,10 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($lotesm as $lotem)
-                                            <tr>
+                                            <tr id="{{$lotem->id}}">
                                                 <td>
                                                     <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}}">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_venta}}" id="{{$lotem->id}}">
                                                     </div>
                                                 </td>
                                                 <td>{{$lotem->numero}}</td>
@@ -229,10 +227,10 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($lotesi as $lotei)
-                                            <tr>
+                                            <tr id="{{$lotei->id}}">
                                                 <td>
                                                     <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotei->id}}">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotei->id}},{{$lotei->insumo->nombre}},{{$lotei->cantidad}},{{$lotei->precio_venta}}" id="{{$lotei->id}}">
                                                     </div>
                                                 </td>
                                                 <td>{{$lotei->numero}}</td>
@@ -248,7 +246,7 @@
                             </div>
                             <div role="tabpanel" class="tab-pane" id="tab03">
                                 <br>
-                                <table id="tproducto" class="table">
+                                <table id="tlotep" class="table">
                                     <thead>
                                         <tr>
                                             <th></th>
@@ -259,17 +257,17 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($productos as $producto)
-                                            <tr>
+                                        @foreach ($lotesp as $lotep)
+                                            <tr id="{{$lotep->id}}">
                                                 <td>
                                                     <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$producto->id}}">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotep->id}},{{$lotep->producto->nombre}},{{$lotep->cantidad}},{{$lotep->precio_venta}}" id="{{$lotep->id}}">                                                        
                                                     </div>
-                                                </td>
-                                                <td>{{$producto->nombre}}</td>                                                
-                                                <td>{{$producto->fecha_vencimiento}}</td>
-                                                <td>{{$producto->stock}}</td>
-                                                <td>{{$producto->precio_venta}}</td>
+                                                </td>                                                                                              
+                                                <td>{{$lotep->producto->nombre}}</td>
+                                                <td>{{$lotep->fecha_vencimiento}}</td>
+                                                <td>{{$lotep->cantidad}}</td>
+                                                <td>{{$lotep->precio_venta}}</td>
                                             </tr>                                            
                                         @endforeach                                                                                
                                     </tbody>
@@ -332,7 +330,7 @@
     });
 
     $(function () {
-        $('#tproducto').DataTable({
+        $('#tlotep').DataTable({
             "responsive" : false,
             "paging": true,
             "lengthMenu": [4, 8, "All"],
@@ -348,7 +346,7 @@
         $('input.chk').not(this).prop('checked', false);  
     });
    
-    var cont=0;
+    // var cont=0;
     let total=0;
     let subtotal=[];
 
@@ -356,50 +354,67 @@
         e.preventDefault();
         addImage(5);
         $('#myModal').modal('hide');
-        //$(this).tab('show')
         return false;
     })
 
     function agregar(){
-        codigo = document.getElementById("pcodigo").innerText;
-        producto=document.getElementById("pproducto");
-        concepto=producto.options[producto.selectedIndex].text;    
+        arreglo = document.getElementById("pcodigo").innerText;
+        arr=arreglo.split(',')
+        codigo=arr[0];
+        cant_max=arr[2];
+               
+        concepto = document.getElementById("pproducto").value;               
         cantidad = document.getElementById("pcantidad").value; 
         precio = document.getElementById("pprecio").value;    
-        
-        if (cantidad!="" && precio!="") {
-            gasto=(cantidad*precio);
+               
+        if (cantidad=="" || precio=="") {
+            alert("Error: Campos no pueden estar vacíos");                        
+        } else if (parseInt(cantidad) > parseInt(cant_max)) {            
+            alert("Error: la cantidad excede el stock del lote");            
+        } else {
+            [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
+                idlote=cb.id;
+                $('#'+idlote).fadeOut('slow');
+            });
+            gasto=(cantidad*precio);                        
             subtotal.push(gasto.toFixed(2));
-            total=total+parseFloat(subtotal[cont]);            
-            document.getElementById('eTotal').value = total;
-            var fila='<tr class="selectd" id="fila'+cont+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                                  
-            $('#detalles').append(fila);            
-            cont=cont+1;
-        }else{
-            alert("Error al ingresar al detalle de ingreso");            
+            cont=subtotal.length-1;
+            total=parseFloat(total)+parseFloat(subtotal[cont]);            
+            document.getElementById('eTotal').value = total.toFixed(2);
+            var fila='<tr class="selectd" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
+            $('#detalles').append(fila);                                                              
         }
         limpiar();        
     }
     function limpiar(){        
         document.getElementById("pcantidad").value = "";
-        document.getElementById("pprecio").value = "";        
+        document.getElementById("pprecio").value = "";
+        document.getElementById("pproducto").value = "";
+        document.getElementById("pcodigo").innerText = "";
+        $('input[name="chk"]').prop('checked', false);
+
     }
-    function eliminar(index){
-        console.log("sub antes: "+subtotal);
-        console.log(index);
-        total=parseFloat(total)-parseFloat(subtotal[index]);
+    function eliminar(index, cont){    
         
-        document.getElementById('eTotal').value = total;
-        subtotal.splice(index,1);
-        console.log("sub despues: "+subtotal);
-        $('#fila'+index).remove();
-        cont=cont-1;
+        total=parseFloat(total)-parseFloat(subtotal[cont]);
+        document.getElementById('eTotal').value = total.toFixed(2);
+        subtotal.splice(cont,1);        
+        $('#fila'+index).remove();                
+        $('#'+index).fadeIn('slow');
+        console.log("pasando contador "+cont);
     }
 
     function seleccionar(){        
         [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
             document.getElementById('pcodigo').innerText=cb.value;            
         });
+        arreglo = document.getElementById("pcodigo").innerText;        
+        arr=arreglo.split(',')
+        producto=arr[1];        
+        precio_venta=arr[3];
+        document.getElementById('pprecio').value=precio_venta;
+        document.getElementById('pproducto').value=producto;
+        
     }
 
     function pagar(){

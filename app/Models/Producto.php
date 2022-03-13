@@ -18,10 +18,8 @@ class Producto extends Model
         'estado'
     ];
 
-    public function detalle_compras(){
-        return $this->hasMany(DetalleCompra::class);
+    public function lotes(){
+        return $this->hasMany(Lote::class);        
     }
-    public function detalle_ventas(){
-        return $this->hasMany(DetalleVenta::class);
-    } 
+    
 }

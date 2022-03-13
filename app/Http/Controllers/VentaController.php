@@ -52,15 +52,14 @@ class VentaController extends Controller
                     ->where('insumo_id','<>',null)                                        
                     ->get();
 
-        $productos=Producto::where('estado','A')
-                    ->where('stock','>','stock_minimo')                    
+        $lotesp=Lote::where('estado','A')
+                    ->where('producto_id','<>',null)
                     ->get(); 
 
         return view('venta.create',['venta'=>$venta, 'comprobante'=>$comprobante])
-                ->with('productos',$productos)
+                ->with('lotesp',$lotesp)
                 ->with('lotesm',$lotesm)
-                ->with('lotesi',$lotesi);
-                
+                ->with('lotesi',$lotesi);                
     }
 
     /**
@@ -74,7 +73,6 @@ class VentaController extends Controller
         try {
             DB::beginTransaction();
             $venta = new Venta($request->all());
-            // dd($request);
             if (is_null($venta->glosa)) {
                 $venta->comprobante=$request->comprobante;
                 $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
@@ -102,6 +100,24 @@ class VentaController extends Controller
                     $lote->cantidad = $cantlote;
                     $lote->precio_venta = $dprecio[$cont];
                     $lote->save();
+                    
+                    if (!is_null($lote->medicamento_id)) {
+                        $medicamento = Medicamento::find($lote->medicamento_id);
+                        $medicamento->stock = $medicamento->stock - $dcantidad[$cont];
+                        $medicamento->save();
+                    }
+
+                    if (!is_null($lote->insumo_id)) {
+                        $insumo = Insumo::find($lote->insumo_id);
+                        $insumo->stock = $insumo->stock - $dcantidad[$cont];
+                        $insumo->save();
+                    }
+
+                    if (!is_null($lote->producto_id)) {
+                        $producto = Producto::find($lote->producto_id);
+                        $producto->stock = $producto->stock - $dcantidad[$cont];
+                        $producto->save();
+                    }
                     
                     $cont = $cont + 1;
                 }

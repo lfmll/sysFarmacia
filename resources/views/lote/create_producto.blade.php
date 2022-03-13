@@ -7,7 +7,7 @@
     <div class="col-md-12">           
         <div class="card card-warning">            
             <div class="card-header">
-                <h5 class="card-title"><i class="fas fa-fw fa-receipt"></i> Nuevo Lote Medicamento</h5>                
+                <h5 class="card-title"><i class="fas fa-fw fa-receipt"></i> Nuevo Lote Producto</h5>                
             </div>        
             {!! Form::open(['url' => '/lote', 'method' => 'POST']) !!}                 
                 <div class="card-body">
@@ -15,7 +15,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 {{Form::label('numero','Numero')}}
-                                {{Form::text('numero', $lote->numero, ['class'=>'form-control', 'placeholder'=>'Numero de lote','required'])}}
+                                {{Form::text('numero', $lote->numero, ['class'=>'form-control', 'placeholder'=>'Numero de lote'])}}
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -52,16 +52,10 @@
                         </div>
                          
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                {!! Form::label('laboratorio', 'Laboratorio') !!}
-                                {{ Form::select('laboratorios',$laboratorios, $lote->laboratorio_id, ['class'=>'laboratorios form-control','placeholder'=>'','required','style'=>'weight: 100%;']) }}
-                            </div>            
-                        </div>
+                    <div class="row">                        
                         <div class="col-md-8">        
                             <div class="form-group" style="display: none;">
-                                {{ Form::select('medicamentos',$medicamentos, $medicamento_id, ['class'=>'form-control']) }}
+                                {{ Form::select('productos',$productos, $producto_id, ['class'=>'form-control']) }}
                                 {{-- {{ Form::select('insumos',$insumos, null, ['class'=>'form-control']) }}
                                 {{ Form::select('productos',$productos, null, ['class'=>'form-control']) }} --}}
                             </div>                                
@@ -70,7 +64,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="float-left">
-                        <a type="submit" class="btn btn-default" href="{{url('/medicamento')}}">Cancelar</a>   
+                        <a type="submit" class="btn btn-default" href="{{url('/producto')}}">Cancelar</a>   
                     </div>                
                     <div class="float-right">
                         <input type="submit" value="Guardar" class="btn btn-warning"> 

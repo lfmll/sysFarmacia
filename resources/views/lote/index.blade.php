@@ -21,12 +21,14 @@
                         <table id="tlote" class="table table-bordered">
                             <thead>
                                 <tr>                                    
-                                    <td>Nro</td>
-                                    <td>Cantidad</td>
-                                    <td>Fecha Vencimiento</td>
-                                    <td>Laboratorio</td>
-                                    <td>Medicamento/Insumo</td>
-                                    <td>Acciones</td>
+                                    <th>Nro</th>
+                                    <th>Cantidad</th>
+                                    <th>Fecha Vencimiento</th>
+                                    <th>Laboratorio</th>
+                                    <th>Concepto</th>
+                                    <th>Precio Compra</th>
+                                    <th>Precio Venta</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,7 +37,13 @@
                                     <td>{{$lote->numero}}</td>
                                     <td>{{$lote->cantidad}}</td>
                                     <td>{{$lote->fecha_vencimiento}}</td>
-                                    <td>{{$lote->laboratorio->nombre}}</td>
+                                    @if (!is_null($lote->laboratorio))
+                                        <td>
+                                            {{$lote->laboratorio->nombre}}
+                                        </td>
+                                    @else
+                                        <td></td>
+                                    @endif                                    
                                     @if (!is_null($lote->medicamento))
                                         <td>
                                             {{$lote->medicamento->nombre_comercial}}
@@ -45,7 +53,14 @@
                                         <td>
                                             {{$lote->insumo->nombre}}
                                         </td>
-                                    @endif                                    
+                                    @endif
+                                    @if (!is_null($lote->producto))
+                                        <td>
+                                            {{$lote->producto->nombre}}
+                                        </td>
+                                    @endif   
+                                    <td>{{$lote->precio_compra}}</td>
+                                    <td>{{$lote->precio_venta}}</td>
                                     <td>
                                     <a href="{{url('/lote/'.$lote->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i> Editar</a>
                                     </td>

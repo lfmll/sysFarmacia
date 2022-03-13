@@ -21,13 +21,12 @@
                         <table id="tlote" class="table table-bordered">
                             <thead>
                                 <tr>                                    
-                                    <td>ID</td>
-                                    <td>Nombre</td>
-                                    <td>Stock</td>
-                                    <td>Fecha Vencimiento</td>
-                                    <td>Precio Compra</td>
-                                    <td>Precio Venta</td>
-                                    <td>Acciones</td>                                    
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Stock</th>
+                                    <th>Stock Mínimo</th>
+                                    <th>Acciones</th>                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,12 +34,12 @@
                                 <tr>   
                                     <td>{{$producto->id}}</td>                                 
                                     <td>{{$producto->nombre}}</td>
+                                    <td>{{$producto->descripcion}}</td>
                                     <td>{{$producto->stock}}</td>
-                                    <td>{{$producto->fecha_vencimiento}}</td>
-                                    <td>{{$producto->precio_compra}}</td>
-                                    <td>{{$producto->precio_venta}}</td>
+                                    <td>{{$producto->stock_minimo}}</td>                                    
                                     <td>
                                         <a href="{{url('/producto/'.$producto->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i> Editar</a>
+                                        <a href="{{url('/lote/'.$producto->id.'/create_producto')}}" class="btn btn-warning"><i class="fa fa-receipt"></i></a>
                                     </td>
                                 </tr>
                                 @endforeach

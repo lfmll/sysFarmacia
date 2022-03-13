@@ -14,7 +14,7 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos=Producto::where('estado','A')->get();
+        $productos=Producto::all();
         return view('producto.index',['productos' => $productos]);
     }
 
@@ -39,13 +39,10 @@ class ProductoController extends Controller
     {
         $producto=new producto($request->all());
         $producto->nombre=$request->nombre;
+        $producto->descripcion=$request->descripcion;
         $producto->stock=0;
         $producto->stock_minimo=$request->stock_minimo;
-        $producto->fecha_vencimiento=$request->fecha_vencimiento;
-        $producto->precio_compra=$request->precio_compra;
-        $producto->precio_venta=$request->precio_venta;
-        $producto->ganancia=0;
-        $producto->estado='A';                                          
+                           
         if ($producto->save()) {
             return redirect('/producto');
         } else {
@@ -87,13 +84,9 @@ class ProductoController extends Controller
     {
         $producto= Producto::find($id);
         $producto->nombre=$request->nombre;
+        $producto->descripcion=$request->descripcion;
         $producto->stock=0;
-        $producto->stock_minimo=$request->stock_minimo;
-        $producto->fecha_vencimiento=$request->fecha_vencimiento;
-        $producto->precio_compra=$request->precio_compra;
-        $producto->precio_venta=$request->precio_venta;
-        $producto->ganancia=0;
-        $producto->estado='A';                                          
+        $producto->stock_minimo=$request->stock_minimo;                                         
         if ($producto->save()) {
             return redirect('/producto');
         } else {
