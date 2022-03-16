@@ -7,7 +7,7 @@
         {{Form::text('descripcion',$producto->descripcion,['class'=>'form-control', 'placeholder'=>'Descripción'])}}
     </div>
     <div class="form-group">
-        {{Form::number('stock_minimo',$producto->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0'])}}    
+        {{Form::number('stock_minimo',$producto->stock_minimo,['class'=>'form-control', 'placeholder'=>'Stock Mínimo','min'=>'0','required'])}}    
     </div>
     
 </div>

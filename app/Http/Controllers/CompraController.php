@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Compra;
 use App\Models\Agente;
 use App\Models\DetalleCompra;
+use App\Models\Medicamento;
 use App\Models\Lote;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -42,23 +44,24 @@ class CompraController extends Controller
                 ->count();
                           
         $comprobante = str_replace('-','',$fecha_compra).$c;
+                        
+        $lotesm=Lote::where('estado','A')
+                    ->where('medicamento_id','<>',null)                    
+                    ->get();
         
-        $lotes=Lote::where('estado','A')->get(); 
-        
-        $medicamentos=DB::table('medicamentos')
-                        ->select('nombre_comercial','id')
-                        ->where('stock','>','stock_minimo');
-
-        $productos=DB::table('insumos')
-                    ->select('nombre','id')
-                    ->where('stock','>','stock_minimo')
-                    ->union($medicamentos)
+        $lotesi=Lote::where('estado','A')
+                    ->where('insumo_id','<>',null)                                        
                     ->get();
 
+        $lotesp=Lote::where('estado','A')
+                    ->where('producto_id','<>',null)
+                    ->get();                     
+
         return view('compra.create',['compra'=>$compra, 'comprobante'=>$comprobante])
-                ->with('agentes',$agentes)
-                ->with('productos',$productos)
-                ->with('lotes',$lotes);
+                ->with('agentes',$agentes)                
+                ->with('lotesm',$lotesm)
+                ->with('lotesi',$lotesi)
+                ->with('lotesp',$lotesp);
     }
 
     /**
@@ -101,6 +104,24 @@ class CompraController extends Controller
                     $lote->cantidad = $cantlote;
                     $lote->precio_compra = $dprecio[$cont];
                     $lote->save();
+
+                    if (!is_null($lote->medicamento_id)) {
+                        $medicamento = Medicamento::find($lote->medicamento_id);
+                        $medicamento->stock = $medicamento->stock + $dcantidad[$cont];
+                        $medicamento->save();
+                    }
+
+                    if (!is_null($lote->insumo_id)) {
+                        $insumo = Insumo::find($lote->insumo_id);
+                        $insumo->stock = $insumo->stock + $dcantidad[$cont];
+                        $insumo->save();
+                    }
+
+                    if (!is_null($lote->producto_id)) {
+                        $producto = Producto::find($lote->producto_id);
+                        $producto->stock = $producto->stock + $dcantidad[$cont];
+                        $producto->save();
+                    }
                     
                     $cont = $cont + 1;
                 }                

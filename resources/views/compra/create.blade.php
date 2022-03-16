@@ -25,24 +25,22 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                                                                                                    
-                    <hr class="dotted">                       
+                    </div>                       
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-lg-3 col-md-3 col-xs-12">
                                     <div class="form-group">                                        
-                                        {!! Form::label('Producto', 'Producto') !!}                                                                                                                              
-                                            <div class="row">                                                                                                                                   
-                                                {!! Form::select('productos', $productos->pluck('nombre','id'), null, ['id'=>'pproducto', 'class'=>'productos form-control','style'=>'width:80%;']) !!}                                            
-                                                <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" style='padding: display;'>
-                                                    <i class="fa fa-lg fa-receipt"></i>
-                                                </a>
-                                            </div>
-                                            {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none;']) !!}
-                                                                    
+                                        {!! Form::label('Producto', 'Producto') !!}                                          
+                                        <div class="row">                                                                                                                                   
+                                            {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control','style'=>'width:80%;']) !!}                                            
+                                            <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" >
+                                                <i class="fa fa-lg fa-receipt"></i>
+                                            </a>
+                                        </div>
+                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
                                     </div>
-                                </div>
+                                </div>                                
                                 <div class="col-lg-3 col-md-3 col-xs-12">
                                     <div class="form-group">
                                         {!! Form::label('Cantidad', 'Cantidad') !!}
@@ -144,39 +142,115 @@
                         <span aria-hidden="true">x</span>
                     </button>                    
                 </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <table id="tlote" class="table">
+                <div class="modal-body">                                                                      
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#tab01" aria-controls="tab01" role="tab" data-toggle="tab">Medicamentos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tab02" aria-controls="tab02" role="tab" data-toggle="tab">Insumos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#tab03" aria-controls="tab03" role="tab" data-toggle="tab">Productos</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="tab01">
+                                <br>
+                                <table id="tlotem" class="table">
                                     <thead>
                                         <tr>
                                             <th></th>
                                             <th>Nro Lote</th>
+                                            <th>Medicamento</th>
                                             <th>Fecha Vencimiento</th>
                                             <th>Cantidad</th>
-                                            <th>Precio</th>
+                                            <th>Precio Compra</th>
                                             <th>Laboratorio</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($lotes as $lote)
-                                            <tr>
+                                        @foreach ($lotesm as $lotem)
+                                            <tr id="{{$lotem->id}}">
                                                 <td>
                                                     <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lote->id}}">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_compra}}" id="{{$lotem->id}}">
                                                     </div>
                                                 </td>
-                                                <td>{{$lote->numero}}</td>
-                                                <td>{{$lote->fecha_vencimiento}}</td>
-                                                <td>{{$lote->cantidad}}</td>
-                                                <td>{{$lote->precio_venta}}</td>
-                                                <td>{{$lote->laboratorio->nombre}}</td>
+                                                <td>{{$lotem->numero}}</td>
+                                                <td>{{$lotem->medicamento->nombre_comercial}}</td>
+                                                <td>{{$lotem->fecha_vencimiento}}</td>
+                                                <td>{{$lotem->cantidad}}</td>
+                                                <td>{{$lotem->precio_compra}}</td>
+                                                <td>{{$lotem->laboratorio->nombre}}</td>
                                             </tr>                                            
                                         @endforeach                                                                                
                                     </tbody>
                                 </table>
                             </div>
+                            <div role="tabpanel" class="tab-pane" id="tab02">
+                                <br>
+                                <table id="tlotei" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Nro Lote</th>
+                                            <th>Insumo</th>
+                                            <th>Fecha Vencimiento</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Compra</th>
+                                            <th>Laboratorio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($lotesi as $lotei)
+                                            <tr id="{{$lotei->id}}">
+                                                <td>
+                                                    <div class="chk">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotei->id}},{{$lotei->insumo->nombre}},{{$lotei->cantidad}},{{$lotei->precio_compra}}" id="{{$lotei->id}}">
+                                                    </div>
+                                                </td>
+                                                <td>{{$lotei->numero}}</td>
+                                                <td>{{$lotei->insumo->nombre}}</td>
+                                                <td>{{$lotei->fecha_vencimiento}}</td>
+                                                <td>{{$lotei->cantidad}}</td>
+                                                <td>{{$lotei->precio_compra}}</td>
+                                                <td>{{$lotei->laboratorio->nombre}}</td>
+                                            </tr>                                            
+                                        @endforeach                                                                                
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="tab03">
+                                <br>
+                                <table id="tlotep" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Producto</th>
+                                            <th>Fecha Vencimiento</th>
+                                            <th>Stock</th>
+                                            <th>Precio Compra</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                        
+                                        @foreach ($lotesp as $lotep)
+                                            <tr id="{{$lotep->id}}">                                                
+                                                <td>
+                                                    <div class="chk">
+                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotep->id}},{{$lotep->producto->nombre}},{{$lotep->cantidad}},{{$lotep->precio_compra}}" id="{{$lotep->id}}">                                                        
+                                                    </div>
+                                                </td>                                                                                              
+                                                <td>{{$lotep->producto->nombre}}</td>
+                                                <td>{{$lotep->fecha_vencimiento}}</td>
+                                                <td>{{$lotep->cantidad}}</td>
+                                                <td>{{$lotep->precio_compra}}</td>
+                                            </tr>                                            
+                                        @endforeach                                                                                
+                                    </tbody>
+                                </table>                                
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -198,13 +272,34 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
-<script>    
-    $(document).ready(function() {
-        $('.productos').select2();
+<script>   
+    $('.agentes').select2();
+    $(function(){
+        $('#tlotem').DataTable({
+            "responsive" : false,
+            "paging": true,
+            "lengthMenu": [4, 8, "All"],
+            "searching": true,
+            "ordering": false,
+            "info": false,
+            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+            "autoWidth": false
+        });
     });
-
+    $(function(){
+        $('#tlotei').DataTable({
+            "responsive" : false,
+            "paging": true,
+            "lengthMenu": [4, 8, "All"],
+            "searching": true,
+            "ordering": false,
+            "info": false,
+            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+            "autoWidth": false
+        });
+    });
     $(function () {
-        $('#tlote').DataTable({
+        $('#tlotep').DataTable({
             "responsive" : false,
             "paging": true,
             "lengthMenu": [4, 8, "All"],
@@ -216,47 +311,62 @@
         });
     });
 
-    var cont=0;
     let total=0;
     let subtotal=[];
     
     function agregar(){
-        
-        codigo = document.getElementById("pcodigo").innerText;
-        producto=document.getElementById("pproducto");
-        concepto=producto.options[producto.selectedIndex].text;    
+        arreglo = document.getElementById("pcodigo").innerText;
+        arr=arreglo.split(',')
+        codigo=arr[0];
+               
+        concepto = document.getElementById("pproducto").value;               
         cantidad = document.getElementById("pcantidad").value; 
-        precio = document.getElementById("pprecio").value;                
-        
-        if (cantidad!="" && precio!="") {
-            gasto=(cantidad*precio);
+        precio = document.getElementById("pprecio").value;    
+               
+        if (cantidad=="" || precio=="") {
+            alert("Error: Campos no pueden estar vacíos");                        
+        } else {
+            [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
+                idlote=cb.id;
+                $('#'+idlote).fadeOut('slow');
+            });
+            gasto=(cantidad*precio);                        
             subtotal.push(gasto.toFixed(2));
-            total=total+parseFloat(subtotal[cont]);            
-            document.getElementById('eTotal').value = total;
-            var fila='<tr class="selectd" id="fila'+cont+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                                  
-            $('#detalles').append(fila);            
-            cont=cont+1;
-        }else{
-            alert("Error al ingresar al detalle de ingreso");
+            cont=subtotal.length-1;
+            total=parseFloat(total)+parseFloat(subtotal[cont]);            
+            document.getElementById('eTotal').value = total.toFixed(2);
+            var fila='<tr class="selectd" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
+            $('#detalles').append(fila);                                                              
         }
         limpiar();        
     }
+
     function limpiar(){        
         document.getElementById("pcantidad").value = "";
-        document.getElementById("pprecio").value = "";        
+        document.getElementById("pprecio").value = "";
+        document.getElementById("pproducto").value = "";
+        document.getElementById("pcodigo").innerText = "";
+        $('input[name="chk"]').prop('checked', false);      
     }
-    function eliminar(index){
-        total=parseFloat(total)-parseFloat(subtotal[index]);        
-        document.getElementById('eTotal').value = total;
-        subtotal.splice(index,1);
-        $('#fila'+index).remove();
-        cont=cont-1;
+    
+    function eliminar(index,cont){
+        total=parseFloat(total)-parseFloat(subtotal[cont]);        
+        document.getElementById('eTotal').value = total.toFixed(2);
+        subtotal.splice(cont,1);
+        $('#fila'+cont).remove();
+        $('#'+index).fadeIn('slow');
     }
 
     function seleccionar(){        
         [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
             document.getElementById('pcodigo').innerText=cb.value;            
         });
+        arreglo = document.getElementById("pcodigo").innerText;        
+        arr=arreglo.split(',')
+        producto=arr[1];        
+        precio_compra=arr[3];
+        document.getElementById('pprecio').value=precio_compra;
+        document.getElementById('pproducto').value=producto;
     }
 
     function pagar(){
@@ -264,5 +374,6 @@
         document.getElementById('pcambio').value = pago-total;
     }
 </script>
+
 @stop
 

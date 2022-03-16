@@ -55,7 +55,7 @@ class LoteController extends Controller
             DB::beginTransaction();
             $lote=new Lote($request->all());
             $lote->numero=$request->numero;
-            $lote->cantidad=$request->cantidad;
+            $lote->cantidad=0;
             $lote->fecha_vencimiento=$request->fecha_vencimiento;
             $lote->precio_compra=$request->precio_compra;
             $lote->ganancia=$request->ganancia;
@@ -67,7 +67,7 @@ class LoteController extends Controller
             $lote->producto_id=$request->productos;                                   
             $lote->save();            
             
-            if (!is_null($request->medicamentos)) {
+            /* if (!is_null($request->medicamentos)) {
                 $medicamento=Medicamento::find($lote->medicamento_id);
                 $medicamento->stock = $medicamento->stock + $lote->cantidad;
                 $medicamento->save();    
@@ -81,7 +81,7 @@ class LoteController extends Controller
                 $producto=Producto::find($lote->producto_id);
                 $producto->stock = $producto->stock + $lote->cantidad;
                 $producto->save();
-            }
+            } */
             DB::commit();
             
         } catch (Exception $e) {
@@ -102,16 +102,12 @@ class LoteController extends Controller
     {
         $lote=new Lote();
         $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
-        // $insumos=Insumo::orderBy('nombre','ASC')->pluck('nombre','id');
         $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
-        // $productos=Producto::orderBy('nombre','ASC')->pluck('nombre','id');
 
         return view('lote.create_medicamento',['lote'=>$lote])
                 ->with('medicamento_id',$medicamento_id)
                 ->with('laboratorios',$laboratorios)
-                // ->with('insumos',null)
-                ->with('medicamentos',$medicamentos);
-                // ->with('productos',null);
+                ->with('medicamentos',$medicamentos);                
     }
     /**
      * @param Insumo $insumo_id
@@ -121,9 +117,7 @@ class LoteController extends Controller
         $lote=new Lote();
         $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
         $insumos=Insumo::orderBy('nombre','ASC')->pluck('nombre','id');
-        // $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
         return view('lote.create_insumo',['lote'=>$lote])
-                // ->with('medicamentos',$medicamentos)
                 ->with('laboratorios',$laboratorios)
                 ->with('insumo_id',$insumo_id)
                 ->with('insumos',$insumos);

@@ -12,36 +12,36 @@
             {!! Form::open(['url' => '/lote', 'method' => 'POST']) !!}
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
+                                {{Form::label('numero','Numero')}}
                                 {{Form::text('numero', $lote->numero, ['class'=>'form-control', 'placeholder'=>'Numero de lote'])}}
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
+                                {{Form::label('fecha_vencimiento','Fecha Vencimiento')}}
                                 {{Form::date('fecha_vencimiento', $lote->fecha_vencimiento,['class'=>'form-control laboratorio', 'placeholder'=>'Fecha de Vencimiento','required'])}}
                             </div>        
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                {{Form::number('cantidad', $lote->cantidad, ['class'=>'form-control','min'=>'0', 'placeholder'=>'Cantidad', 'step'=>1, 'required'])}}                                
-                            </div>
-                        </div>
+                        </div>                        
                     </div>
                     <div class="row">
                         
                         <div class="col-md-4">
                             <div class="form-group">
+                                {{Form::label('precio_compra','Precio Compra')}}
                                 {{ Form::number('precio_compra',$lote->precio_compra,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Compra', 'step'=>'any', 'required']) }}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
+                                {{Form::label('ganancia','Ganancia (%)')}}
                                 {{ Form::number('ganancia',$lote->ganancia,['class'=>'form-control','min'=>'0', 'max'=>'100', 'placeholder'=>'Ganancia','step'=>'any', 'onchange'=>'porcentuarA(this.value)']) }}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
+                                {{Form::label('precio_venta','Precio Venta')}}
                                 {{ Form::number('precio_venta',$lote->precio_venta,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Venta','step'=>'any', 'onchange'=>'porcentuarA(this.value)']) }}
                             </div> 
                         </div>                         
@@ -157,12 +157,12 @@
     });
 
     function porcentuarA(g)
-        {
-            pcompra=document.getElementById("precio_compra").value;
-            porcentaje=(g/100*pcompra);
-            pventa=parseFloat(pcompra)+parseFloat(porcentaje);
-            document.getElementById("precio_venta").value=pventa.toFixed(2);            
-        }
+    {
+        pcompra=document.getElementById("precio_compra").value;
+        porcentaje=(g/100*pcompra);
+        pventa=parseFloat(pcompra)+parseFloat(porcentaje);
+        document.getElementById("precio_venta").value=pventa.toFixed(2);            
+    }
     function porcentuarB(pventa)
     {
         pcompra=document.getElementById("precio_compra").value;

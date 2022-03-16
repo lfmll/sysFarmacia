@@ -34,7 +34,7 @@
                                                 <i class="fa fa-lg fa-receipt"></i>
                                             </a>
                                         </div>
-                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
+                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none;']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12">
@@ -188,7 +188,7 @@
                                             <th>Medicamento</th>
                                             <th>Fecha Vencimiento</th>
                                             <th>Cantidad</th>
-                                            <th>Precio</th>
+                                            <th>Precio Venta</th>
                                             <th>Laboratorio</th>
                                         </tr>
                                     </thead>
@@ -221,7 +221,7 @@
                                             <th>Insumo</th>
                                             <th>Fecha Vencimiento</th>
                                             <th>Cantidad</th>
-                                            <th>Precio</th>
+                                            <th>Precio Venta</th>
                                             <th>Laboratorio</th>
                                         </tr>
                                     </thead>
@@ -298,10 +298,8 @@
 
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    $(document).ready(function() {
-        $('.productos').select2();
-    });
     
     $(function () {
         $('#tlotem').DataTable({
@@ -346,7 +344,6 @@
         $('input.chk').not(this).prop('checked', false);  
     });
    
-    // var cont=0;
     let total=0;
     let subtotal=[];
 
@@ -386,6 +383,7 @@
         }
         limpiar();        
     }
+
     function limpiar(){        
         document.getElementById("pcantidad").value = "";
         document.getElementById("pprecio").value = "";
@@ -394,14 +392,13 @@
         $('input[name="chk"]').prop('checked', false);
 
     }
-    function eliminar(index, cont){    
-        
+
+    function eliminar(index, cont){            
         total=parseFloat(total)-parseFloat(subtotal[cont]);
         document.getElementById('eTotal').value = total.toFixed(2);
         subtotal.splice(cont,1);        
         $('#fila'+index).remove();                
         $('#'+index).fadeIn('slow');
-        console.log("pasando contador "+cont);
     }
 
     function seleccionar(){        
@@ -413,8 +410,7 @@
         producto=arr[1];        
         precio_venta=arr[3];
         document.getElementById('pprecio').value=precio_venta;
-        document.getElementById('pproducto').value=producto;
-        
+        document.getElementById('pproducto').value=producto;        
     }
 
     function pagar(){
