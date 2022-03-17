@@ -14,16 +14,26 @@
                         <table id="tventa" class="table table-bordered">
                             <thead style="background-color: #2ab27b">
                                 <tr>
-                                    <td>ID</td>    
-                                    <td>Cantidad</td>
-                                    <td>Precio Unitario</td>
-                                    <td>SubTotal</td>                                                                                                     
+                                    <th>No</th>
+                                    <th>Concepto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>SubTotal</th>                                                                                                     
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($detalleventas as $detalleventa)
                                 <tr>
-                                    <td>{{$detalleventa->id}}</td>
+                                    <td>{{$loop->index+1}}</td>
+                                    @if (!is_null($detalleventa->lote->medicamento))
+                                        <td>{{$detalleventa->lote->medicamento->nombre_comercial}}</td>
+                                    @endif
+                                    @if (!is_null($detalleventa->lote->insumo))
+                                        <td>{{$detalleventa->lote->insumo->nombre}}</td>
+                                    @endif
+                                    @if (!is_null($detalleventa->lote->producto))
+                                        <td>{{$detalleventa->lote->producto->nombre}}</td> 
+                                    @endif
                                     <td>{{$detalleventa->cantidad}}</td>
                                     <td>{{$detalleventa->precio_venta}}</td>
                                     <td>{{$detalleventa->cantidad * $detalleventa->precio_venta}}</td>                            
