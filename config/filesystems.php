@@ -42,6 +42,10 @@ return [
     */
 
     'disks' => [
+        'public_dir' => [
+            'driver' => 'local',
+            'root' => public_path(),
+        ],
 
         'local' => [
             'driver' => 'local',
