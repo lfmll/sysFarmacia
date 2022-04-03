@@ -8,8 +8,11 @@
         <div class="card card-info">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-sm-10">                            
+                    <div class="col-sm-4">                            
                         <a href="{{url('#')}}" class="btn btn-info"><i class="fa fa-medkit fa-lg"></i></a>
+                    </div>
+                    <div class="col-sm-6">
+                        <h5>Medicamentos</h5>
                     </div>
                     <div class="col-sm-2">
                         <a href="{{url('listaMedicamentos')}}" class="btn btn-info"><i class="fa fa-print"></i> Imprimir</a>

@@ -5,10 +5,17 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card card-info">
             <div class="card-header">
-                <h3 class="card-title">Presentaciones</h3>                                                    
-            </div>
+                <div class="row">
+                    <div class="col-sm-4">                            
+                        <a href="{{url('#')}}" class="btn btn-info"><i class="fa fa-pills fa-lg"></i></a>
+                    </div>
+                    <div class="col-sm-8">
+                        <h5>Presentaciones</h5>
+                    </div>
+                </div>
+            </div>            
             <div class="card-body">
                 <div class="dataTables_wrapper dt-bootstrap4">
                     <table id="tformato" class="table table-bordered">
