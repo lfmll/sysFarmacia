@@ -3,7 +3,6 @@
 @section('title', 'Laboratorios')
 
 @section('content')
-
     <div class="col-md-6">           
         <div class="card card-success">            
             <div class="card-header">    

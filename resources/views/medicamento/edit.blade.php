@@ -3,6 +3,7 @@
 @section('title', 'Medicamento')
 
 @section('content')
+@include('sweetalert::alert')
     <div class="conatiner-fluid">
         <h3 class="box-title">Editar Medicamento</h3>        
         {!! Form::open(['medicamento'=>$medicamento, 'url' => '/medicamento/'.$medicamento->id, 'method' => 'PATCH']) !!}

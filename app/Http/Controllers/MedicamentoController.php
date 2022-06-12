@@ -124,9 +124,9 @@ class MedicamentoController extends Controller
         }
         
         if ($medicamento->save()) {
-            return redirect('/medicamento');
+            return redirect('/medicamento')->with('success','Registro realizado exitosamente');
         } else {
-            return view('medicamento.create',['medicamento'=>$medicamento]);
+            return view('medicamento.create',['medicamento'=>$medicamento])->with('error','Error al registrar');
         }
     }
 
@@ -379,9 +379,9 @@ class MedicamentoController extends Controller
         }
         
         if ($medicamento->save()) {
-            return redirect('/medicamento');
+            return redirect('/medicamento')->with('success','Medicamento modificado exitosamente');
         } else {
-            return view('medicamento.create',['medicamento'=>$medicamento]);
+            return view('medicamento.create',['medicamento'=>$medicamento])->with('error','Error al registrar');
         }
     }
 

@@ -3,6 +3,7 @@
 @section('title', 'Medicamento')
 
 @section('content')
+@include('sweetalert::alert')
     <div class="conatiner-fluid">
         <h3 class="box-title">Registro Nuevo Medicamento</h3>
         {!! Form::open(['url' => '/medicamento', 'method' => 'POST']) !!}

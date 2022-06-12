@@ -6,11 +6,7 @@ use App\Models\Insumo;
 use Illuminate\Http\Request;
 
 class InsumoController extends Controller
-{
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+{    
     /**
      * Display a listing of the resource.
      *
@@ -48,9 +44,9 @@ class InsumoController extends Controller
         $insumo->stock=0;
         $insumo->stock_minimo=$request->stock_minimo;
         if ($insumo->save()) {
-            return redirect('/insumo');
+            return redirect('/insumo')->with('success','Insumo registrado exitosamente');
         } else {
-            return view('insumo.create',['insumo'=>$insumo]);
+            return view('insumo.create',['insumo'=>$insumo])->with('error','Error al registrar');
         }        
     }
 
@@ -93,9 +89,9 @@ class InsumoController extends Controller
         $insumo->descripcion=$request->descripcion;
         $insumo->stock_minimo=$request->stock_minimo;
         if ($insumo->save()) {
-            return redirect('/insumo');
+            return redirect('/insumo')->with('success','Insumo modificado exitosamente');
         } else {
-            return view('insumo.edit',['insumo'=>$insumo]);
+            return view('insumo.edit',['insumo'=>$insumo])->with('error','Error al registrar');
         }
     }
 
