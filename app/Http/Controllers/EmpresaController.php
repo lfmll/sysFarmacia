@@ -24,7 +24,8 @@ class EmpresaController extends Controller
      */
     public function create()
     {
-        //
+        $empresa=new Empresa();        
+        return view('empresa.create',['empresa' => $empresa]);       
     }
 
     /**
@@ -35,7 +36,24 @@ class EmpresaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $hasFile=$request->hasFile('cover') && $request->cover->isValid();
+        $empresa= new Empresa($request->all());
+        $empresa->nombre_empresa = $request->nombre_empresa;
+        $empresa->direccion = $request->direccion;
+        $empresa->telefono = $request->telefono;
+        $empresa->nit = $request->nit;
+        if ($hasFile) {
+            $extension=$request->cover->extension();
+            $empresa->extension=$extension;
+        }        
+        if ($empresa->save()) {
+            if ($hasFile) {
+                $request->cover->move('imagen',"$empresa->id.$extension");
+            }
+            return redirect('/home');
+        } else {
+            return view('empresa.create',['empresa'=>$empresa]);
+        }
     }
 
     /**

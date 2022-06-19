@@ -18,6 +18,7 @@ use App\Http\Controllers\CajaController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\EmpresaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,7 @@ use App\Http\Controllers\ProductoController;
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::resource('empresa',EmpresaController::class);
 Route::resource('laboratorio',LaboratorioController::class);
 Route::resource('via',ViaController::class);
 Route::resource('medida',MedidaController::class);
