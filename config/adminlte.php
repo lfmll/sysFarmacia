@@ -232,10 +232,25 @@ return [
 
     'menu' => [
         [
-            'text' => 'search',
-            'search' => true,
-            'topnav' => true,
+            'text'          => 'Lotes Vencidos',
+            'url'           => '/reporteLotesVencimiento',
+            'icon'          => 'fas fa-fw fa-receipt',
+            'icon_color'    => 'warning',
+            'id'            => 'ilotevenc',
+            'topnav_right'  => 'right',
+            'label'         => '0',
+            'label_color'   => 'warning',
         ],
+        [
+            'text'          => 'Ventas',
+            'url'           => '/reporteVentaDia',
+            'icon'          => 'fas fa-fw fa-cart-plus',
+            'icon_color'    => 'green',
+            'id'            => 'iventas',
+            'topnav_right'  => 'right',
+            'label'         => '0',
+            'label_color'   => 'success',
+        ],    
         [
             'text' => 'blog',
             'url'  => 'admin/blog',
