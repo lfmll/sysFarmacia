@@ -6,6 +6,7 @@ use App\Models\Caja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class CajaController extends Controller
 {
@@ -77,7 +78,7 @@ class CajaController extends Controller
      */
     public function edit($id)
     {                
-        $caja=Caja::all()->last();       
+        $caja=Caja::all()->last();
         $fecha = Carbon::now('America/La_Paz')->toDateString();       
         $horai=date('00:00:00');
         $horaf=date('23:59:59');  
@@ -125,6 +126,7 @@ class CajaController extends Controller
         $caja->m05=$request->m05;
         $caja->m02=$request->m02;
         $caja->m01=$request->m01;
+        $caja->hora_fin=$hora_fin;
         $caja->monto_apertura=$request->monto_apertura;
         $caja->gastos=$request->gastos;
         $caja->ganancias=$request->ganancias;

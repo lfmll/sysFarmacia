@@ -229,7 +229,7 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/#8-menu-configuration
     |
     */
-
+    'alto'=>5,
     'menu' => [
         [
             'text'          => 'Lotes Vencidos',
@@ -238,7 +238,7 @@ return [
             'icon_color'    => 'warning',
             'id'            => 'ilotevenc',
             'topnav_right'  => 'right',
-            'label'         => '0',
+            'label'         => '[alto]',
             'label_color'   => 'warning',
         ],
         [
@@ -281,7 +281,25 @@ return [
                     'text' => 'Presentaciones',
                     'url'  => '/formato',
                     'icon' => 'fas fa-fw fa-pills',
-                ],                         
+                ], 
+                [
+                    'text'       => 'Posología',
+                    'icon'       => 'fas fa-fw fa-eye-dropper',
+                    'icon_color' => 'orange',
+                    'url'        => '#',
+                    'submenu' => [
+                        [
+                            'text' => 'Dosis',
+                            'url'  => '/medida',
+                            'icon' => 'fas fa-fw fa-vial',
+                        ],
+                        [
+                            'text' => 'Vías Administración',
+                            'url'  => '/via',
+                            'icon' => 'fas fa-fw fa-syringe',
+                        ],
+                    ],
+                ],                        
             ],
         ],        
         [
@@ -302,24 +320,7 @@ return [
             'icon_color' => 'blue',
             'url'        => '/producto',
         ],
-        [
-            'text'       => 'Posología',
-            'icon'       => 'fas fa-fw fa-eye-dropper',
-            'icon_color' => 'orange',
-            'url'        => '#',
-            'submenu' => [
-                [
-                    'text' => 'Dosis',
-                    'url'  => '/medida',
-                    'icon' => 'fas fa-fw fa-vial',
-                ],
-                [
-                    'text' => 'Vías Administración',
-                    'url'  => '/via',
-                    'icon' => 'fas fa-fw fa-syringe',
-                ],
-            ],
-        ],
+        
         [
             'text'       => 'Egresos',
             'icon'       => 'fas fa-sign-out-alt',

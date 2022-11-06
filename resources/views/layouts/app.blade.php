@@ -78,6 +78,13 @@
         </nav>
 
         <main class="py-4">
+            {{-- Alertas y mensajes --}}
+            @if (session('message'))
+            <div class="alert alert-{{ session('message')[0] }} text-center" role="alert">
+                <b> {{ session('message')[1] }} </b>
+            </div>
+
+            @endif
             @yield('content')
         </main>
     </div>

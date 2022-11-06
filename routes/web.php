@@ -48,8 +48,8 @@ Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
 Route::get('/lote/{id}/create_insumo',[LoteController::class,'create_insumo']);
 Route::get('/lote/{id}/create_producto',[LoteController::class,'create_producto']);
-Route::resource('compra', CompraController::class);
-Route::resource('venta', VentaController::class);
+Route::resource('compra', CompraController::class)->middleware('aperturar');
+Route::resource('venta', VentaController::class)->middleware('aperturar');
 Route::resource('factura', FacturaController::class);
 Route::resource('producto', ProductoController::class);
 
@@ -57,7 +57,13 @@ Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
 
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
-Route::resource('caja', CajaController::class);
+
+Route::get('/caja',[CajaController::class,'index']);
+Route::get('/caja/create',[CajaController::class,'create']);
+Route::post('/caja',[CajaController::class,'store']);
+Route::get('/caja/{caja}',[CajaController::class,'show']);
+Route::get('/caja/{caja}/edit',[CajaController::class,'edit'])->middleware('aperturar');
+Route::put('/caja/{caja}',[CajaController::class,'update']);
 
 Route::get('listaLaboratorios',[PDFController::class,'listaLaboratorios']);
 Route::get('listaMedicamentos',[PDFController::class,'listaMedicamentos']);
