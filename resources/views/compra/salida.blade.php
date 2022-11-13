@@ -3,7 +3,7 @@
 @section('title', 'Compra')
 
 @section('content')
-
+@include('sweetalert::alert')
     {!! Form::open(['url' => '/compra', 'method' => 'POST']) !!}       
     {{Form::token()}}     
         <div class="col-md-6">

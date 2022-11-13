@@ -145,9 +145,9 @@ class VentaController extends Controller
             DB::rollback();
         }
         if ($venta->save()) {
-            return redirect("/venta");
+            return redirect("/venta")->with('toast_success','Cobro realizado exitosamente');
         }else {
-            return view("venta.create",["venta"=>$venta]);
+            return view("venta.create",["venta"=>$venta])->with('toast_error','Error al registrar');
         }
     }
 

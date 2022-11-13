@@ -5,7 +5,7 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">Vía de Administración</h3>
                                                     

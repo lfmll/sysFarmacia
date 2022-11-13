@@ -46,9 +46,9 @@ class AgenteController extends Controller
         $agente->anotacion = $request->anotacion;
         $agente->laboratorio_id=$request->laboratorios;
         if ($agente->save()) {
-            return redirect('/agente');
+            return redirect('/agente')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('agente.create',['agente'=>$agente]);
+            return view('agente.create',['agente'=>$agente])->with('toast_error','Error al registrar');
         }
     }
 
@@ -92,9 +92,9 @@ class AgenteController extends Controller
         $agente->anotacion = $request->anotacion;
         $agente->laboratorio_id=$request->laboratorios;
         if ($agente->save()) {
-            return redirect('/agente');
+            return redirect('/agente')->with('toast_success','Proveedor modificado exitosamente');
         } else {
-            return view('agente.create',['agente'=>$agente]);
+            return view('agente.create',['agente'=>$agente])->with('toast_error','Error al registrar');
         }
     }
 

@@ -3,6 +3,7 @@
 @section('title', 'Lote')
 
 @section('content')
+@include('sweetalert::alert')
     <div class="row">
         <div class="col-12">
             <div class="card card-warning">

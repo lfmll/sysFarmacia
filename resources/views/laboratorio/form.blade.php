@@ -10,7 +10,18 @@
         {{Form::number('telefono',$laboratorio->telefono,['class'=>'form-control', 'placeholder'=>'Teléfono', 'min'=>'0'])}}
     </div>
     <div class="form-group">
-        {{Form::select('procedencia',['Bolivia'=>'Bolivia','Argentina'=>'Argentina','Chile'=>'Chile','Brasil'=>'Brasil','Perú'=>'Perú','Paraguay'=>'Paraguay','Colombia'=>'Colombia','China'=>'China','India'=>'India','Estados Unidos'=>'Estados Unidos','Otros'=>'Otros'], null,['class'=>'form-control'])}}
+        {{Form::select('procedencia',['Bolivia'=>'Bolivia',
+                                    'Argentina'=>'Argentina',
+                                    'Chile'=>'Chile',
+                                    'Brasil'=>'Brasil',
+                                    'Perú'=>'Perú',
+                                    'Paraguay'=>'Paraguay',
+                                    'Colombia'=>'Colombia',
+                                    'China'=>'China',
+                                    'India'=>'India',
+                                    'Estados Unidos'=>'Estados Unidos',
+                                    'Otros'=>'Otros'], 
+                                    $laboratorio->procedencia,['class'=>'form-control'])}}
     </div>
     <div class="form-group">
         {{Form::text('anotacion', $laboratorio->anotacion, ['class'=>'form-control','placeholder'=>'Anotación'])}}

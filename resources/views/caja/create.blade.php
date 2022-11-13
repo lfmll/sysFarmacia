@@ -56,4 +56,5 @@
 @section('js')
     <script> console.log('Hi!'); </script>
     <script src="js/sweetalert.min.js"></script>
+    
 @stop

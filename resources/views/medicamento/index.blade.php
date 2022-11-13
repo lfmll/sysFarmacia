@@ -3,6 +3,7 @@
 @section('title', 'Medicamento')
 
 @section('content')
+@include('sweetalert::alert')
 <div class="row">
     <div class="col-12">
         <div class="card card-info">
@@ -26,7 +27,7 @@
                             <tr>
                                 <td>ID</td>
                                 <td>Nombre Comercial</td>    
-                                <td>Nombre Generico</td>            
+                                <td>Nombre Genérico</td>            
                                 <td>Stock</td>
                                 <td>Stock Mínimo</td>
                                 <td>Acciones</td>

@@ -3,6 +3,7 @@
 @section('title', 'Arqueo Caja')
 
 @section('content')
+@include('sweetalert::alert')
 {!! Form::open(['url' => '/caja/'.$caja->id, 'method' => 'PUT']) !!} 
     <div class="col-md-6">   
         <div class="card card-info">

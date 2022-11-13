@@ -142,9 +142,9 @@ class CompraController extends Controller
             DB::rollback();
         }
         if ($compra->save()) {
-            return redirect("/compra");
+            return redirect("/compra")->with('toast_success','Pago realizado exitosamente');
         }else {
-            return view("compra.create",["compra"=>$compra]);
+            return view("compra.create",["compra"=>$compra])->with('toast_error','Error al registrar');
         }
     }
 

@@ -16,6 +16,6 @@ class Caja extends Model
     ];
 
     public function scopeApertura(){
-        return $apertura=DB::table('cajas')->whereDate('created_at', DB::raw('CURDATE()'))->count();     
-    }
-}
+        return $apertura=DB::table('cajas')->whereDate('fecha', DB::raw('CURDATE()'))->count();     
+    }    
+}   

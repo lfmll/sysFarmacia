@@ -50,13 +50,20 @@ class CajaController extends Controller
     {
         $caja = new Caja($request->all());
         $caja->fecha = $request->fecha;
+        
         $caja->hora_inicio = $request->hora_inicio;
         $caja->monto_apertura = $request->monto_apertura;
-        if ($caja->save()) {
-            return redirect('/caja');
+
+        $ultimaApertura = Caja::all()->last();
+        if ($ultimaApertura -> fecha == $caja->fecha) {
+            return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
+        } elseif ($caja->save()) {
+            Alert::warning('Warning', '¿Desea Continuar? Una vez realizada la apertura no se podrá modificar');
+            return redirect('/caja')->with('toast_success','Apertura de Caja realizado exitosamente');
         } else {
-            return view('caja.create',['caja'=>$caja]);
+            return view('caja.create',['caja'=>$caja])->with('toast_error','Error al aperturar caja');
         }
+        
     }
 
     /**
@@ -132,10 +139,14 @@ class CajaController extends Controller
         $caja->ganancias=$request->ganancias;
         $caja->total=$request->total;
 
-        if ($caja -> save()) {
-            return redirect('/caja');
+        $ultimoArqueo = Caja::all()->last();
+        if ($ultimoArqueo -> fecha == $caja->fecha && $ultimoArqueo -> hora_fin <> null) {
+            return redirect('/caja')->with('errors','Ya se realizó el Arqueo de Caja');    
+        } elseif ($caja -> save()) {
+            Alert::warning('Warning','Una vez completado el cierre no se podrá modificar');
+            return redirect('/caja')->with('toast_success','Arqueo de Caja realizado exitosamente');
         } else {
-            return view('caja.edit',['caja'=>$caja]);
+            return view('caja.edit',['caja'=>$caja])->with('toast_error','Error al realizar el arqueo de caja');
         }
     }
 

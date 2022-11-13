@@ -45,9 +45,9 @@ class LaboratorioController extends Controller
         $laboratorio->procedencia = $request->procedencia;
         $laboratorio->anotacion = $request->anotacion;
         if ($laboratorio->save()) {
-            return redirect('/laboratorio')->with('success','Registro realizado exitosamente');
+            return redirect('/laboratorio')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('laboratorio.create',['laboratorio'=>$laboratorio])->with('error','Error al registrar');
+            return view('laboratorio.create',['laboratorio'=>$laboratorio])->with('toast_error','Error al registrar');
         }
     }
 
@@ -90,9 +90,9 @@ class LaboratorioController extends Controller
         $laboratorio->procedencia = $request->procedencia;
         $laboratorio->anotacion = $request->anotacion;
         if ($laboratorio->save()) {
-            return redirect('/laboratorio')->with('success','Laboratorio modificado realizado exitosamente');
+            return redirect('/laboratorio')->with('toast_success','Laboratorio modificado realizado exitosamente');
         } else {
-            return view('laboratorio.edit',['laboratorio'=>$laboratorio])->with('error','Error al registrar');
+            return view('laboratorio.edit',['laboratorio'=>$laboratorio])->with('toast_error','Error al registrar');
         }
     }
 

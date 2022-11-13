@@ -93,9 +93,9 @@ class LoteController extends Controller
         }
         
         if ($lote->save()) {
-            return redirect('/lote');
+            return redirect('/lote')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('lote.create',['lote'=>$lote]);
+            return view('lote.create',['lote'=>$lote])->with('toast_error','Error al registrar');
         }
     }
     
@@ -219,9 +219,9 @@ class LoteController extends Controller
         }
         
         if ($lote->save()) {
-            return redirect('/lote');
+            return redirect('/lote')->with('toast_success','Modificación realizada exitosamente');
         } else {
-            return view('lote.edit',['lote'=>$lote]);
+            return view('lote.edit',['lote'=>$lote])->with('toast_error','Error al actualizar');
         }
     }
 

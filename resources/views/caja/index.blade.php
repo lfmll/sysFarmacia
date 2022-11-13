@@ -3,6 +3,7 @@
 @section('title', 'Lista de Arqueo')
 
 @section('content')
+@include('sweetalert::alert')
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -68,5 +69,6 @@
             });
         });
     </script>
+    <script src="js/sweetalert.min.js"></script>
 @stop
 

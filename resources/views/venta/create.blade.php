@@ -3,6 +3,7 @@
 @section('title', 'Venta')
 
 @section('content')
+
     {!! Form::open(['url' => '/venta', 'method' => 'POST']) !!}       
     {{Form::token()}}     
         <div class="col-md-12">

@@ -44,9 +44,9 @@ class ProductoController extends Controller
         $producto->stock_minimo=$request->stock_minimo;
                            
         if ($producto->save()) {
-            return redirect('/producto');
+            return redirect('/producto')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('producto.create',['producto'=>$producto]);
+            return view('producto.create',['producto'=>$producto])->with('toast_error','Error al registrar');
         }
     }
 
@@ -88,9 +88,9 @@ class ProductoController extends Controller
         $producto->stock=0;
         $producto->stock_minimo=$request->stock_minimo;                                         
         if ($producto->save()) {
-            return redirect('/producto');
+            return redirect('/producto')->with('toast_success','Producto modificado exitosamente');
         } else {
-            return view('producto.edit',['producto'=>$producto]);
+            return view('producto.edit',['producto'=>$producto])->with('toast_error','Error al actualizar');
         }
     }
 

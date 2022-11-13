@@ -17,7 +17,8 @@
                         </div>
                         <div class="col-sm-2">
                             <a href="{{url('listaLaboratorios')}}" class="btn btn-success"><i class="fa fa-print"></i> Imprimir</a>
-                        </div>                    
+                        </div>    
+                                      
                     </div>                    
                 </div>
                 <div class="card-body">
