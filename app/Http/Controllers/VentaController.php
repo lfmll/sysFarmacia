@@ -83,6 +83,7 @@ class VentaController extends Controller
                 $venta->pago_venta=$request->Pago;
                 $venta->cambio_venta=$request->Cambio;
                 $venta->forma_pago=$request->forma_pago;
+                $venta->estado='A';
                 $venta->save();
 
                 $dcantidad = $request->get('dcantidad');

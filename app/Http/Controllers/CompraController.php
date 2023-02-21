@@ -87,6 +87,7 @@ class CompraController extends Controller
                 $compra->pago_compra=$request->Pago;
                 $compra->cambio_compra=$request->Cambio;
                 $compra->forma_pago=$request->forma_pago;
+                $compra->estado='A';
                 $compra->save();
 
                 $dcantidad = $request->get('dcantidad');

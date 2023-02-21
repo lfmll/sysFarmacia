@@ -22,6 +22,7 @@ class CreateComprasTable extends Migration
             $table->decimal('cambio_compra',10,2);
             $table->string('glosa')->nullable();
             $table->string('forma_pago');
+            $table->char('estado');
             $table->timestamps();
         });
     }

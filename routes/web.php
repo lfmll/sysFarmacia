@@ -35,6 +35,7 @@ use App\Http\Controllers\EmpresaController;
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('charts',[App\Http\Controllers\HomeController::class,'index'])->name('home');
 Route::resource('empresa',EmpresaController::class);
 Route::resource('laboratorio',LaboratorioController::class);
 Route::resource('via',ViaController::class);
