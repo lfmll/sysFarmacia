@@ -229,7 +229,7 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/#8-menu-configuration
     |
     */
-    'alto'=>5,
+    
     'menu' => [
         [
             'text'          => 'Lotes Vencidos',
@@ -237,8 +237,7 @@ return [
             'icon'          => 'fas fa-fw fa-receipt',
             'icon_color'    => 'warning',
             'id'            => 'ilotevenc',
-            'topnav_right'  => 'right',
-            'label'         => '[alto]',
+            'topnav_right'  => 'right',            
             'label_color'   => 'warning',
         ],
         [
@@ -248,7 +247,6 @@ return [
             'icon_color'    => 'green',
             'id'            => 'iventas',
             'topnav_right'  => 'right',
-            'label'         => '0',
             'label_color'   => 'success',
         ],    
         [
