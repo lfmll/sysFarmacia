@@ -19,6 +19,7 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\ClienteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ Route::resource('compra', CompraController::class)->middleware('aperturar');
 Route::resource('venta', VentaController::class)->middleware('aperturar');
 Route::resource('factura', FacturaController::class);
 Route::resource('producto', ProductoController::class);
+Route::resource('cliente', ClienteController::class);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
@@ -72,6 +74,7 @@ Route::get('listaInsumos',[PDFController::class,'listaInsumos']);
 Route::get('listaAcciones',[PDFController::class,'listaAcciones']);
 Route::get('listaLotes',[PDFController::class,'listaLotes']);
 Route::get('listaProductos',[PDFController::class,'listaProductos']);
+Route::get('listaClientes',[PDFController::class,'listaClientes']);
 Route::get('detalleMedicamento/{id}',[PDFController::class,'detalleMedicamento']);
 Route::get('reporte',[PDFController::class,'reporte']);
 Route::get('reporteVentaDia',[PDFController::class,'reporteVentaDia']);
@@ -84,3 +87,5 @@ Route::get('reporteCierreAnterior',[PDFController::class,'reporteCierreAnterior'
 Route::get('reporteLotesVencimiento',[PDFController::class,'reporteLotesVencimiento']);
 Route::get('importMedicamento',[ImportController::class,'importMedicamento']);
 Route::post('importM',[ImportController::class,'importM']);
+Route::get('importCliente',[ImportController::class,'importCliente']);
+Route::post('importC',[ImportController::class,'importC']);

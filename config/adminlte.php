@@ -256,6 +256,12 @@ return [
         ],        
         ['header' => 'Módulos'],
         [
+            'text' => 'Clientes',
+            'url'  => '/cliente',
+            'icon' => 'fas fa-fw fa-user',
+            'icon_color' => 'white',
+        ],
+        [
             'text'        => 'Farmacología',
             'icon_color'  => 'cyan',
             'icon'        => 'fas fa-fw fa-prescription-bottle-alt',

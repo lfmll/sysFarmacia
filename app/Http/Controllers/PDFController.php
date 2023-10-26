@@ -17,6 +17,7 @@ use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
 use App\Models\Caja;
 use App\Models\Producto;
+use App\Models\Cliente;
 
 class PDFController extends Controller
 {
@@ -68,6 +69,14 @@ class PDFController extends Controller
         $productos=Producto::where('estado','A')->get();
         $pdf=PDF::loadView('producto.reporte',['productos'=>$productos,'fecha'=>$fecha]);
         return $pdf->download('Productos.pdf');
+    }
+
+    public function listaClientes()
+    {
+        $fecha=Carbon::now('America/La_Paz')->format('d/m/y h:i A');
+        $clientes=Cliente::where('estado','A')->get();
+        $pdf=PDF::loadView('cliente.reporte',['clientes'=>$clientes,'fecha'=>$fecha]);
+        return $pdf->download('Clientes.pdf');
     }
     public function detalleMedicamento($idMedicamento)
     {

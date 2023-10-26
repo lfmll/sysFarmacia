@@ -143,4 +143,89 @@ class ImportController extends Controller
             echo $mensaje;
         
     }
+
+    public function importCliente()
+    {
+        return view('cliente.importCliente');
+    }
+
+    public function importC(Request $request)
+    {
+        $hasFile=$request->hasFile('cover');               
+        date_default_timezone_set('America/La_Paz');
+        $fecha = date('Y-m-d H:i:s');
+        $mensaje="Importación realizada con exito";        
+        if ($hasFile) {
+            $extension=$request->file('cover')->extension();            
+                
+            if ($extension=="xlsx" || $extension =="xls" || $extension=="csv" || $extension=="txt") { 
+                
+                $path='/excelCliente';
+                $archivos=Storage::disk('public_dir')->allFiles($path);
+                $cantArchivos=count($archivos);
+                $cantArchivos=$cantArchivos+1;                
+                                
+                $excelFile = $_FILES['cover']['tmp_name'];
+
+                $url=public_path('excelCliente');
+                                
+                $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
+                $spreadsheet = $reader->load($excelFile);
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+                $writer->setDelimiter(',');
+                $writer->setEnclosure('"');
+                $writer->setSheetIndex(0);
+                $writer->save($url."/"."$cantArchivos.$extension");
+
+                $fila=1;                      
+                $cabecera=array();
+                $cabecera_modelo=array("tipo_documento","numero_documento","complemento","nombre","correo","telefono","direccion");
+                
+                if (($gestor=fopen(public_path('excelCliente/'.$cantArchivos.'.'.$extension),"r"))!==FALSE) {
+                    
+                    while (($datos=fgetcsv($gestor,1000,","))!==FALSE) {
+                        $columnas=count($datos);
+                        
+                        if ($fila==1) {                            
+                            for ($i=0; $i < $columnas; $i++) {
+                                $col=explode(',',$datos[$i]);
+                                $cabecera[$i]=strtolower($col[0]);
+                            }                            
+                            if ($cabecera!==$cabecera_modelo) {
+                                $mensaje=nl2br("el archivo no coincide con el modelo requerido.\n".implode(",",$cabecera));
+                                goto mensaje;
+                            }
+                        } else {
+                            $tipo_documento_data     = $datos[0];
+                            $numero_documento_data   = $datos[1];
+                            $complemento_data        = $datos[2];
+                            $nombre_data             = $datos[3];
+                            $correo_data             = $datos[4];
+                            $telefono_data           = $datos[5];
+                            $direccion_data          = $datos[6];
+
+                            $numero_documento=Cliente::where('numero_documento',$numero_documento_data)->first(); 
+                            if (is_null($numero_documento)) {
+                                $cli=new Cliente();
+                                $cli->tipo_documento    = $tipo_documento_data;
+                                $cli->numero_documento  = $numero_documento_data;
+                                $cli->complemento       = $complemento_data;
+                                $cli->nombre            = $nombre_data;
+                                $cli->correo            = $correo_data;
+                                $cli->telefono          = $telefono_data;
+                                $cli->direccion         = $direccion_data;
+                                $cli->save();
+                            }
+                        }                       
+                        $fila++;                          
+                    }                    
+                    fclose($gestor);
+                }
+            }            
+        } else {
+            $mensaje="El archivo no fue subido correctamente";            
+        }
+        mensaje:            
+            echo $mensaje;
+    }
 }
