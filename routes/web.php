@@ -16,10 +16,11 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\FacturaController;
-use App\Http\Controllers\ImportController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DocumentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +77,8 @@ Route::get('listaLotes',[PDFController::class,'listaLotes']);
 Route::get('listaProductos',[PDFController::class,'listaProductos']);
 Route::get('listaClientes',[PDFController::class,'listaClientes']);
 Route::get('detalleMedicamento/{id}',[PDFController::class,'detalleMedicamento']);
-Route::get('reporte',[PDFController::class,'reporte']);
+Route::get('reporte',[DocumentoController::class,'reporte']);
+Route::get('importe',[DocumentoController::class,'importe']);
 Route::get('reporteVentaDia',[PDFController::class,'reporteVentaDia']);
 Route::get('reporteVentaMensual',[PDFController::class,'reporteVentaMensual']);
 Route::get('reporteVentaAnual',[PDFController::class,'reporteVentaAnual']);
@@ -85,7 +87,10 @@ Route::get('reporteCompraMensual',[PDFController::class,'reporteCompraMensual'])
 Route::get('reporteCompraAnual',[PDFController::class,'reporteCompraAnual']);
 Route::get('reporteCierreAnterior',[PDFController::class,'reporteCierreAnterior']);
 Route::get('reporteLotesVencimiento',[PDFController::class,'reporteLotesVencimiento']);
-Route::get('importMedicamento',[ImportController::class,'importMedicamento']);
-Route::post('importM',[ImportController::class,'importM']);
-Route::get('importCliente',[ImportController::class,'importCliente']);
-Route::post('importC',[ImportController::class,'importC']);
+Route::get('importMedicamento',[ExcelController::class,'importMedicamento']);
+Route::post('importM',[ExcelController::class,'importM']);
+Route::get('formatoMedicamentos',[ExcelController::class,'formatoMedicamentos']);
+Route::get('formatoClientes',[ExcelController::class,'formatoClientes']);
+Route::get('importCliente',[ExcelController::class,'importCliente']);
+Route::post('importC',[ExcelController::class,'importC']);
+

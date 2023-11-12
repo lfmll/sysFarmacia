@@ -401,7 +401,7 @@ return [
                 ],
                 [
                     'text'  =>  'Importar',
-                    'url'   =>  'importMedicamento',
+                    'url'   =>  '/importe',
                     'icon'  =>  'fas fa-file-import'
                 ]
 
