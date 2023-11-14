@@ -55,13 +55,13 @@ class CajaController extends Controller
         $caja->monto_apertura = $request->monto_apertura;
 
         $ultimaApertura = Caja::all()->last();
-        if ($ultimaApertura -> fecha == $caja->fecha) {
-            return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
-        } elseif ($caja->save()) {
+        
+        if ($ultimaApertura==null || $ultimaApertura->fecha != $caja->fecha) {
             Alert::warning('Warning', '¿Desea Continuar? Una vez realizada la apertura no se podrá modificar');
+            $caja->save();
             return redirect('/caja')->with('toast_success','Apertura de Caja realizado exitosamente');
         } else {
-            return view('caja.create',['caja'=>$caja])->with('toast_error','Error al aperturar caja');
+            return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
         }
         
     }
