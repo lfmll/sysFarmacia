@@ -10,7 +10,7 @@
             <div class="card-header">
                 <div class="row">
                     <div class="col-sm-4">                            
-                        <a href="{{url('#')}}" class="btn btn-info"><i class="fa fa-user fa-lg"></i></a>
+                        <a href="{{url('/importCliente')}}" class="btn btn-info"><i class="fa fa-user fa-lg"></i></a>
                     </div>
                     <div class="col-sm-6">
                         <h5>Clientes</h5>    
@@ -47,6 +47,7 @@
                                 <td>{{$cli->telefono}}</td>
                                 <td>{{$cli->direccion}}</td> -->
                                 <td>
+                                    <a href="{{url('/cliente/'.$cli->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-eye"></i> Ver</a>
                                     <a href="{{url('/cliente/'.$cli->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Editar</a>
                                     @include('cliente.delete',['cliente'=>$cli])                                    
                                 </td>

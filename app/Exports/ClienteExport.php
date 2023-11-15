@@ -29,7 +29,7 @@ class ClienteExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return['id',
+        return[
                 'tipo_documento',
                 'numero_documento',
                 'complemento',

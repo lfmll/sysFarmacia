@@ -60,9 +60,10 @@ class ClienteController extends Controller
      * @param  \App\Models\Cliente  $cliente
      * @return \Illuminate\Http\Response
      */
-    public function show(Cliente $cliente)
+    public function show($id)
     {
-        //
+        $cliente = Cliente::findOrFail($id);
+        return view('cliente.show',['cliente'=>$cliente]);
     }
 
     /**

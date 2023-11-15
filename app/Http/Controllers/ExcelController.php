@@ -274,13 +274,14 @@ class ExcelController extends Controller
                                     $cli->complemento       = $complemento_data;
                                     $cli->nombre            = $nombre_data;
                                     $cli->correo            = $correo_data;
-                                    $cli->telefono          = $telefono_data;
+                                    $cli->telefono          = $telefono_data;                                    
                                     $cli->direccion         = $direccion_data;
+                                    $cli->estado            = 'A';
                                     $cli->save();
                                 }
                                 DB::commit();
                             } catch (\Exception $e) {
-                                DB::rollback();
+                                DB::rollback();                                
                                 $mensaje="Hubo un error de escritura, fila=".$fila;
                                 goto mensaje;
                             }
@@ -298,7 +299,7 @@ class ExcelController extends Controller
         }
         mensaje:            
             if ($mensaje=="Importación realizada con exito") {
-                return redirect('/importCliente')->with('success_message',$mensaje);
+                return redirect('/cliente')->with('success_message',$mensaje);
             } else {
                 return redirect('/importCliente')->with('error_message',$mensaje);
             }
