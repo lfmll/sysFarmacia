@@ -137,6 +137,7 @@ class VentaController extends Controller
                 $venta->cambio_venta=0;
                 $venta->glosa=$request->glosa;
                 $venta->forma_pago=$request->forma_pago;
+                $venta->estado='A';
                 $venta->save();
             }
             

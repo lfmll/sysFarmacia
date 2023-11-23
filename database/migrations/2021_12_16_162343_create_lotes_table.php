@@ -20,11 +20,10 @@ class CreateLotesTable extends Migration
             $table->date('fecha_vencimiento');
             $table->smallInteger('laboratorio_id')->unsigned()->nullable();
             $table->smallInteger('medicamento_id')->unsigned()->nullable();
-            $table->smallInteger('insumo_id')->unsigned()->nullable();
             $table->smallInteger('producto_id')->unsigned()->nullable();
             $table->decimal('precio_compra',8,2)->nullable();
             $table->decimal('precio_venta',8,2)->nullable();
-            $table->decimal('ganancia',8,2);
+            $table->decimal('ganancia',8,2)->nullable();
             $table->char('estado',1);
             $table->timestamps();
         });

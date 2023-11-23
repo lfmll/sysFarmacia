@@ -8,18 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Producto extends Model
 {
     protected $fillable=[
-        'nombre',
-        'stock',
-        'stock_minimo',
-        'fecha_vencimiento',
-        'precio_compra',
-        'precio_venta',
-        'ganancia',        
+        'catalogo_id',
+        'codigo',
+        'descripcion',
+        'precio_unitario',
+        'unidad',                
         'estado'
     ];
 
     public function lotes(){
         return $this->hasMany(Lote::class);        
+    }
+
+    public function catalogo(){
+        return $this->belongsTo(Catalogo::class);
     }
     
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use App\Models\Catalogo;
+use App\Models\Formato;
+use Illuminate\Support\Facades\DB;
 
 class ProductoController extends Controller
 {
@@ -14,7 +17,7 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos=Producto::all();
+        $productos=Producto::where('estado','A')->get();
         return view('producto.index',['productos' => $productos]);
     }
 
@@ -26,7 +29,12 @@ class ProductoController extends Controller
     public function create()
     {
         $producto=new Producto();
-        return view('producto.create',['producto'=>$producto]);
+        $catalogos=Catalogo::orderBy('nombre','ASC')->pluck('nombre','id');
+        $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','descripcion');
+
+        return view('producto.create',['producto'=>$producto])
+            ->with('catalogos',$catalogos)
+            ->with('formatos',$formatos);
     }
 
     /**
@@ -37,28 +45,38 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+        $hasFile=$request->hasFile('cover') && $request->cover->isValid();
         $producto=new producto($request->all());
-        $producto->nombre=$request->nombre;
+        $producto->codigo=$request->codigo;
         $producto->descripcion=$request->descripcion;
-        $producto->stock=0;
-        $producto->stock_minimo=$request->stock_minimo;
-                           
+        $producto->precio_unitario=$request->precio_unitario;        
+        $producto->estado='A';
+        $producto->unidad=$request->formatos;
+        $producto->catalogo_id=$request->catalogos;
+        if ($hasFile) {
+            $extension=$request->cover->extension();
+            $producto->extension=$extension;
+        }                            
         if ($producto->save()) {
+            if ($hasFile) {
+                $request->cover->move('imagenProducto',"$producto->id.$extension");
+            }
             return redirect('/producto')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('producto.create',['producto'=>$producto])->with('toast_error','Error al registrar');
         }
     }
-
+ 
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function show(Producto $producto)
+    public function show($id)
     {
-        //
+        $producto =  Producto::findOrFail($id);
+        return view('producto.show',['producto'=>$producto]);
     }
 
     /**
@@ -70,7 +88,12 @@ class ProductoController extends Controller
     public function edit($id)
     {
         $producto = Producto::find($id);
-        return view('producto.edit',['producto'=>$producto]);
+        $catalogos=Catalogo::orderBy('nombre','ASC')->pluck('nombre','id');
+        $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','descripcion');
+
+        return view('producto.edit',['producto'=>$producto])
+                ->with('catalogos',$catalogos)
+                ->with('formatos',$formatos);
     }
 
     /**
@@ -81,16 +104,27 @@ class ProductoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    {   
+        
+        $hasFile=$request->hasFile('cover') && $request->cover->isValid();
         $producto= Producto::find($id);
-        $producto->nombre=$request->nombre;
+        $producto->codigo=$request->codigo;
         $producto->descripcion=$request->descripcion;
-        $producto->stock=0;
-        $producto->stock_minimo=$request->stock_minimo;                                         
+        $producto->precio_unitario=$request->precio_unitario;        
+        $producto->estado='A';
+        $producto->unidad=$request->formatos;
+        $producto->catalogo_id=$request->catalogos;
+        if ($hasFile) {
+            $extension=$request->cover->extension();
+            $producto->extension=$extension;
+        }                            
         if ($producto->save()) {
-            return redirect('/producto')->with('toast_success','Producto modificado exitosamente');
+            if ($hasFile) {
+                $request->cover->move('imagenProducto',"$producto->id.$extension");
+            }
+            return redirect('/producto')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('producto.edit',['producto'=>$producto])->with('toast_error','Error al actualizar');
+            return view('producto.edit',['producto'=>$producto])->with('toast_error','Error al registrar');
         }
     }
 
@@ -100,8 +134,12 @@ class ProductoController extends Controller
      * @param  \App\Models\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Producto $producto)
+    public function destroy($id)
     {
-        //
+        $producto = Producto::find($id);
+        $producto->estado = 'E';
+        if ($producto->save()) {
+            return redirect('/producto');
+        }
     }
 }

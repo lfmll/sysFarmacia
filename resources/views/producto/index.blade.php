@@ -10,7 +10,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-4">                            
-                            <a href="{{url('#')}}" class="btn btn-primary"><i class="fa fa-inbox fa-lg"></i></a>
+                            <a href="{{url('#')}}" class="btn btn-primary"><i class="fa fa-archive fa-lg"></i></a>
                         </div>
                         <div class="col-sm-6">
                             <h5>Productos</h5>                            
@@ -26,10 +26,10 @@
                             <thead>
                                 <tr>                                    
                                     <th>ID</th>
-                                    <th>Nombre</th>
+                                    <th>Catalogo</th>
+                                    <th>Codigo</th>
                                     <th>Descripción</th>
-                                    <th>Stock</th>
-                                    <th>Stock Mínimo</th>
+                                    <th>Precio Unitario</th>
                                     <th>Acciones</th>                                    
                                 </tr>
                             </thead>
@@ -37,13 +37,21 @@
                                 @foreach($productos as $producto)
                                 <tr>   
                                     <td>{{$producto->id}}</td>                                 
-                                    <td>{{$producto->nombre}}</td>
+                                    @if (!is_null($producto->catalogo))
+                                        <td>
+                                            {{$producto->catalogo->nombre}}
+                                        </td>
+                                    @else
+                                        <td></td>
+                                    @endif 
+                                    <td>{{$producto->codigo}}</td>
                                     <td>{{$producto->descripcion}}</td>
-                                    <td>{{$producto->stock}}</td>
-                                    <td>{{$producto->stock_minimo}}</td>                                    
+                                    <td>{{$producto->precio_unitario}}</td>                                                                        
                                     <td>
+                                        <a href="{{url('/producto/'.$producto->id)}}" class="btn btn-warning"><i class="fa fa-eye"></i> Ver</a>
                                         <a href="{{url('/producto/'.$producto->id.'/edit')}}" class="btn btn-primary"><i class="fa fa-edit"></i> Editar</a>
                                         <a href="{{url('/lote/'.$producto->id.'/create_producto')}}" class="btn btn-warning"><i class="fa fa-receipt"></i></a>
+                                        @include('producto.delete',['producto'=>$producto])
                                     </td>
                                 </tr>
                                 @endforeach
@@ -75,6 +83,31 @@
                 "info": false,
                 "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
                 "autoWidth": false
+            });
+        });
+    </script>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+        $( ".eliminar" ).on( "click", function(e) {
+            e.preventDefault();
+            var form = $(this).parents('form');
+            
+            Swal.fire({
+                title: 'Esta Seguro?',
+                text: "Eliminar Producto",
+                type: 'warning',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, Eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+                    form.submit();            
+                }
+                
             });
         });
     </script>

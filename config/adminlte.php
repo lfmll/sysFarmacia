@@ -272,11 +272,6 @@ return [
                     'icon' => 'fas fa-fw fa-medkit',
                 ],
                 [
-                    'text' => 'Insumos',
-                    'icon' => 'fas fa-fw fa-archive',            
-                    'url'  => '/insumo',
-                ], 
-                [
                     'text' => 'Acciones Terapéuticas',
                     'url'  => '/clase',
                     'icon' => 'fas fa-fw fa-notes-medical'
@@ -320,8 +315,8 @@ return [
         ],
         [
             'text'       => 'Productos',
-            'icon'       => 'fas fa-fw fa-inbox',
-            'icon_color' => 'blue',
+            'icon'       => 'fas fa-fw fa-archive',
+            'icon_color' => 'cyan',
             'url'        => '/producto',
         ],
         
