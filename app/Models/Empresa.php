@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Empresa extends Model
 {
     protected $fillable=[
-        'nombre_empresa','direccion','telefono','nit'
+        'nombre',
+        'nit',
+        'correo',
+        'actividad',
+        'documento',
+        'modalidad',
+        'emision',
+        'cuis',
+        'vigencia_cuis'
     ];
 }

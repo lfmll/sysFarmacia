@@ -21,6 +21,8 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DocumentoController;
+use App\Http\Controllers\AgenciaController;
+use App\Http\Controllers\PuntoVentaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +57,8 @@ Route::resource('factura', FacturaController::class);
 Route::resource('producto', ProductoController::class);
 Route::resource('cliente', ClienteController::class);
 Route::resource('catalogo', CatalogoController::class);
+Route::resource('agencia', AgenciaController::class);
+Route::resource('puntoventa', PuntoVentaController::class);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);

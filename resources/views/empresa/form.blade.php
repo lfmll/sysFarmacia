@@ -1,7 +1,7 @@
 {!! Form::open(['url' => $url, 'method' => $method, 'files' => true]) !!}
 <div class="card-body">
     <div class="input-group mb-3">
-        {{Form::text('nombre_empresa',$empresa->nombre_empresa,['class'=>'form-control', 'placeholder'=>'Nombre de Farmacia','required'])}}
+        {{Form::text('nombre',$empresa->nombre,['class'=>'form-control', 'placeholder'=>'Nombre de Farmacia','required'])}}
         <div class="input-group-append">
             <div class="input-group-text">
                 <span class="fas fa-first-aid"></span>
@@ -9,18 +9,10 @@
         </div>
     </div>
     <div class="input-group mb-3">
-        {{Form::text('direccion',$empresa->direccion,['class'=>'form-control', 'placeholder'=>'Dirección'])}}    
+        {{Form::text('actividad',$empresa->actividad,['class'=>'form-control', 'placeholder'=>'Razon Social','required'])}}
         <div class="input-group-append">
             <div class="input-group-text">
-                <span class="fas fa-map-marker-alt"></span>
-            </div>
-        </div>
-    </div>
-    <div class="input-group mb-3">
-        {{Form::number('telefono',$empresa->telefono,['class'=>'form-control', 'placeholder'=>'Teléfono', 'min'=>'0'])}}
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-phone-alt"></span>
+                <span class="fas fa-first-aid"></span>
             </div>
         </div>
     </div>
@@ -31,6 +23,44 @@
                 <span class="fas fa-id-card"></span>
             </div>            
         </div>
+    </div>
+    <div class="input-group mb-3">
+        {{Form::text('correo',$empresa->correo,['class'=>'form-control', 'placeholder'=>'Correo'])}}    
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+            </div>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+        {{Form::select('documento', ['FACTURA COMPRA-VENTA'=>'FACTURA COMPRA-VENTA',
+                                    'FACTURA COMERCIAL DE EXPORTACION'=>'FACTURA COMERCIAL DE EXPORTACION',
+                                    'FACTURA DE SEGUROS'=>'FACTURA DE SEGUROS',
+                                    'FACTURA COMPRA VENTA BONIFICACIONES'=>'FACTURA COMPRA VENTA BONIFICACIONES'],$empresa->documento,['class'=>'form-control', 'placeholder'=>'Documento de Emision', 'min'=>'0'])}}
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-file-alt"></span>
+            </div>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+    {{Form::text('modalidad', $empresa->modalidad,['class'=>'form-control', 'placeholder'=>'COMPUTARIZADA EN LINEA', 'readonly'=>'true'])}}    
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-inbox"></span>
+            </div>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+    {{Form::number('cuis', $empresa->cuis,['class'=>'form-control', 'placeholder'=>'CUIS'])}}    
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-money-check"></span>
+            </div>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+    {{Form::date('vigencia_cuis', $empresa->vigencia_cuis,['class'=>'form-control', 'placeholder'=>'Vigencia CUIS'])}}    
     </div>
     <div class="input-group mb-3">
         {{Form::file('cover')}}

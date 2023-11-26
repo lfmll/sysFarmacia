@@ -38,10 +38,16 @@ class EmpresaController extends Controller
     {
         $hasFile=$request->hasFile('cover') && $request->cover->isValid();
         $empresa= new Empresa($request->all());
-        $empresa->nombre_empresa = $request->nombre_empresa;
-        $empresa->direccion = $request->direccion;
-        $empresa->telefono = $request->telefono;
+        $empresa->nombre = $request->nombre;
         $empresa->nit = $request->nit;
+        $empresa->correo = $request->correo;
+        $empresa->actividad = $request->actividad;
+        $empresa->documento = $request->documento;
+        $empresa->modalidad = $request->modalidad;
+        $empresa->emision = $request->emision;
+        $empresa->cuis =  $request->cuis;
+        $empresa->vigencia_cuis = $request->vigencia_cuis;
+        
         if ($hasFile) {
             $extension=$request->cover->extension();
             $empresa->extension=$extension;

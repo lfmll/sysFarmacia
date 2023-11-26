@@ -48,9 +48,9 @@ class ClienteController extends Controller
         $cliente->estado            = 'A';
         
         if ($cliente->save()) {
-            return redirect('/cliente');
+            return redirect('/cliente')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('cliente.create',['cliente'=>$cliente]);
+            return view('cliente.create',['cliente'=>$cliente])->with('toast_error','Error al registrar');
         }
     }
 
@@ -98,9 +98,9 @@ class ClienteController extends Controller
         $cliente->estado            = 'A';
 
         if ($cliente->save()) {
-            return redirect('/cliente');
+            return redirect('/cliente')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('cliente.edit',['cliente'=>$cliente]);
+            return view('cliente.edit',['cliente'=>$cliente])->with('toast_error','Error al registrar');
         }
     }
 
