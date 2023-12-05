@@ -8,6 +8,7 @@ use App\Models\Lote;
 use App\Models\Medicamento;
 use App\Models\Insumo;
 use App\Models\Producto;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -52,18 +53,17 @@ class VentaController extends Controller
                     ->where('medicamento_id','<>',null)                    
                     ->get();
         
-        $lotesi=Lote::where('estado','A')
-                    ->where('insumo_id','<>',null)                                        
-                    ->get();
-
         $lotesp=Lote::where('estado','A')
                     ->where('producto_id','<>',null)
                     ->get(); 
+        
+        $clientes=Cliente::where('estado','A')
+                    ->get();
 
         return view('venta.create',['venta'=>$venta, 'comprobante'=>$comprobante])
                 ->with('lotesp',$lotesp)
                 ->with('lotesm',$lotesm)
-                ->with('lotesi',$lotesi);                
+                ->with('clientes',$clientes);                
     }
 
     /**

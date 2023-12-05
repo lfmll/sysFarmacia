@@ -3,6 +3,7 @@
 @section('title', 'Venta')
 
 @section('content')
+@include('sweetalert::alert')
 
     {!! Form::open(['url' => '/venta', 'method' => 'POST']) !!}       
     {{Form::token()}}     
@@ -26,16 +27,65 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
+                                <div class="col-lg-9">
+                                    <div class="form-group">
+                                        {!! Form::label('cliente','Nombre o Razon Social: ') !!}   
+                                        <div class="row">
+                                            {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control','style'=>'width:88%;']) !!} 
+                                            <a href="#modalBuscarCliente" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalBuscarCliente">
+                                                <i class="fa fa-lg fa-user"></i>
+                                            </a>
+                                        </div>   
+                                        {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente', 'style'=>'display:none']) !!}                                     
+                                    </div>                                    
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">   
+                                        {!! Form::label('Accion','Accion',['type'=>'hidden']) !!}                                                                               
+                                        <a href="#modalCrearCliente" class="btn btn-info form-control" data-toggle="modal" data-target="#modalCrearCliente">Nuevo Cliente</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 ">
+                                    <div class="form-group">
+                                        {!! Form::label('tipodoc','Tipo Documento: ') !!}   
+                                        {!! Form::text('tipodoc', null, ['id'=>'ctipodoc','class'=>'form-control', 'readonly'=>true]) !!} 
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 ">
+                                    <div class="form-group">
+                                        {!! Form::label('nrodoc','Numero de Documento: ') !!}   
+                                        {!! Form::text('nrodoc', null, ['id'=>'cnrodoc','class'=>'form-control', 'readonly'=>true]) !!} 
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 ">
+                                    <div class="form-group">
+                                        {!! Form::label('cmpl','Complemento: ') !!}   
+                                        {!! Form::text('cmpl', null, ['id'=>'ccmpl','class'=>'form-control', 'readonly'=>true]) !!} 
+                                    </div>
+                                </div> 
+                            </div>                               
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="form-group">
+                                        {!! Form::label('correo','Correo: ') !!}   
+                                        {!! Form::text('correo', null, ['id'=>'ccorreo','class'=>'form-control', 'readonly'=>true]) !!} 
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
                                 <div class="col-lg-3 col-md-3 col-xs-12">
                                     <div class="form-group">                                        
                                         {!! Form::label('Producto', 'Producto') !!}                                          
                                         <div class="row">                                                                                                                                   
                                             {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control','style'=>'width:80%;']) !!}                                            
-                                            <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" >
+                                            <a href="#modalLote" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalLote" >
                                                 <i class="fa fa-lg fa-receipt"></i>
                                             </a>
                                         </div>
-                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none;']) !!}
+                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-xs-12">
@@ -53,7 +103,7 @@
                                 <div class="col-lg-3 col-sm-3 col-md-2 col-xs-12">
                                     <div class="form-group">  
                                         {!! Form::label('Accion','Accion',['type'=>'hidden']) !!}                                        
-                                        <input type="button" value="Agregar" id="btn_add" class="btn btn-info form-control" onclick="agregar()">
+                                        <input type="button" value="Agregar" id="btn_add" class="btn btn-success form-control" onclick="agregar()">
                                     </div>
                                 </div>
                             </div>
@@ -155,8 +205,134 @@
             </div>     
         </div>                           
     {!! Form::close() !!}
-    
-    <div class="modal fade" id="myModal" role="dialog" tabindex="-1" aria-hidden="true">
+
+    <!-- ********Modal Buscar Cliente*********** -->
+    <div class="modal fade" id="modalBuscarCliente" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Buscar Clientes</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> 
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <table id="tcliente" class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nombre Razon Social</th>
+                                    <th>Tipo Documento</th>
+                                    <th>Nro Documento</th>
+                                    <th>Complemento</th>
+                                    <th>Correo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($clientes as $cliente)
+                                <tr>
+                                    <td>                                        
+                                        <div class="chkCliente">
+                                            <input type="checkbox" name="chkCliente" class="chkCliente" value="{{$cliente->id}},{{$cliente->nombre}},{{$cliente->tipo_documento}},{{$cliente->numero_documento}},{{$cliente->complemento}},{{$cliente->correo}}">                                             
+                                        </div>                                        
+                                    </td>
+                                    <td>{{$cliente->nombre}}</td>
+                                    <td>{{$cliente->tipo_documento}}</td>
+                                    <td>{{$cliente->numero_documento}}</td>
+                                    <td>{{$cliente->complemento}}</td>
+                                    <td>{{$cliente->correo}}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="seleccionarCliente()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ******** Modal Crear Cliente ******** -->
+    <div class="modal fade" id="modalCrearCliente" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Crear Cliente</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> 
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Nombre o Razon Social (*)</label>
+                                        <input type="text" name="ccnombre" id="ccnombre" class="form-control" required>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Tipo Documento (*)</label>                        
+                                    <select name="cctipodoc" id="cctipodoc" class="form-control" required>
+                                        <option value="CI - Cedula de Identidad">CI - Cedula de Identidad</option>
+                                        <option value="CEX - Cedula de Indentidad Extranjero">CEX - Cedula de Indentidad Extranjero</option>
+                                        <option value="PAS - Pasaporte">PAS - Pasaporte</option>
+                                        <option value="NIT - Numero de Certificacion Tributaria">NIT - Numero de Certificacion Tributaria</option>
+                                        <option value="OO - Otros Documentos">OO - Otros Documentos</option>                            
+                                    </select>                                
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="form-group">
+                            <div class="row">                                
+                                <div class="col-md-9">
+                                    <label>Nro Documento (*)</label>
+                                    <input type="number" min="0" name="ccnrodoc" id="ccnrodoc" class="form-control" required>
+                                </div>                            
+                                <div class="col-md-3">
+                                    <label>Complemento</label>
+                                    <input type="text" name="cccmpl" id="cccmpl" class="form-control">
+                                </div>                           
+                            </div> 
+                        </div>                                               
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <label>Correo (*)</label>
+                                    <input type="email" name="cccorreo" id="cccorreo" class="form-control">
+                                </div>                                                            
+                                <div class="col-md-3">
+                                    <label>Telefono</label>
+                                    <input type="number" min="0" name="cctelf" id="cctelf" class="form-control">
+                                </div>
+                            </div>                                                                               
+                        </div>                        
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Direccion</label>
+                                    <input type="text" name="ccdireccion" id="ccdireccion" class="form-control">
+                                </div>
+                            </div>                            
+                        </div>                            
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="crearCliente">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- *************** Buscar Producto ******************** -->
+    <div class="modal fade" id="modalLote" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -170,10 +346,7 @@
                         <ul class="nav nav-tabs">
                             <li class="nav-item">
                                 <a class="nav-link active" aria-current="page" href="#tab01" aria-controls="tab01" role="tab" data-toggle="tab">Medicamentos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#tab02" aria-controls="tab02" role="tab" data-toggle="tab">Insumos</a>
-                            </li>
+                            </li>                            
                             <li class="nav-item">
                                 <a class="nav-link" href="#tab03" aria-controls="tab03" role="tab" data-toggle="tab">Productos</a>
                             </li>
@@ -211,40 +384,7 @@
                                         @endforeach                                                                                
                                     </tbody>
                                 </table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="tab02">
-                                <br>
-                                <table id="tlotei" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Nro Lote</th>
-                                            <th>Insumo</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio Venta</th>
-                                            <th>Laboratorio</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lotesi as $lotei)
-                                            <tr id="{{$lotei->id}}">
-                                                <td>
-                                                    <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotei->id}},{{$lotei->insumo->nombre}},{{$lotei->cantidad}},{{$lotei->precio_venta}}" id="{{$lotei->id}}">
-                                                    </div>
-                                                </td>
-                                                <td>{{$lotei->numero}}</td>
-                                                <td>{{$lotei->insumo->nombre}}</td>
-                                                <td>{{$lotei->fecha_vencimiento}}</td>
-                                                <td>{{$lotei->cantidad}}</td>
-                                                <td>{{$lotei->precio_venta}}</td>
-                                                <td>{{$lotei->laboratorio->nombre}}</td>
-                                            </tr>                                            
-                                        @endforeach                                                                                
-                                    </tbody>
-                                </table>
-                            </div>
+                            </div>                            
                             <div role="tabpanel" class="tab-pane" id="tab03">
                                 <br>
                                 <table id="tlotep" class="table">
@@ -300,8 +440,21 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-    
+    $(function () {
+        $('#tcliente').DataTable({
+            "responsive" : false,
+            "paging": true,
+            "lengthMenu": [4, 8, "All"],
+            "searching": true,
+            "ordering": false,
+            "info": false,
+            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+            "autoWidth": false
+        });
+    });
+
     $(function () {
         $('#tlotem').DataTable({
             "responsive" : false,
@@ -348,12 +501,69 @@
     let total=0;
     let subtotal=[];
 
-    $('#myModal .save').click(function (e) {
+    $('#modalLote.save').click(function (e) {
         e.preventDefault();
         addImage(5);
-        $('#myModal').modal('hide');
+        $('#modalLote').modal('hide');
         return false;
     })
+
+    $('#modalBuscarCliente.save').click(function (e) {
+        e.preventDefault();
+        addImage(5);
+        $('#modalBuscarCliente').modal('hide');
+        return false;
+    })
+
+    $('#modalCrearCliente.save').click(function (e) {
+        e.preventDefault();
+        addImage(5);
+        $('#modalCrearCliente').modal('hide');
+        return false;
+    })
+
+    $('#crearCliente').click(function(e){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        e.preventDefault();
+        var formData = {
+            estado: encodeURIComponent('A'),
+            tipo_documento: $('#cctipodoc').val(),
+            numero_documento: $('#ccnrodoc').val(),
+            complemento: $('#cccmpl').val(),
+            nombre: $('#ccnombre').val(),
+            correo: $('#cccorreo').val(),
+            telefono: $('#cctelf').val(),
+            direccion: $('#ccdireccion').val(),
+        };        
+        var type="POST";
+        $.ajax({
+            type: type,
+            url: '{{url("/cliente")}}',
+            data: formData,
+            dataType: 'json',           
+            data: formData,
+            success: function(data){
+                swal.fire("Registro Realizado","Cliente Nuevo: "+data.numero_documento,"success");
+                
+                $('#cnombre').val(data.nombre);
+                $('#ctipodoc').val(data.tipo_documento);
+                $('#cnrodoc').val(data.numero_documento);
+                $('#ccmpl').val(data.complemento);
+                $('#ccorreo').val(data.correo);
+            },
+            error: function (json) {
+                if (json.status==409) {
+                    swal.fire("Error", JSON.parse(json.responseText).mensaje, "error"); 
+                } else {
+                    swal.fire("Error","Error al registrar","error")  ;
+                }
+            }
+        });
+    });
 
     function agregar(){
         arreglo = document.getElementById("pcodigo").innerText;
@@ -385,6 +595,10 @@
         limpiar();        
     }
 
+    function agregarCliente(){
+        limpiar();
+    }
+
     function limpiar(){        
         document.getElementById("pcantidad").value = "";
         document.getElementById("pprecio").value = "";
@@ -401,8 +615,26 @@
         $('#fila'+index).remove();                
         $('#'+index).fadeIn('slow');
     }
+    function seleccionarCliente(){
+        [].forEach.call(document.querySelectorAll('input[name="chkCliente"]:checked'), function(cb) {
+            document.getElementById('ccliente').innerText=cb.value;            
+        });
+        cliente=document.getElementById("ccliente").innerText;
+        cl=cliente.split(',');
+        nombre=cl[1];
+        tipodoc=cl[2];
+        nrodoc=cl[3];
+        cmpl=cl[4];
+        correo=cl[5];
+        document.getElementById('cnombre').value =nombre;
+        document.getElementById('ctipodoc').value =tipodoc;
+        document.getElementById('cnrodoc').value  =nrodoc;
+        document.getElementById('ccmpl').value    =cmpl;
+        document.getElementById('ccorreo').value  =correo;        
+    }
 
-    function seleccionar(){        
+    function seleccionar(){  
+        console.log("Hola");
         [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
             document.getElementById('pcodigo').innerText=cb.value;            
         });

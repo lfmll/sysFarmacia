@@ -77,13 +77,7 @@
                                 {{ Form::select('medicamentos',$medicamentos, $lote->medicamento_id,['class'=>'medicamentos form-control','placeholder'=>'','style'=>'width: 100%;'] ) }}
                                 
                             </div>        
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                {!! Form::label('insumo', 'Insumo') !!}
-                                {{ Form::select('insumos',$insumos, $lote->insumo_id,['class'=>'insumos form-control','placeholder'=>'','style'=>'width: 100%;', 'disabled']) }}            
-                            </div>
-                        </div>
+                        </div>                        
                         <div class="col-md-4">
                             <div class="form-group">
                                 {!! Form::label('producto', 'Producto') !!}

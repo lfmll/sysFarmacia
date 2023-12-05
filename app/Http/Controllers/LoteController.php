@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Lote;
 use App\Models\Laboratorio;
-use App\Models\Insumo;
 use App\Models\Medicamento;
 use App\Models\Producto;
 use Illuminate\Http\Request;
@@ -36,13 +35,12 @@ class LoteController extends Controller
     {
         $lote=new Lote();
         $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
-        $insumos=Insumo::orderBy('nombre','ASC')->pluck('nombre','id');        
+              
         $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
-        $productos=Producto::orderBy('nombre','ASC')->pluck('nombre','id');
+        $productos=Producto::orderBy('descripcion','ASC')->pluck('descripcion','id');
         
         return view('lote.create',['lote'=>$lote])
                 ->with('laboratorios',$laboratorios)
-                ->with('insumos',$insumos)
                 ->with('medicamentos',$medicamentos)
                 ->with('productos',$productos);
     }
@@ -67,7 +65,7 @@ class LoteController extends Controller
             $lote->estado='A';
             $lote->laboratorio_id=$request->laboratorios;
             $lote->medicamento_id=$request->medicamentos;
-            $lote->insumo_id=$request->insumos;
+            
             $lote->producto_id=$request->productos;                                   
             $lote->save();            
             
@@ -157,14 +155,12 @@ class LoteController extends Controller
     public function edit($id)
     {
         $lote=Lote::find($id);        
-        $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
-        $insumos=Insumo::orderBy('nombre','ASC')->pluck('nombre','id');        
+        $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');   
         $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
         $productos=Producto::orderBy('nombre','ASC')->pluck('nombre','id');
 
         return view('lote.edit',['lote'=>$lote])
                 ->with('laboratorios',$laboratorios)
-                ->with('insumos',$insumos)
                 ->with('medicamentos',$medicamentos)
                 ->with('productos',$productos);
     }

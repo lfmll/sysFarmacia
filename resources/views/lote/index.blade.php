@@ -50,11 +50,6 @@
                                             {{$lote->medicamento->nombre_comercial}}
                                         </td>
                                     @endif
-                                    @if (!is_null($lote->insumo))
-                                        <td>
-                                            {{$lote->insumo->nombre}}
-                                        </td>
-                                    @endif
                                     @if (!is_null($lote->producto))
                                         <td>
                                             {{$lote->producto->nombre}}

@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Cliente extends Model
 {
     protected $fillable=[
-        'tipo_documento','numero_documento','nombre','correo'
+        'tipo_documento',
+        'numero_documento',
+        'nombre',
+        'correo',
+        'estado'
     ];
 }

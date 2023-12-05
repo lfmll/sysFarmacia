@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use Response;
 use Illuminate\Http\Request;
 
 class ClienteController extends Controller
@@ -37,6 +38,27 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->ajax()) {
+            $existeCliente=Cliente::where('numero_documento','=',$request->numero_documento)
+                                    ->where('tipo_documento','=',$request->tipo_documento)
+                                    ->get();
+
+            if ($existeCliente->isNotEmpty()) {
+                return \Response::json(["mensaje"=>"El Cliente se encuentra registrado con el Documento: ".$existeCliente[0]["numero_documento"]."."],409);
+            }
+            
+            $cliente = Cliente::create($request->all());
+            return \Response::json($cliente);
+        }
+
+        $cliente=Cliente::where('numero_documento','=',$request->numero_documento)
+                        ->where('tipo_documento','=',$request->tipo_documento)
+                        ->get();
+        
+        if ($cliente->isNotEmpty()) {
+            return redirect('cliente')->with('toast_error','El cliente ya se encuentra registrado');
+        }
+
         $cliente = new Cliente($request->all());
         $cliente->tipo_documento    = $request->tipo_documento;
         $cliente->numero_documento  = $request->numero_documento; 
