@@ -15,6 +15,7 @@ class CreateMedicamentosTable extends Migration
     {
         Schema::create('medicamentos', function (Blueprint $table) {
             $table->smallIncrements('id');
+            $table->string('codigo',50);
             $table->string('nombre_comercial',50);
             $table->string('nombre_generico',50);
             $table->string('composicion',255)->nullable();
@@ -25,6 +26,7 @@ class CreateMedicamentosTable extends Migration
             $table->integer('stock_minimo')->unsigned();
             $table->smallinteger('formato_id')->unsigned();            
             $table->smallinteger('via_id')->unsigned();
+            $table->smallinteger('catalogo_id')->unsigned();
             $table->timestamps();
         });
     }

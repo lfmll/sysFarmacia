@@ -10,6 +10,7 @@ use App\Models\Clase;
 use App\Models\Medida;
 use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
+use App\Models\Catalogo;
 use Illuminate\Support\Facades\DB;
 
 class MedicamentoController extends Controller
@@ -36,9 +37,12 @@ class MedicamentoController extends Controller
      */
     public function create()
     {                
+        $c=Medicamento::count();        
+        $codigo="MED".str_pad(++$c, 6, '0', STR_PAD_LEFT);        
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
+        $catalogos=Catalogo::orderBy('nombre','ASC')->pluck('nombre','id');
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
@@ -47,10 +51,12 @@ class MedicamentoController extends Controller
         $dosis_estandar3=null;
         $medicamento=new Medicamento();        
         $clasemedicamento=new ClaseMedicamento();
-        return view('medicamento.create',['medicamento'=>$medicamento])                    
+        return view('medicamento.create',['medicamento'=>$medicamento]) 
+            ->with('codigo',$codigo)                   
             ->with('vias',$vias)
             ->with('formatos',$formatos)
             ->with('clases',$clases)
+            ->with('catalogos',$catalogos)
             ->with('dosis1',$dosis1)
             ->with('dosis2',$dosis2)
             ->with('dosis3',$dosis3)
@@ -71,6 +77,7 @@ class MedicamentoController extends Controller
         try {
             DB::beginTransaction();
             $medicamento=new Medicamento($request->all());
+            $medicamento->codigo=$request->codigo;
             $medicamento->nombre_comercial=$request->nombre_comercial;
             $medicamento->nombre_generico=$request->nombre_generico;
             $medicamento->composicion=$request->composicion;
@@ -82,6 +89,7 @@ class MedicamentoController extends Controller
 
             $medicamento->formato_id=$request->formatos;            
             $medicamento->via_id=$request->vias;
+            $medicamento->catalogo_id=$request->catalogos;
             $medicamento->save();
             
             $clases=$request->clases;
@@ -228,6 +236,7 @@ class MedicamentoController extends Controller
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
+        $catalogos=Catalogo::orderBy('nombre','ASC')->pluck('nombre','id');
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
@@ -291,6 +300,7 @@ class MedicamentoController extends Controller
         return view("medicamento.edit",["medicamento"=>$medicamento])                    
             ->with('vias',$vias)
             ->with('formatos',$formatos)
+            ->with('catalogos',$catalogos)
             ->with('clases',$clases)
             ->with('dosis1',$dosis1)
             ->with('dosis2',$dosis2)
@@ -316,6 +326,7 @@ class MedicamentoController extends Controller
         try {
             DB::beginTransaction();
             $medicamento=Medicamento::find($id);
+            $medicamento->codigo=$request->codigo;
             $medicamento->nombre_comercial=$request->nombre_comercial;
             $medicamento->nombre_generico=$request->nombre_generico;
             $medicamento->composicion=$request->composicion;
@@ -326,7 +337,7 @@ class MedicamentoController extends Controller
 
             $medicamento->formato_id=$request->formatos;
             $medicamento->via_id=$request->vias;
-
+            $medicamento->catalogo_id=$request->catalogos;
             $medicamento->save();
             
             $clases=$request->clases;                                    

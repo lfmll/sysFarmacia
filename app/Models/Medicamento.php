@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Medicamento extends Model
 {
     protected $fillable=[
+        'codigo',
         'nombre_comercial',
         'nombre_generico',
         'composicion',
@@ -17,7 +18,8 @@ class Medicamento extends Model
         'stock',
         'stock_minimo',
         'formato_id',
-        'via_id'
+        'via_id',
+        'catalogo_id'
     ];
 
     public function formato(){
@@ -35,7 +37,12 @@ class Medicamento extends Model
     public function medidas(){
         return $this->belongsTo(MedidaMedicamento::class);
     }
+    
     public function lotes(){
         return $this->hasMany(Lote::class);
+    }
+
+    public function catalogos(){
+        return $this->belongsTo(Catalogo::class);
     }
 }

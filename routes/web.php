@@ -54,7 +54,6 @@ Route::get('/lote/{id}/create_producto',[LoteController::class,'create_producto'
 Route::resource('compra', CompraController::class)->middleware('aperturar');
 Route::resource('venta', VentaController::class)->middleware('aperturar');
 Route::resource('factura', FacturaController::class);
-Route::resource('producto', ProductoController::class);
 Route::resource('cliente', ClienteController::class);
 Route::resource('catalogo', CatalogoController::class);
 Route::resource('agencia', AgenciaController::class);

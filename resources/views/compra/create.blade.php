@@ -21,7 +21,7 @@
                                 </div>                                                    
                                 <div class="float-right">
                                     {!! Form::label('agentes', 'Proveedores') !!}
-                                    {{ Form::select('agentes',$agentes, $compra->agente_id, ['class'=>'agentes form-control','placeholder'=>'','style'=>'weight: 100%;']) }}                                            
+                                    {{ Form::select('agentes',$agentes, $compra->agente_id, ['class'=>'agentes form-control','placeholder'=>'']) }}                                            
                                 </div>
                             </div>
                         </div>
@@ -29,31 +29,31 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-lg-3 col-md-3 col-xs-12">
+                                <div class="col-lg-3">
                                     <div class="form-group">                                        
-                                        {!! Form::label('Producto', 'Producto') !!}                                          
-                                        <div class="row">                                                                                                                                   
+                                        {!! Form::label('Producto', 'Producto') !!}   
+                                        <div class="row">
                                             {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control','style'=>'width:80%;']) !!}                                            
                                             <a href="#myModal" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#myModal" >
                                                 <i class="fa fa-lg fa-receipt"></i>
                                             </a>
-                                        </div>
-                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
+                                        </div>                                                                                                                                                                   
+                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none']) !!}
                                     </div>
                                 </div>                                
-                                <div class="col-lg-3 col-md-3 col-xs-12">
+                                <div class="col-lg-3">
                                     <div class="form-group">
                                         {!! Form::label('Cantidad', 'Cantidad') !!}
                                         {!! Form::number('Cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-3 col-xs-12">
+                                <div class="col-lg-3">
                                     <div class="form-group">
                                         {!! Form::label('Precio', 'Precio') !!}
                                         {!! Form::number('Precio', null, ['id'=>'pprecio','class'=>'form-control','placeholder'=>'0.00','min'=>'0']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-sm-3 col-md-2 col-xs-12">
+                                <div class="col-lg-3">
                                     <div class="form-group">  
                                         {!! Form::label('Accion','Accion',['type'=>'hidden']) !!}                                        
                                         <input type="button" value="Agregar" id="btn_add" class="btn btn-info form-control" onclick="agregar()">
@@ -143,115 +143,37 @@
                     </button>                    
                 </div>
                 <div class="modal-body">                                                                      
-                    <div role="tabpanel">
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#tab01" aria-controls="tab01" role="tab" data-toggle="tab">Medicamentos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#tab02" aria-controls="tab02" role="tab" data-toggle="tab">Insumos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#tab03" aria-controls="tab03" role="tab" data-toggle="tab">Productos</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="tab01">
-                                <br>
-                                <table id="tlotem" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Nro Lote</th>
-                                            <th>Medicamento</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio Compra</th>
-                                            <th>Laboratorio</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lotesm as $lotem)
-                                            <tr id="{{$lotem->id}}">
-                                                <td>
-                                                    <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_compra}}" id="{{$lotem->id}}">
-                                                    </div>
-                                                </td>
-                                                <td>{{$lotem->numero}}</td>
-                                                <td>{{$lotem->medicamento->nombre_comercial}}</td>
-                                                <td>{{$lotem->fecha_vencimiento}}</td>
-                                                <td>{{$lotem->cantidad}}</td>
-                                                <td>{{$lotem->precio_compra}}</td>
-                                                <td>{{$lotem->laboratorio->nombre}}</td>
-                                            </tr>                                            
-                                        @endforeach                                                                                
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="tab02">
-                                <br>
-                                <table id="tlotei" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Nro Lote</th>
-                                            <th>Insumo</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio Compra</th>
-                                            <th>Laboratorio</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lotesi as $lotei)
-                                            <tr id="{{$lotei->id}}">
-                                                <td>
-                                                    <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotei->id}},{{$lotei->insumo->nombre}},{{$lotei->cantidad}},{{$lotei->precio_compra}}" id="{{$lotei->id}}">
-                                                    </div>
-                                                </td>
-                                                <td>{{$lotei->numero}}</td>
-                                                <td>{{$lotei->insumo->nombre}}</td>
-                                                <td>{{$lotei->fecha_vencimiento}}</td>
-                                                <td>{{$lotei->cantidad}}</td>
-                                                <td>{{$lotei->precio_compra}}</td>
-                                                <td>{{$lotei->laboratorio->nombre}}</td>
-                                            </tr>                                            
-                                        @endforeach                                                                                
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="tab03">
-                                <br>
-                                <table id="tlotep" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Producto</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Stock</th>
-                                            <th>Precio Compra</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>                                        
-                                        @foreach ($lotesp as $lotep)
-                                            <tr id="{{$lotep->id}}">                                                
-                                                <td>
-                                                    <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotep->id}},{{$lotep->producto->nombre}},{{$lotep->cantidad}},{{$lotep->precio_compra}}" id="{{$lotep->id}}">                                                        
-                                                    </div>
-                                                </td>                                                                                              
-                                                <td>{{$lotep->producto->nombre}}</td>
-                                                <td>{{$lotep->fecha_vencimiento}}</td>
-                                                <td>{{$lotep->cantidad}}</td>
-                                                <td>{{$lotep->precio_compra}}</td>
-                                            </tr>                                            
-                                        @endforeach                                                                                
-                                    </tbody>
-                                </table>                                
-                            </div>                            
-                        </div>
+                    <div>
+                        <table id="tlotem" class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nro Lote</th>
+                                    <th>Medicamento</th>
+                                    <th>Fecha Vencimiento</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Compra</th>
+                                    <th>Laboratorio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($lotesm as $lotem)
+                                    <tr id="{{$lotem->id}}">
+                                        <td>
+                                            <div class="chk">
+                                                <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_compra}}" id="{{$lotem->id}}">
+                                            </div>
+                                        </td>
+                                        <td>{{$lotem->numero}}</td>
+                                        <td>{{$lotem->medicamento->nombre_comercial}}</td>
+                                        <td>{{$lotem->fecha_vencimiento}}</td>
+                                        <td>{{$lotem->cantidad}}</td>
+                                        <td>{{$lotem->precio_compra}}</td>
+                                        <td>{{$lotem->laboratorio->nombre}}</td>
+                                    </tr>                                            
+                                @endforeach                                                                                
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -264,16 +186,17 @@
 @stop
 
 @section('js')
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 
+
 <script>   
-    $('.agentes').select2();
+    $('.agentes').select2({theme: 'bootstrap4'});
     $(function(){
         $('#tlotem').DataTable({
             "responsive" : false,

@@ -13,8 +13,9 @@ class Catalogo extends Model
         'nombre'
     ];
     
-    public function producto()
+    public function medicamento()
     {
-        return $this->hasMany(Producto::class);
+        return $this->hasMany(Medicamento::class);
     }
+
 }

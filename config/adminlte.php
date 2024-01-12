@@ -314,13 +314,6 @@ return [
             'url'        => '/lote',
         ],
         [
-            'text'       => 'Productos',
-            'icon'       => 'fas fa-fw fa-archive',
-            'icon_color' => 'cyan',
-            'url'        => '/producto',
-        ],
-        
-        [
             'text'       => 'Egresos',
             'icon'       => 'fas fa-sign-out-alt',
             'icon_color' => 'red',

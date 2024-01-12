@@ -14,6 +14,14 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
+                                {{Form::label('medicamento','Medicamento')}}
+                                {{ Form::select('medicamentos',$medicamentos, $medicamento_id, ['class'=>'form-control','readonly']) }}
+                            </div>
+                        </div>                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 {{Form::label('numero','Numero')}}
                                 {{Form::text('numero', $lote->numero, ['class'=>'form-control', 'placeholder'=>'Numero de lote','required'])}}
                             </div>
@@ -59,13 +67,6 @@
                                 {{ Form::select('laboratorios',$laboratorios, $lote->laboratorio_id, ['class'=>'laboratorios form-control','placeholder'=>'','required','style'=>'weight: 100%;']) }}
                             </div>            
                         </div>
-                        <div class="col-md-8">        
-                            <div class="form-group" style="display: none;">
-                                {{ Form::select('medicamentos',$medicamentos, $medicamento_id, ['class'=>'form-control']) }}
-                                {{-- {{ Form::select('insumos',$insumos, null, ['class'=>'form-control']) }}
-                                {{ Form::select('productos',$productos, null, ['class'=>'form-control']) }} --}}
-                            </div>                                
-                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -85,10 +86,14 @@
 @section('js')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
     <link rel="stylesheet" href="/css/admin_custom.css">
     <script>
         $(document).ready(function(){
-            $('.laboratorios').select2();
+            $('.laboratorios').select2({theme: 'bootstrap4'});
         });
 
         function porcentuarA(g)
@@ -98,6 +103,7 @@
             pventa=parseFloat(pcompra)+parseFloat(porcentaje);
             document.getElementById("precio_venta").value=pventa.toFixed(2);            
         }
+        
         function porcentuarB(pventa)
         {
             pcompra=document.getElementById("precio_compra").value;

@@ -33,17 +33,24 @@
                                         <div class="row">
                                             {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control','style'=>'width:88%;']) !!} 
                                             <a href="#modalBuscarCliente" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalBuscarCliente">
-                                                <i class="fa fa-lg fa-user"></i>
+                                                <i class="fa fa-lg fa-search"></i>
                                             </a>
                                         </div>   
                                         {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente', 'style'=>'display:none']) !!}                                     
                                     </div>                                    
                                 </div>
                                 <div class="col-lg-3">
-                                    <div class="form-group">   
-                                        {!! Form::label('Accion','Accion',['type'=>'hidden']) !!}                                                                               
-                                        <a href="#modalCrearCliente" class="btn btn-info form-control" data-toggle="modal" data-target="#modalCrearCliente">Nuevo Cliente</a>
-                                    </div>
+                                    <div class="row">                                                                                        
+                                        <label> Accion:</label>   
+                                    </div> 
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <a href="#modalCrearCliente" class="btn btn-info form-control" data-toggle="modal" data-target="#modalCrearCliente"><i class="fa fa-lg fa-user"></i> Nuevo</a>
+                                        </div>  
+                                        <div class="col-md-6">
+                                            <input type="button" value="Limpiar" id="btn_limpiarcl" class="btn btn-warning form-control" onclick="limpiarCliente()">
+                                        </div>
+                                    </div>                                                                        
                                 </div>
                             </div>
                             <div class="row">
@@ -85,19 +92,25 @@
                                                 <i class="fa fa-lg fa-receipt"></i>
                                             </a>
                                         </div>
-                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo','style'=>'display:none']) !!}
+                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo', 'style'=>'display:none']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-3 col-xs-12">
+                                <div class="col-lg-2 col-md-2 col-xs-12">
                                     <div class="form-group">
                                         {!! Form::label('Cantidad', 'Cantidad') !!}
                                         {!! Form::number('Cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-md-3 col-xs-12">
+                                <div class="col-lg-2 col-md-2 col-xs-12">
                                     <div class="form-group">
                                         {!! Form::label('Precio', 'Precio') !!}
                                         {!! Form::number('Precio', null, ['id'=>'pprecio','class'=>'form-control','placeholder'=>'0.00','min'=>'0']) !!}
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-xs-12">
+                                    <div class="form-group">
+                                        {!! Form::label('Descuento', 'Descuento') !!}
+                                        {!! Form::number('Descuento', null, ['id'=>'pdescuento','class'=>'form-control','placeholder'=>'0.00','min'=>'0','max'=>'100']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-sm-3 col-md-2 col-xs-12">
@@ -119,10 +132,27 @@
                                         <th>P. Unitario</th>
                                         <th>SubTotal</th>
                                     </thead>
-                                    <tfoot>         
-                                        <td colspan="4"></td>                                                                                
-                                        <td>Total: </td>                                 
-                                        <td><input type="number" name="eTotal" id="eTotal" class="form-control" readonly></td>
+                                    <tfoot>     
+                                        <tr>
+                                            <td colspan="4"></td>                                                                                
+                                            <td>SubTotal: </td>                                 
+                                            <td><input type="number" name="eTotal" id="eSubTotal" class="form-control" readonly></td>
+                                        </tr>    
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td>Descuento: </td>
+                                            <td><input type="number" name="eDescuento" id="eDescuento" class="form-control" value="0" min="0" max="100" onchange="descuentoTotal(this.value)"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td>Monto Giftcard: </td>
+                                            <td><input type="number" name="eMontoGifcard" id="eMontoGifcard" class="form-control" value="0" min="0"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td>Total Subjeto IVA: </td>
+                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" readonly></td>
+                                        </tr>                                        
                                     </tfoot>
                                     <tbody>
                                 
@@ -133,30 +163,62 @@
                         <div class="card-footer">
                             <div class="container">
                                 <div class="row">
-                                    <div class="col">
-                                        <div class="checkbox form-group">
-                                            <label><i class="fa fa-credit-card"></i> Forma de Pago</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" checked>
-                                                <label class="form-check-label" for="chkefectivo">
-                                                    Efectivo
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" >
-                                                <label class="form-check-label" for="chktarjeta">
-                                                    Tarjeta
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="forma_pago" value="QR" id="chkqr" >
-                                                <label class="form-check-label" for="chkqr">
-                                                    QR
-                                                </label>
-                                            </div>
+                                    <div class="col-sm-8">
+                                        <div class="checkbox form-group">                                            
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th><i class="fa fa-credit-card"></i> Forma de Pago</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
+                                                        <hr>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" checked>
+                                                                <label class="form-check-label" for="chkefectivo">
+                                                                    Efectivo
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        <hr>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="giftcard" id="chkgiftcard" >
+                                                                <label class="form-check-label" for="chkgiftcard">
+                                                                    Giftcard
+                                                                </label>
+                                                            </div> 
+                                                        </td>
+                                                        <td>
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        <hr>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" >
+                                                                <label class="form-check-label" for="chktarjeta">
+                                                                    Tarjeta
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        <hr>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chkotros" >
+                                                                <label class="form-check-label" for="chkotros">
+                                                                    Otros
+                                                                </label>
+                                                            </div> 
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>                                        
                                     </div>
-                                    <div class="col">
+                                    <!-- <div class="col">
                                         <div class="form-group">                                    
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="" id="fcheck" onclick="onFactura()"/>
@@ -175,20 +237,15 @@
                                         <div class="form-group">
                                             {!! Form::text('Factura', '', ['id'=>'ffactura','hidden']) !!}
                                         </div>
-                                    </div>    
+                                    </div>  -->
+                                    <div class="col-sm-4">
+                                        <div class="float-right">
+                                            {!! Form::label('Cambio', 'Cambio') !!}
+                                            {!! Form::number('Cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly', 'step'=>'any']) !!}
+                                        </div>                                        
+                                    </div>                                        
                                 </div>                                                                                                                                                                                                     
-                            </div>          
-                            <hr>                  
-                            <div class="form-group">
-                                <div class="float-left">
-                                    {!! Form::label('Pago', 'Pago') !!}
-                                    {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
-                                </div>
-                                <div class="float-right">
-                                    {!! Form::label('Cambio', 'Cambio') !!}
-                                    {!! Form::number('Cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly', 'step'=>'any']) !!}
-                                </div>            
-                            </div>
+                            </div>                          
                         </div>                                                                                                                                                                                                                                                                                                                                                                            
                     </div>
                     <div class="card-footer">
@@ -243,7 +300,7 @@
                                     <td>{{$cliente->complemento}}</td>
                                     <td>{{$cliente->correo}}</td>
                                 </tr>
-                                @endforeach
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -342,79 +399,38 @@
                     </button>                                        
                 </div>
                 <div class="modal-body">                                                                      
-                    <div role="tabpanel">
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#tab01" aria-controls="tab01" role="tab" data-toggle="tab">Medicamentos</a>
-                            </li>                            
-                            <li class="nav-item">
-                                <a class="nav-link" href="#tab03" aria-controls="tab03" role="tab" data-toggle="tab">Productos</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="tab01">
-                                <br>
-                                <table id="tlotem" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Nro Lote</th>
-                                            <th>Medicamento</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio Venta</th>
-                                            <th>Laboratorio</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lotesm as $lotem)
-                                            <tr id="{{$lotem->id}}">
-                                                <td>
-                                                    <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_venta}}" id="{{$lotem->id}}">
-                                                    </div>
-                                                </td>
-                                                <td>{{$lotem->numero}}</td>
-                                                <td>{{$lotem->medicamento->nombre_comercial}}</td>
-                                                <td>{{$lotem->fecha_vencimiento}}</td>
-                                                <td>{{$lotem->cantidad}}</td>
-                                                <td>{{$lotem->precio_venta}}</td>
-                                                <td>{{$lotem->laboratorio->nombre}}</td>
-                                            </tr>                                            
-                                        @endforeach                                                                                
-                                    </tbody>
-                                </table>
-                            </div>                            
-                            <div role="tabpanel" class="tab-pane" id="tab03">
-                                <br>
-                                <table id="tlotep" class="table">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Producto</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Stock</th>
-                                            <th>Precio Venta</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($lotesp as $lotep)
-                                            <tr id="{{$lotep->id}}">
-                                                <td>
-                                                    <div class="chk">
-                                                        <input type="checkbox" name="chk" class="chk" value="{{$lotep->id}},{{$lotep->producto->nombre}},{{$lotep->cantidad}},{{$lotep->precio_venta}}" id="{{$lotep->id}}">                                                        
-                                                    </div>
-                                                </td>                                                                                              
-                                                <td>{{$lotep->producto->nombre}}</td>
-                                                <td>{{$lotep->fecha_vencimiento}}</td>
-                                                <td>{{$lotep->cantidad}}</td>
-                                                <td>{{$lotep->precio_venta}}</td>
-                                            </tr>                                            
-                                        @endforeach                                                                                
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div>
+                        <br>
+                        <table id="tlotem" class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Nro Lote</th>
+                                    <th>Medicamento</th>
+                                    <th>Fecha Vencimiento</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Venta</th>
+                                    <th>Laboratorio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($lotesm as $lotem)
+                                    <tr id="{{$lotem->id}}">
+                                        <td>
+                                            <div class="chk">
+                                                <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_venta}}" id="{{$lotem->id}}">
+                                            </div>
+                                        </td>
+                                        <td>{{$lotem->numero}}</td>
+                                        <td>{{$lotem->medicamento->nombre_comercial}}</td>
+                                        <td>{{$lotem->fecha_vencimiento}}</td>
+                                        <td>{{$lotem->cantidad}}</td>
+                                        <td>{{$lotem->precio_venta}}</td>
+                                        <td>{{$lotem->laboratorio->nombre}}</td>
+                                    </tr>                                            
+                                @endforeach                                                                                
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -506,14 +522,14 @@
         addImage(5);
         $('#modalLote').modal('hide');
         return false;
-    })
+    });
 
     $('#modalBuscarCliente.save').click(function (e) {
         e.preventDefault();
         addImage(5);
         $('#modalBuscarCliente').modal('hide');
         return false;
-    })
+    });
 
     $('#modalCrearCliente.save').click(function (e) {
         e.preventDefault();
@@ -522,7 +538,7 @@
         return false;
     })
 
-    $('#crearCliente').click(function(e){
+    $('#crearCliente').click(function(e) {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -547,13 +563,12 @@
             dataType: 'json',           
             data: formData,
             success: function(data){
-                swal.fire("Registro Realizado","Cliente Nuevo: "+data.numero_documento,"success");
-                
                 $('#cnombre').val(data.nombre);
                 $('#ctipodoc').val(data.tipo_documento);
                 $('#cnrodoc').val(data.numero_documento);
                 $('#ccmpl').val(data.complemento);
                 $('#ccorreo').val(data.correo);
+                swal.fire("Registro Realizado","Cliente Nuevo: "+data.numero_documento,"success");
             },
             error: function (json) {
                 if (json.status==409) {
@@ -563,7 +578,7 @@
                 }
             }
         });
-    });
+    })
 
     function agregar(){
         arreglo = document.getElementById("pcodigo").innerText;
@@ -573,21 +588,33 @@
                
         concepto = document.getElementById("pproducto").value;               
         cantidad = document.getElementById("pcantidad").value; 
-        precio = document.getElementById("pprecio").value;    
+        precio = document.getElementById("pprecio").value;
+        descuento = document.getElementById("pdescuento").value;
+
+        if (parseInt(descuento)<0 || parseInt(descuento)>100) {
+            alert("Error: Valores no validos");
+            return;
+        }
                
-        if (cantidad=="" || precio=="") {
-            alert("Error: Campos no pueden estar vacíos");                        
+        if (concepto=="" || cantidad=="" || precio=="") {
+            alert("Error: Campos no pueden estar vacíos");     
+            return;                   
         } else if (parseInt(cantidad) > parseInt(cant_max)) {            
-            alert("Error: la cantidad excede el stock del lote");            
+            alert("Error: la cantidad excede el stock del lote");    
+            return;        
         } else {
             [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
                 idlote=cb.id;
                 $('#'+idlote).fadeOut('slow');
             });
-            gasto=(cantidad*precio);                        
+            precio=precio - (Math.floor(precio*descuento)/100);
+            console.log(precio);
+            gasto=(cantidad*precio);    
+                                
             subtotal.push(gasto.toFixed(2));
             cont=subtotal.length-1;
             total=parseFloat(total)+parseFloat(subtotal[cont]);            
+            document.getElementById('eSubTotal').value = total.toFixed(2);
             document.getElementById('eTotal').value = total.toFixed(2);
             var fila='<tr class="selectd" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
             $('#detalles').append(fila);                                                              
@@ -595,17 +622,22 @@
         limpiar();        
     }
 
-    function agregarCliente(){
-        limpiar();
-    }
-
     function limpiar(){        
         document.getElementById("pcantidad").value = "";
         document.getElementById("pprecio").value = "";
         document.getElementById("pproducto").value = "";
-        document.getElementById("pcodigo").innerText = "";
+        document.getElementById("pdescuento").value = "";
+        document.getElementById("pcodigo").innerText = "";        
         $('input[name="chk"]').prop('checked', false);
 
+    }
+
+    function limpiarCliente(){
+        document.getElementById("cnombre").value = "";
+        document.getElementById("ctipodoc").value = "";
+        document.getElementById("cnrodoc").value = "";
+        document.getElementById("ccmpl").value = "";
+        document.getElementById("ccorreo").value = "";
     }
 
     function eliminar(index, cont){            
@@ -633,8 +665,7 @@
         document.getElementById('ccorreo').value  =correo;        
     }
 
-    function seleccionar(){  
-        console.log("Hola");
+    function seleccionar(){          
         [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
             document.getElementById('pcodigo').innerText=cb.value;            
         });
@@ -649,6 +680,12 @@
     function pagar(){
         pago=document.getElementById('ppago').value;
         document.getElementById('pcambio').value = pago-total;
+    }
+
+    function descuentoTotal(val){
+        total=document.getElementById('eSubTotal').value;
+        total= total - (Math.floor(total*val)/100);
+        document.getElementById("eTotal").value = total;
     }
 
     function onFactura(){

@@ -27,7 +27,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 {!! Form::label('cantidad', 'Cantidad') !!}
-                                {{Form::number('cantidad', $lote->cantidad, ['class'=>'form-control','min'=>'0', 'placeholder'=>'Cantidad', 'step'=>'1', 'required'])}}    
+                                {{Form::number('cantidad', $lote->cantidad, ['class'=>'form-control','min'=>'0', 'placeholder'=>'Cantidad', 'step'=>'1', 'required'])}}
                             </div>        
                         </div>
                     </div>
@@ -65,29 +65,7 @@
                                     {{ Form::select('laboratorios',$laboratorios, $lote->laboratorio_id, ['class'=>'laboratorios form-control','placeholder'=>'','style'=>'weight: 100%;']) }}
                                 </div>
                             </div>                           
-                        @endif                                  
-                        @if(!is_null($lote->insumo_id))
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('insumo', 'Insumo') !!}
-                                    {{ Form::select('insumos',$insumos, $lote->insumo_id,['class'=>'insumos form-control','placeholder'=>'','style'=>'width: 100%;']) }}            
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('laboratorio', 'Laboratorio') !!}
-                                    {{ Form::select('laboratorios',$laboratorios, $lote->laboratorio_id, ['class'=>'laboratorios form-control','placeholder'=>'','style'=>'weight: 100%;']) }}
-                                </div>
-                            </div>                             
-                        @endif
-                        @if(!is_null($lote->producto_id))
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('producto', 'Producto') !!}
-                                    {{ Form::select('productos',$productos, $lote->producto_id,['class'=>'productos form-control','placeholder'=>'','style'=>'width: 100%;']) }}            
-                                </div>
-                            </div>
-                        @endif                        
+                        @endif                                                         
                     </div>
                 </div>
                 <div class="card-footer">
@@ -114,10 +92,8 @@
 <script>
     $(document).ready(function(){
         $('.laboratorios').select2();
-        
-        $('.insumos').select2();
         $('.medicamentos').select2();
-        $('.productos').select2();
+        
                
     });
 </script>    

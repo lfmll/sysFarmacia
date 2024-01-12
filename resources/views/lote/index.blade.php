@@ -49,12 +49,7 @@
                                         <td>
                                             {{$lote->medicamento->nombre_comercial}}
                                         </td>
-                                    @endif
-                                    @if (!is_null($lote->producto))
-                                        <td>
-                                            {{$lote->producto->nombre}}
-                                        </td>
-                                    @endif   
+                                    @endif  
                                     <td>{{$lote->precio_compra}}</td>
                                     <td>{{$lote->precio_venta}}</td>
                                     <td>

@@ -51,17 +51,12 @@ class VentaController extends Controller
 
         $lotesm=Lote::where('estado','A')
                     ->where('medicamento_id','<>',null)                    
-                    ->get();
-        
-        $lotesp=Lote::where('estado','A')
-                    ->where('producto_id','<>',null)
                     ->get(); 
         
         $clientes=Cliente::where('estado','A')
                     ->get();
 
         return view('venta.create',['venta'=>$venta, 'comprobante'=>$comprobante])
-                ->with('lotesp',$lotesp)
                 ->with('lotesm',$lotesm)
                 ->with('clientes',$clientes);                
     }

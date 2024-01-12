@@ -17,6 +17,18 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        {!!Form::text('codigo',$codigo,['class'=>'form-control','required']) !!}
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">                                    
+                                        {{ Form::select('catalogos', $catalogos, $medicamento->catalogo_id,['class'=>'form-control','required']) }}
+                                    </div>                                    
+                                </div>
+                            </div>                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         {{Form::text('nombre_comercial',$medicamento->nombre_comercial,['class'=>'form-control', 'placeholder'=>'Nombre Comercial','required'])}}
                                     </div>
                                 </div>                            
@@ -136,7 +148,7 @@
                                 <tbody>
                                     <tr>
                                         <th>
-                                        {!! Form::select('clases[]', $clases, null, ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple']) !!}
+                                        {!! Form::select('clases[]', $clases, null, ['class'=>'sclases form-control','data-width'=>'100%','multiple'=>'multiple', 'required']) !!}
                                         </th>
                                     </tr>
                                 </tbody>

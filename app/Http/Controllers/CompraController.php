@@ -51,21 +51,11 @@ class CompraController extends Controller
                         
         $lotesm=Lote::where('estado','A')
                     ->where('medicamento_id','<>',null)                    
-                    ->get();
-        
-        $lotesi=Lote::where('estado','A')
-                    ->where('insumo_id','<>',null)                                        
-                    ->get();
-
-        $lotesp=Lote::where('estado','A')
-                    ->where('producto_id','<>',null)
-                    ->get();                     
+                    ->get();                                    
 
         return view('compra.create',['compra'=>$compra, 'comprobante'=>$comprobante])
                 ->with('agentes',$agentes)                
-                ->with('lotesm',$lotesm)
-                ->with('lotesi',$lotesi)
-                ->with('lotesp',$lotesp);
+                ->with('lotesm',$lotesm);
     }
 
     /**
@@ -110,23 +100,9 @@ class CompraController extends Controller
                     $lote->precio_compra = $dprecio[$cont];
                     $lote->save();
 
-                    if (!is_null($lote->medicamento_id)) {
-                        $medicamento = Medicamento::find($lote->medicamento_id);
-                        $medicamento->stock = $medicamento->stock + $dcantidad[$cont];
-                        $medicamento->save();
-                    }
-
-                    if (!is_null($lote->insumo_id)) {
-                        $insumo = Insumo::find($lote->insumo_id);
-                        $insumo->stock = $insumo->stock + $dcantidad[$cont];
-                        $insumo->save();
-                    }
-
-                    if (!is_null($lote->producto_id)) {
-                        $producto = Producto::find($lote->producto_id);
-                        $producto->stock = $producto->stock + $dcantidad[$cont];
-                        $producto->save();
-                    }
+                    $medicamento = Medicamento::find($lote->medicamento_id);
+                    $medicamento->stock = $medicamento->stock + $dcantidad[$cont];
+                    $medicamento->save();
                     
                     $cont = $cont + 1;
                 }                
