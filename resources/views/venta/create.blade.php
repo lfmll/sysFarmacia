@@ -12,18 +12,7 @@
                 <div class="card-header">
                     <h3 class="card-title"><i class="fa fa-bookmark"></i> Venta</h3>    
                 </div>   
-                <div class="card-body">                                                        
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="float-left">                                        
-                                    {!! Form::label('comprobante','Comprobante: ') !!}   
-                                    {!! Form::label('comprobante',$comprobante) !!}  
-                                    <input type="hidden" name="comprobante" id="eComprobante" value={{$comprobante}}>                                                                     
-                                </div>                                                                                    
-                            </div>
-                        </div>
-                    </div>                                                                                                                                             
+                <div class="card-body">                                                                                                                                                                                                     
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -140,17 +129,17 @@
                                         </tr>    
                                         <tr>
                                             <td colspan="4"></td>
-                                            <td>Descuento: </td>
+                                            <td>Monto Descuento: </td>
                                             <td><input type="number" name="eDescuento" id="eDescuento" class="form-control" value="0" min="0" max="100" onchange="descuentoTotal(this.value)"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="4"></td>
-                                            <td>Monto Giftcard: </td>
+                                            <td>Total: </td>
                                             <td><input type="number" name="eMontoGifcard" id="eMontoGifcard" class="form-control" value="0" min="0"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="4"></td>
-                                            <td>Total Subjeto IVA: </td>
+                                            <td>Monto Total Subjeto IVA: </td>
                                             <td><input type="number" name="eTotal" id="eTotal" class="form-control" readonly></td>
                                         </tr>                                        
                                     </tfoot>
@@ -174,40 +163,40 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago_efectivo','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" checked>
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" onchange="onchkefectivo()" checked>
                                                                 <label class="form-check-label" for="chkefectivo">
                                                                     Efectivo
                                                                 </label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="giftcard" id="chkgiftcard" >
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="giftcard" id="chkgiftcard" onchange="onchkgiftcard()">
                                                                 <label class="form-check-label" for="chkgiftcard">
                                                                     Giftcard
                                                                 </label>
                                                             </div> 
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" >
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" onchange="onchktarjeta()">
                                                                 <label class="form-check-label" for="chktarjeta">
                                                                     Tarjeta
                                                                 </label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('Pago', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chkotros" >
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chkotros" onchange="onchkotros()">
                                                                 <label class="form-check-label" for="chkotros">
                                                                     Otros
                                                                 </label>
@@ -675,6 +664,42 @@
         precio_venta=arr[3];
         document.getElementById('pprecio').value=precio_venta;
         document.getElementById('pproducto').value=producto;        
+    }
+    //Metodos de Pago
+    function onchkefectivo(){
+        limpiarMetodosPago();
+        document.getElementById("ppago_efectivo").readOnly = false;
+        document.getElementById("ppago_giftcard").readOnly = true;
+        document.getElementById("ppago_tarjeta").readOnly  = true;
+        document.getElementById("ppago_otro").readOnly     = true;
+    }
+    function onchkgiftcard(){
+        limpiarMetodosPago();
+        document.getElementById("ppago_efectivo").readOnly = true;
+        document.getElementById("ppago_giftcard").readOnly = false;
+        document.getElementById("ppago_tarjeta").readOnly  = true;
+        document.getElementById("ppago_otro").readOnly     = true;
+    }
+    function onchktarjeta(){
+        limpiarMetodosPago();
+        document.getElementById("ppago_efectivo").readOnly = true;
+        document.getElementById("ppago_giftcard").readOnly = true;
+        document.getElementById("ppago_tarjeta").readOnly  = false;
+        document.getElementById("ppago_otro").readOnly     = true;
+    }
+    function onchkotros(){
+        limpiarMetodosPago();
+        document.getElementById("ppago_efectivo").readOnly = true;
+        document.getElementById("ppago_giftcard").readOnly = true;
+        document.getElementById("ppago_tarjeta").readOnly  = true;
+        document.getElementById("ppago_otro").readOnly     = false;
+    }
+
+    function limpiarMetodosPago(){
+        document.getElementById("ppago_efectivo").value = "";
+        document.getElementById("ppago_giftcard").value = "";
+        document.getElementById("ppago_tarjeta").value = "";
+        document.getElementById("ppago_otro").value = "";
     }
 
     function pagar(){

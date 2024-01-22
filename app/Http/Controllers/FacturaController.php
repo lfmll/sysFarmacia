@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Factura;
 use App\Models\Empresa;
+use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Milon\Barcode\DNS2D;
@@ -17,7 +18,8 @@ class FacturaController extends Controller
      */
     public function index()
     {
-        //
+        $factura = Factura::all();             
+        return view('factura.index',['factura'=>$factura]);
     }
 
     /**

@@ -15,16 +15,38 @@ class CreateFacturasTable extends Migration
     {
         Schema::create('facturas', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('nroFactura'); 
-            $table->string('nroAutorizacion');
-            $table->datetime('fecha');
-            $table->string('NIT');
-            $table->string('razonSocial');
-            $table->date('fechaLimite');
-            $table->string('codigoControl');
-            $table->decimal('total',12,2);
-            $table->string('totalLiteral');
-            $table->char('eliminado');
+            $table->string('nitEmisor'); 
+            $table->string('razonSocialEmisor');
+            $table->string('municipio');
+            $table->string('telefono');
+            $table->string('numeroFactura');
+            $table->string('cuf');
+            $table->string('cufd');
+            $table->string('codigoSucursal');
+            $table->string('direccion');
+            $table->string('codigoPuntoVenta');
+            $table->datetime('fechaEmision');
+            $table->string('nombreRazonSocial');
+            $table->string('codigoTipoDocumentoIdentidad');
+            $table->string('numeroDocumento');
+            $table->string('complemento')->nullable();
+            $table->string('codigoCliente');
+            $table->string('codigoMetodoPago');
+            $table->string('numeroTarjeta')->nullable();
+            $table->string('montoTotal');
+            $table->string('montoTotalSujetoIva');
+            $table->string('codigoMoneda');
+            $table->string('tipoCambio');
+            $table->string('montoTotalMoneda');
+            $table->string('montoGiftCard');
+            $table->string('descuentoAdicional');
+            $table->string('codigoExcepcion')->nullable();
+            $table->string('cafc')->nullable();
+            $table->string('leyenda');
+            $table->string('usuario');
+            $table->string('codigoDocumentoSector');
+            $table->string('estado');
+            
             $table->smallInteger('venta_id')->unsigned();
             $table->timestamps();
         });

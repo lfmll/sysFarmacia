@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCatalogosTable extends Migration
+class CreateMetodoPagosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCatalogosTable extends Migration
      */
     public function up()
     {
-        Schema::create('catalogos', function (Blueprint $table) {
+        Schema::create('metodo_pagos', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('nombre',50);
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateCatalogosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('catalogos');
+        Schema::dropIfExists('metodo_pagos');
     }
 }

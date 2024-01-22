@@ -356,6 +356,12 @@ return [
             ],
         ],
         [
+            'text'      =>  'Facturas',
+            'icon'      =>  'fas fa-inbox',
+            'icon_color'=>  'white',
+            'url'       =>  '/factura'
+        ],
+        [
             'text'      =>  'Caja',
             'icon'      =>  'fas fa-donate',  
             'icon_color'=>  'yellow',

@@ -18,6 +18,9 @@ use App\Models\MedidaMedicamento;
 use App\Models\Caja;
 use App\Models\Producto;
 use App\Models\Cliente;
+use App\Models\Factura;
+use App\Models\DetalleFactura;
+use App\Models\Venta;
 
 class PDFController extends Controller
 {
@@ -173,6 +176,7 @@ class PDFController extends Controller
         $pdf = PDF::loadView('venta.reporteVentaDia',['ventas' => $ventas,'fecha'=>$fecha]);
         return $pdf->download('Ventas_Dia.pdf');        
     }
+
     public function reporteVentaMensual()
     {        
         $fechai=Carbon::now('America/La_Paz')->startOfMonth()->toDateString();
@@ -270,5 +274,18 @@ class PDFController extends Controller
         $cajas=Caja::where('fecha',$fechaAnt);
         $pdf = PDF::loadView('caja.reporteCierreAnterior',['cajas' => $cajas,'fecha'=>$fecha]);
         return $pdf->download('Cierre_Anterior.pdf');
+    }
+
+    public function facturaCarta($id)
+    {        
+        $factura=Factura::find($id);
+        $detalleFactura=DetalleFactura::where('factura_id',$id)->get();        
+        $venta=Venta::find($factura->venta_id);        
+        
+        $pdf=PDF::loadView('factura.factura_carta',['factura'=>$factura, 
+                                                    'detalleFactura'=>$detalleFactura,
+                                                    'venta'=>$venta]);
+        $pdf->setPaper('letter','landscape');
+        return $pdf->download('factura_carta.pdf');
     }
 }

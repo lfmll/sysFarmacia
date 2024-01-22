@@ -13,4 +13,8 @@ class Venta extends Model
     public function detalle_ventas(){
         return $this->hasMany(DetalleVenta::class);
     }
+    
+    public function factura(){
+        return $this->belongsTo(Factura::class);
+    }
 }

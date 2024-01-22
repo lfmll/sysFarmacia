@@ -14,14 +14,18 @@ class CreateVentasTable extends Migration
     public function up()
     {
         Schema::create('ventas', function (Blueprint $table) {
-            $table->smallIncrements('id');
-            $table->string('comprobante',15)->nullable();
+            $table->smallIncrements('id');            
             $table->datetime('fecha_venta');
-            $table->decimal('pago_venta',10,2);
-            $table->decimal('cambio_venta',10,2);    
-            $table->string('glosa')->nullable();
-            $table->string('forma_pago');   
+            $table->decimal('subtotal',10,2);
+            $table->decimal('descuento',10,2);                      
+            $table->decimal('total',10,2);    
+            $table->decimal('monto_giftcard',10,2);
+            $table->decimal('monto_pagar',10,2);
+            $table->decimal('importe_iva',10,2);
+            $table->decimal('cambio_venta',10,2);
+            $table->string('literal');
             $table->char('estado');
+            $table->smallInteger('metodo_pago_id')->unsigned();            
             $table->timestamps();
         });
     }
