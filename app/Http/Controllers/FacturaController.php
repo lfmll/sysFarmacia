@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Factura;
+use App\Models\DetalleFactura;
 use App\Models\Empresa;
 use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Milon\Barcode\DNS2D;
+use Response;
 
 class FacturaController extends Controller
 {
@@ -120,6 +122,82 @@ class FacturaController extends Controller
     /**************************************
      * Imprimir Factura
      **************************************/
+    public function generarXML($idfactura){        
+        $factura=Factura::find($idfactura);
+        $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
+        
+        try {
+            $xml = new \XMLWriter();
+            $xml->openMemory();
+            $xml->openURI('factura.xml');
+            $xml->setIndent(true);
+            $xml->startDocument('1.0','UTF-8');
+            $xml->startElement('facturaComputarizadaCompraVenta');
+            $xml->writeAttribute('xsi:noNamespaceSchemaLocation','facturaComputarizadaCompraVenta.xsd');
+            $xml->writeAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');            
+                $xml->startElement('cabecera');            
+                $xml->writeElement('nitEmisor',$factura->nitEmisor);
+                $xml->writeElement('razonSocialEmisor',$factura->razonSocialEmisor);
+                $xml->writeElement('municipio',$factura->municipio);
+                $xml->writeElement('telefono',$factura->telefono);
+                $xml->writeElement('numeroFactura',$factura->numeroFactura);
+                $xml->writeElement('cuf',$factura->cuf);
+                $xml->writeElement('cufd',$factura->cufd);
+                $xml->writeElement('codigoSucursal',$factura->codigoSucursal);
+                $xml->writeElement('direccion',$factura->direccion);
+                $xml->writeElement('codigoPuntoVenta',$factura->codigoPuntoVenta);
+                $xml->writeElement('fechaEmision',$factura->fechaEmision);
+                $xml->writeElement('nombreRazonSocial',$factura->nombreRazonSocial);
+                $xml->writeElement('codigoTipoDocumentoIdentidad',$factura->codigoTipoDocumentoIdentidad);
+                $xml->writeElement('numeroDocumento',$factura->numeroDocumento);
+                $xml->writeElement('complemento',$factura->complemento);
+                $xml->writeElement('codigoCliente',$factura->codigoCliente);
+                $xml->writeElement('codigoMetodoPago',$factura->codigoMetodoPago);
+                $xml->writeElement('numeroTarjeta',$factura->numeroTarjeta);
+                $xml->writeElement('montoTotal',$factura->montoTotal);
+                $xml->writeElement('montoTotalSujetoIva',$factura->montoTotalSujetoIva);
+                $xml->writeElement('codigoMoneda',$factura->codigoMoneda);
+                $xml->writeElement('tipoCambio',$factura->tipoCambio);
+                $xml->writeElement('montoTotalMoneda',$factura->montoTotalMoneda);
+                $xml->writeElement('montoGiftCard',$factura->montoGiftCard);
+                $xml->writeElement('descuentoAdicional',$factura->descuentoAdicional);
+                $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);
+                $xml->writeElement('cafc',$factura->cafc);
+                $xml->writeElement('leyenda',$factura->leyenda);
+                $xml->writeElement('usuario',$factura->usuario);
+                $xml->writeElement('codigoDocumentoSector',$factura->codigoDocumentoSector);
+                $xml->endElement();
+
+                $xml->startElement('detalle');
+                foreach ($detallefactura as $detalle) {
+                    $xml->writeElement('actividadEconomica', $detalle->actividadEconomica);
+                    $xml->writeElement('codigoProductoSin', $detalle->codigoProductoSin);
+                    $xml->writeElement('codigoProducto', $detalle->codigoProducto);
+                    $xml->writeElement('descripcion', $detalle->descripcion);
+                    $xml->writeElement('cantidad', $detalle->cantidad);
+                    $xml->writeElement('unidadMedida', $detalle->unidadMedida);
+                    $xml->writeElement('precioUnitario', $detalle->precioUnitario);
+                    $xml->writeElement('montoDescuento', $detalle->montoDescuento);
+                    $xml->writeElement('subTotal', $detalle->subTotal);
+                    $xml->writeElement('numeroSerie', $detalle->numeroSerie);
+                    $xml->writeElement('numeroImei', $detalle->numeroImei);
+                    $xml->endElement();
+                }                
+                $xml->endElement();
+
+            $xml->endElement();
+            $xml->endDocument();
+            $content = $xml->outputMemory();
+            ob_end_clean();
+            ob_start();
+                        
+            return response()->download('factura.xml');
+
+        } catch (\Exception $e) {
+            // return redirect('/factura')->with('toast_error',$e);
+            echo $e;
+        }
+    }
     public function imprimirFactura($idfactura)
     {
         $perfil_empresarial=Empresa::first();
