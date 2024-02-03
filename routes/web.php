@@ -23,6 +23,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\AgenciaController;
 use App\Http\Controllers\PuntoVentaController;
+use App\Http\Controllers\MensajeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,5 +98,6 @@ Route::get('formatoClientes',[ExcelController::class,'formatoClientes']);
 Route::get('importCliente',[ExcelController::class,'importCliente']);
 Route::post('importC',[ExcelController::class,'importC']);
 Route::get('generarXML/{id}',[FacturaController::class,'generarXML']);
+Route::get('enviarCorreo',[MensajeController::class,'enviarCorreo']);
 
 
