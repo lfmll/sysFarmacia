@@ -6,7 +6,7 @@
     <title>Factura Farmacia Laufer</title>
 </head>
 <body>
-    Estimado Contribuyente
+    Estimado Contribuyente {{$msg['cliente']}}
     Se realizó la emisión del DOCUMENTO con el detalle adjunto al presente correo.
 </body>
 </html>
