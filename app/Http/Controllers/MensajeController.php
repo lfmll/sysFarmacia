@@ -25,8 +25,8 @@ class MensajeController extends Controller
 
             Mail::to($cliente->correo)->send(new MensajeFactura($msj));
             return redirect('factura')->with('toast_success','Correo enviado exitosamente');
-        } catch (\Throwable $th) {
-            return redirect('factura')->with('toast_error','Error de Envio');
+        } catch (\Exception $e) {            
+            return redirect('factura')->with('toast_error','Error de Envio. '.$e->getMessage());
         }
         
     }

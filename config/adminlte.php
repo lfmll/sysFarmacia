@@ -356,12 +356,6 @@ return [
             ],
         ],
         [
-            'text'      =>  'Facturas',
-            'icon'      =>  'fas fa-inbox',
-            'icon_color'=>  'white',
-            'url'       =>  '/factura'
-        ],
-        [
             'text'      =>  'Caja',
             'icon'      =>  'fas fa-donate',  
             'icon_color'=>  'yellow',
@@ -383,6 +377,14 @@ return [
                 ]
             ],
         ],
+
+        [
+            'text'      =>  'Facturas',
+            'icon'      =>  'fas fa-inbox',
+            'icon_color'=>  'white',
+            'url'       =>  '/factura'
+        ],
+        
         [
             'text'      =>  'Documentos',
             'icon'      =>  'fas fa-fw fa-file',
@@ -400,6 +402,13 @@ return [
                 ]
 
             ],
+        ],
+        
+        [
+            'text'      =>  'Configuracion',
+            'icon'      =>  'fas fa-fw fa-cog',
+            'icon_color'=>  'white',
+            'url'       =>  '/ajuste'
         ],
     ],
 

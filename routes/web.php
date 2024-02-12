@@ -24,6 +24,7 @@ use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\AgenciaController;
 use App\Http\Controllers\PuntoVentaController;
 use App\Http\Controllers\MensajeController;
+use App\Http\Controllers\AjusteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,7 @@ Route::resource('cliente', ClienteController::class);
 Route::resource('catalogo', CatalogoController::class);
 Route::resource('agencia', AgenciaController::class);
 Route::resource('puntoventa', PuntoVentaController::class);
+Route::resource('ajuste', AjusteController::class);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);

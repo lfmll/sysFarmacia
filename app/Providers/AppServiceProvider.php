@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Config;
+use App\Models\Ajuste;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,16 +25,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $mailconfig = Ajuste::first();        
         $data = [
-            'driver'        =>'smtp',
-            'host'          =>'sandbox.smtp.mailtrap.io',
-            'port'          =>'2525',
-            'encryption'    =>'tls',
-            'username'      =>'4c4c778cabb850',
-            'password'      =>'88aeee2bffa71b',
+            'driver'        =>  $mailconfig->driver,
+            'host'          =>  $mailconfig->host,
+            'port'          =>  $mailconfig->port,
+            'encryption'    =>  $mailconfig->encryption,
+            'username'      =>  $mailconfig->username,
+            'password'      =>  $mailconfig->password,
             'from'          => [
-                'address'   => 'luisfernandomedinallorenti@gmail.com',
-                'name'      => 'Farmacia_Laufer'
+                'address'   => $mailconfig->from,
+                'name'      => $mailconfig->name
             ]
 
         ];
