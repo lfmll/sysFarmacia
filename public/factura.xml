@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<facturaComputarizadaCompraVenta xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" http://www.w3.org/2000/xmlns/:xmlns:xsi="" xmlns:http://www.w3.org/2000/xmlns/="http://www.w3.org/2001/XMLSchema-instance">
+<facturaComputarizadaCompraVenta xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  <cabecera>
   <nitEmisor>1003579028</nitEmisor>
   <razonSocialEmisor>Carlos Loza</razonSocialEmisor>
@@ -10,24 +10,24 @@
   <cufd>BQUE+QytqQUDBKVUFOSVRPQkxVRFZNVFVJBMDAwMDAwM</cufd>
   <codigoSucursal>0</codigoSucursal>
   <direccion>AV. JORGE LOPEZ #123</direccion>
-  <codigoPuntoVenta></codigoPuntoVenta>
+  <codigoPuntoVenta xsi:nil="true"/>
   <fechaEmision>2024-01-14 03:05:25</fechaEmision>
   <nombreRazonSocial>Mi razon social</nombreRazonSocial>
   <codigoTipoDocumentoIdentidad>1</codigoTipoDocumentoIdentidad>
   <numeroDocumento>5115889</numeroDocumento>
-  <complemento/>
-  <codigoCliente>51158891</codigoCliente>
+  <complemento xsi:nil="true"/>
+  <codigoCliente>1</codigoCliente>
   <codigoMetodoPago>1</codigoMetodoPago>
-  <numeroTarjeta/>
+  <numeroTarjeta xsi:nil="true"/>
   <montoTotal>99</montoTotal>
   <montoTotalSujetoIva>99</montoTotalSujetoIva>
   <codigoMoneda>1</codigoMoneda>
   <tipoCambio>1</tipoCambio>
   <montoTotalMoneda>99</montoTotalMoneda>
-  <montoGiftCard></montoGiftCard>
+  <montoGiftCard xsi:nil="true"/>
   <descuentoAdicional>1</descuentoAdicional>
-  <codigoExcepcion/>
-  <cafc/>
+  <codigoExcepcion xsi:nil="true"/>
+  <cafc xsi:nil="true"/>
   <leyenda>Ley N° 453: Tienes derecho a recibir información sobre las características y contenidos de los servicios que utilices.</leyenda>
   <usuario>pperez</usuario>
   <codigoDocumentoSector>1</codigoDocumentoSector>

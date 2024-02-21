@@ -126,7 +126,7 @@ class FacturaController extends Controller
         $factura=Factura::find($idfactura);
         $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
         
-        try {
+        try {            
             $xml = new \XMLWriter();
             $xml->openMemory();
             $xml->openURI('factura.xml');
@@ -145,24 +145,72 @@ class FacturaController extends Controller
                 $xml->writeElement('cufd',$factura->cufd);
                 $xml->writeElement('codigoSucursal',$factura->codigoSucursal);
                 $xml->writeElement('direccion',$factura->direccion);
-                $xml->writeElement('codigoPuntoVenta',$factura->codigoPuntoVenta);
+                if (is_null($factura->codigoPuntoVenta) || empty($factura->codigoPuntoVenta)) {
+                    $xml->startElement('codigoPuntoVenta');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('codigoPuntoVenta',$factura->codigoPuntoVenta);                    
+                }                
                 $xml->writeElement('fechaEmision',$factura->fechaEmision);
                 $xml->writeElement('nombreRazonSocial',$factura->nombreRazonSocial);
                 $xml->writeElement('codigoTipoDocumentoIdentidad',$factura->codigoTipoDocumentoIdentidad);
                 $xml->writeElement('numeroDocumento',$factura->numeroDocumento);
-                $xml->writeElement('complemento',$factura->complemento);
+                if (is_null($factura->complemento) || empty($factura->complemento)) {
+                    $xml->startElement('complemento');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('complemento',$factura->complemento);                    
+                }                                            
                 $xml->writeElement('codigoCliente',$factura->codigoCliente);
                 $xml->writeElement('codigoMetodoPago',$factura->codigoMetodoPago);
-                $xml->writeElement('numeroTarjeta',$factura->numeroTarjeta);
+                if (is_null($factura->numeroTarjeta) || empty($factura->numeroTarjeta)) {
+                    $xml->startElement('numeroTarjeta');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('numeroTarjeta',$factura->numeroTarjeta);                    
+                }                 
                 $xml->writeElement('montoTotal',$factura->montoTotal);
                 $xml->writeElement('montoTotalSujetoIva',$factura->montoTotalSujetoIva);
                 $xml->writeElement('codigoMoneda',$factura->codigoMoneda);
                 $xml->writeElement('tipoCambio',$factura->tipoCambio);
                 $xml->writeElement('montoTotalMoneda',$factura->montoTotalMoneda);
-                $xml->writeElement('montoGiftCard',$factura->montoGiftCard);
+                if (is_null($factura->montoGiftCard) || empty($factura->montoGiftCard)) {
+                    $xml->startElement('montoGiftCard');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('montoGiftCard',$factura->montoGiftCard);                    
+                }                 
                 $xml->writeElement('descuentoAdicional',$factura->descuentoAdicional);
-                $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);
-                $xml->writeElement('cafc',$factura->cafc);
+                if (is_null($factura->codigoExcepcion) || empty($factura->codigoExcepcion)) {
+                    $xml->startElement('codigoExcepcion');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);                    
+                }                
+                if (is_null($factura->cafc) || empty($factura->cafc)) {
+                    $xml->startElement('cafc');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('cafc',$factura->cafc);                    
+                }                
                 $xml->writeElement('leyenda',$factura->leyenda);
                 $xml->writeElement('usuario',$factura->usuario);
                 $xml->writeElement('codigoDocumentoSector',$factura->codigoDocumentoSector);
@@ -194,8 +242,7 @@ class FacturaController extends Controller
             return response()->download('factura.xml');
 
         } catch (\Exception $e) {
-            // return redirect('/factura')->with('toast_error',$e);
-            echo $e;
+            return redirect('/factura')->with('toast_error',$e);            
         }
     }
     public function imprimirFactura($idfactura)
