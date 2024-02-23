@@ -12,6 +12,7 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Luecano\NumeroALetras\NumeroALetras;
 
 class VentaController extends Controller
 {
@@ -43,12 +44,6 @@ class VentaController extends Controller
         $horai=date('00:00:00');
         $horaf=date('23:59:59');
 
-        $c=DB::table('ventas')
-                ->whereBetween('fecha_venta',[$fecha_venta.' '.$horai, $fecha_venta.' '.$horaf])
-                ->count();
-                          
-        $comprobante = str_replace('-','',$fecha_venta).$c;
-
         $lotesm=Lote::where('estado','A')
                     ->where('medicamento_id','<>',null)                    
                     ->get(); 
@@ -56,7 +51,7 @@ class VentaController extends Controller
         $clientes=Cliente::where('estado','A')
                     ->get();
 
-        return view('venta.create',['venta'=>$venta, 'comprobante'=>$comprobante])
+        return view('venta.create',['venta'=>$venta])
                 ->with('lotesm',$lotesm)
                 ->with('clientes',$clientes);                
     }
@@ -69,71 +64,73 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {   
+        // dd($request);
         try {
             DB::beginTransaction();
-            $venta = new Venta($request->all());
-            if (is_null($venta->glosa)) {
-                $venta->comprobante=$request->comprobante;
-                $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
-                $venta->pago_venta=$request->Pago;
-                $venta->cambio_venta=$request->Cambio;
-                $venta->forma_pago=$request->forma_pago;
-                $venta->estado='A';
-                $venta->save();
+            $venta = new Venta($request->all());            
+            $venta->fecha_venta = Carbon::now('America/La_Paz')->toDateTimeString();
+            $venta->subtotal = $request->eSubTotal;
+            $venta->descuento = $request->eDescuento;
+            $venta->total = $request->etotal;
+            $venta->monto_giftcard = $request->eMontoGiftCard;
+            
+            $venta->importe_iva = $request->eTotalIVA;
+            
+            $literal = new NumeroALetras();
+            $venta->literal = $literal->toMoney($venta->eTotalIVA,2);
+            
+            $venta->estado='A';
+            $venta->metodo_pago_id = $request->forma_pago;
+            $venta->monto_pagar = $request->ppago_efectivo;
+            $venta->cambio_venta = $request->cambio;
+            $venta->monto_giftcard = $request->ppago_giftcard;
+            
+            $venta->save();
 
-                $dcantidad = $request->get('dcantidad');
-                $dprecio = $request->get('dprecio');
-                $dlote = $request->get('dcodigo');
+            $dcantidad = $request->get('dcantidad');
+            $dprecio = $request->get('dprecio');
+            $dlote = $request->get('dcodigo');
+            
+            $cont = 0;
+            while ($cont < count($dcantidad)) {
+                $detalle = new DetalleVenta();
+                $detalle->venta_id = $venta->id;
+                $detalle->cantidad = $dcantidad[$cont];
+                $detalle->precio_venta = $dprecio[$cont];                
+                $detalle->lote_id = $dlote[$cont];                                                       
+                $detalle->save();
+
+                $lote = Lote::find($dlote[$cont]);
+                $cantlote = $lote->cantidad;
+                $cantlote = $cantlote - $dcantidad[$cont];                
+                $lote->cantidad = $cantlote;
+                $lote->precio_venta = $dprecio[$cont];
+                $lote->save();
                 
-                $cont = 0;
-                while ($cont < count($dcantidad)) {
-                    $detalle = new DetalleVenta();
-                    $detalle->venta_id = $venta->id;
-                    $detalle->cantidad = $dcantidad[$cont];
-                    $detalle->precio_venta = $dprecio[$cont];                
-                    $detalle->lote_id = $dlote[$cont];                                                       
-                    $detalle->save();
-
-                    $lote = Lote::find($dlote[$cont]);
-                    $cantlote = $lote->cantidad;
-                    $cantlote = $cantlote - $dcantidad[$cont];                
-                    $lote->cantidad = $cantlote;
-                    $lote->precio_venta = $dprecio[$cont];
-                    $lote->save();
-                    
-                    if (!is_null($lote->medicamento_id)) {
-                        $medicamento = Medicamento::find($lote->medicamento_id);
-                        $medicamento->stock = $medicamento->stock - $dcantidad[$cont];
-                        $medicamento->save();
-                    }
-
-                    if (!is_null($lote->insumo_id)) {
-                        $insumo = Insumo::find($lote->insumo_id);
-                        $insumo->stock = $insumo->stock - $dcantidad[$cont];
-                        $insumo->save();
-                    }
-
-                    if (!is_null($lote->producto_id)) {
-                        $producto = Producto::find($lote->producto_id);
-                        $producto->stock = $producto->stock - $dcantidad[$cont];
-                        $producto->save();
-                    }
-                    
-                    $cont = $cont + 1;
+                if (!is_null($lote->medicamento_id)) {
+                    $medicamento = Medicamento::find($lote->medicamento_id);
+                    $medicamento->stock = $medicamento->stock - $dcantidad[$cont];
+                    $medicamento->save();
                 }
-                if ($request->Factura=="factura") {
-                    $nit=$request->Nit;
-                    $razon=$request->Razon;
-                    $autorizacion=$request->Autorizacion;
+
+                if (!is_null($lote->insumo_id)) {
+                    $insumo = Insumo::find($lote->insumo_id);
+                    $insumo->stock = $insumo->stock - $dcantidad[$cont];
+                    $insumo->save();
                 }
-            }else {
-                $venta->fecha_venta=Carbon::now('America/La_Paz')->toDateTimeString();
-                $venta->pago_venta=$request->Pago;
-                $venta->cambio_venta=0;
-                $venta->glosa=$request->glosa;
-                $venta->forma_pago=$request->forma_pago;
-                $venta->estado='A';
-                $venta->save();
+
+                if (!is_null($lote->producto_id)) {
+                    $producto = Producto::find($lote->producto_id);
+                    $producto->stock = $producto->stock - $dcantidad[$cont];
+                    $producto->save();
+                }
+                
+                $cont = $cont + 1;
+            }
+            if ($request->Factura=="factura") {
+                $nit=$request->Nit;
+                $razon=$request->Razon;
+                $autorizacion=$request->Autorizacion;
             }
             
             DB::commit();

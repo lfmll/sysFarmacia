@@ -17,4 +17,8 @@ class Venta extends Model
     public function factura(){
         return $this->belongsTo(Factura::class);
     }
+
+    public function metodo_pago(){
+        return $this->belongsTo(MetodoPago::class);
+    }
 }

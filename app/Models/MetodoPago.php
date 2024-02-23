@@ -15,4 +15,8 @@ class MetodoPago extends Model
         return $this->hasMany(Factura::class);
     }
 
+    public function ventas(){
+        return $this->hasMany(Venta::class);
+    }
+
 }

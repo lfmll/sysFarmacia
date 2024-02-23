@@ -87,19 +87,19 @@
                                 <div class="col-lg-2 col-md-2 col-xs-12">
                                     <div class="form-group">
                                         {!! Form::label('Cantidad', 'Cantidad') !!}
-                                        {!! Form::number('Cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
+                                        {!! Form::number('cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-xs-12">
                                     <div class="form-group">
                                         {!! Form::label('Precio', 'Precio') !!}
-                                        {!! Form::number('Precio', null, ['id'=>'pprecio','class'=>'form-control','placeholder'=>'0.00','min'=>'0']) !!}
+                                        {!! Form::number('precio', null, ['id'=>'pprecio','class'=>'form-control','placeholder'=>'0.00','min'=>'0']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-xs-12">
                                     <div class="form-group">
                                         {!! Form::label('Descuento', 'Descuento') !!}
-                                        {!! Form::number('Descuento', null, ['id'=>'pdescuento','class'=>'form-control','placeholder'=>'0.00','min'=>'0','max'=>'100']) !!}
+                                        {!! Form::number('descuento', null, ['id'=>'pdescuento','class'=>'form-control','placeholder'=>'0.00','min'=>'0','max'=>'100']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-sm-3 col-md-2 col-xs-12">
@@ -125,7 +125,7 @@
                                         <tr>
                                             <td colspan="4"></td>                                                                                
                                             <td>SubTotal: </td>                                 
-                                            <td><input type="number" name="eTotal" id="eSubTotal" class="form-control" readonly></td>
+                                            <td><input type="number" name="eSubTotal" id="eSubTotal" class="form-control" step="any" readonly></td>
                                         </tr>    
                                         <tr>
                                             <td colspan="4"></td>
@@ -135,12 +135,12 @@
                                         <tr>
                                             <td colspan="4"></td>
                                             <td>Total: </td>
-                                            <td><input type="number" name="eMontoGifcard" id="eMontoGifcard" class="form-control" value="0" min="0"></td>
+                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" value="0" min="0" step="any"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="4"></td>
                                             <td>Monto Total Subjeto IVA: </td>
-                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" readonly></td>
+                                            <td><input type="number" name="eTotalIVA" id="eTotalIVA" class="form-control" step="any" readonly></td>
                                         </tr>                                        
                                     </tfoot>
                                     <tbody>
@@ -163,40 +163,40 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago_efectivo','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
+                                                        {!! Form::number('ppago_efectivo', null, ['id'=>'ppago_efectivo','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Efectivo" id="chkefectivo" onchange="onchkefectivo()" checked>
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="1" id="chkefectivo" onchange="onchkefectivo()" checked>
                                                                 <label class="form-check-label" for="chkefectivo">
                                                                     Efectivo
                                                                 </label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_giftcard', null, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="giftcard" id="chkgiftcard" onchange="onchkgiftcard()">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="2" id="chkgiftcard" onchange="onchkgiftcard()">
                                                                 <label class="form-check-label" for="chkgiftcard">
                                                                     Giftcard
                                                                 </label>
                                                             </div> 
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_tarjeta', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chktarjeta" onchange="onchktarjeta()">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="3" id="chktarjeta" onchange="onchktarjeta()">
                                                                 <label class="form-check-label" for="chktarjeta">
                                                                     Tarjeta
                                                                 </label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('Pago', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_otro', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="Linkser" id="chkotros" onchange="onchkotros()">
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="4" id="chkotros" onchange="onchkotros()">
                                                                 <label class="form-check-label" for="chkotros">
                                                                     Otros
                                                                 </label>
@@ -230,7 +230,7 @@
                                     <div class="col-sm-4">
                                         <div class="float-right">
                                             {!! Form::label('Cambio', 'Cambio') !!}
-                                            {!! Form::number('Cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly', 'step'=>'any']) !!}
+                                            {!! Form::number('cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly', 'step'=>'any']) !!}
                                         </div>                                        
                                     </div>                                        
                                 </div>                                                                                                                                                                                                     
