@@ -173,7 +173,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_giftcard', null, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_giftcard', null, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="2" id="chkgiftcard" onchange="onchkgiftcard()">
@@ -183,7 +183,7 @@
                                                             </div> 
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_tarjeta', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_tarjeta', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="3" id="chktarjeta" onchange="onchktarjeta()">
@@ -193,7 +193,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_otro', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_otro', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="4" id="chkotros" onchange="onchkotros()">
@@ -230,7 +230,7 @@
                                     <div class="col-sm-4">
                                         <div class="float-right">
                                             {!! Form::label('Cambio', 'Cambio') !!}
-                                            {!! Form::number('cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'readonly', 'step'=>'any']) !!}
+                                            {!! Form::number('cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'step'=>'any']) !!}
                                         </div>                                        
                                     </div>                                        
                                 </div>                                                                                                                                                                                                     
@@ -605,6 +605,7 @@
             total=parseFloat(total)+parseFloat(subtotal[cont]);            
             document.getElementById('eSubTotal').value = total.toFixed(2);
             document.getElementById('eTotal').value = total.toFixed(2);
+            document.getElementById('eTotalIVA').value = total.toFixed(2); //Cambiar al saber el monto que cobrara IVA
             var fila='<tr class="selectd" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
             $('#detalles').append(fila);                                                              
         }
@@ -631,11 +632,14 @@
 
     function eliminar(index, cont){            
         total=parseFloat(total)-parseFloat(subtotal[cont]);
-        document.getElementById('eTotal').value = total.toFixed(2);
+        document.getElementById('eSubTotal').value = total.toFixed(2);
+        document.getElementById('eTotal').value = total.toFixed(2);        
         subtotal.splice(cont,1);        
+        limpiarMetodosPago();
         $('#fila'+index).remove();                
         $('#'+index).fadeIn('slow');
     }
+    
     function seleccionarCliente(){
         [].forEach.call(document.querySelectorAll('input[name="chkCliente"]:checked'), function(cb) {
             document.getElementById('ccliente').innerText=cb.value;            
@@ -669,6 +673,7 @@
     function onchkefectivo(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = false;
+        document.getElementById("pcambio").readOnly        = false;
         document.getElementById("ppago_giftcard").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = true;
         document.getElementById("ppago_otro").readOnly     = true;
@@ -676,6 +681,7 @@
     function onchkgiftcard(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = true;
+        document.getElementById("pcambio").readOnly        = true;
         document.getElementById("ppago_giftcard").readOnly = false;
         document.getElementById("ppago_tarjeta").readOnly  = true;
         document.getElementById("ppago_otro").readOnly     = true;
@@ -683,6 +689,7 @@
     function onchktarjeta(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = true;
+        document.getElementById("pcambio").readOnly        = true;
         document.getElementById("ppago_giftcard").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = false;
         document.getElementById("ppago_otro").readOnly     = true;
@@ -690,6 +697,7 @@
     function onchkotros(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = true;
+        document.getElementById("pcambio").readOnly        = true;
         document.getElementById("ppago_giftcard").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = true;
         document.getElementById("ppago_otro").readOnly     = false;
@@ -698,12 +706,13 @@
     function limpiarMetodosPago(){
         document.getElementById("ppago_efectivo").value = "";
         document.getElementById("ppago_giftcard").value = "";
-        document.getElementById("ppago_tarjeta").value = "";
-        document.getElementById("ppago_otro").value = "";
+        document.getElementById("ppago_tarjeta").value  = "";
+        document.getElementById("ppago_otro").value     = "";
+        document.getElementById("pcambio").value        = "";
     }
 
     function pagar(){
-        pago=document.getElementById('ppago').value;
+        pago=document.getElementById('ppago_efectivo').value;
         document.getElementById('pcambio').value = pago-total;
     }
 

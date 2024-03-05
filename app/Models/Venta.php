@@ -8,7 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Venta extends Model
 {
     protected $fillable=[
-        'comprobante','fecha_venta','pago_venta','cambio_venta','glosa','forma_pago'
+        'fecha_venta',
+        'subtotal',
+        'descuento',
+        'total',
+        'monto_giftcard',
+        'monto_pagar',
+        'importe_iva',
+        'cambio_venta',
+        'literal',
+        'estado'
     ];
     public function detalle_ventas(){
         return $this->hasMany(DetalleVenta::class);

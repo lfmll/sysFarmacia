@@ -9,6 +9,7 @@ use App\Models\Medicamento;
 use App\Models\Insumo;
 use App\Models\Producto;
 use App\Models\Cliente;
+use App\Models\Factura;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -65,13 +66,13 @@ class VentaController extends Controller
     public function store(Request $request)
     {   
         // dd($request);
-        try {
-            DB::beginTransaction();
+        try {            
+            DB::beginTransaction();            
             $venta = new Venta($request->all());            
             $venta->fecha_venta = Carbon::now('America/La_Paz')->toDateTimeString();
             $venta->subtotal = $request->eSubTotal;
             $venta->descuento = $request->eDescuento;
-            $venta->total = $request->etotal;
+            $venta->total = $request->eTotal;
             $venta->monto_giftcard = $request->eMontoGiftCard;
             
             $venta->importe_iva = $request->eTotalIVA;
@@ -127,6 +128,27 @@ class VentaController extends Controller
                 
                 $cont = $cont + 1;
             }
+
+            //Factura
+            $fecha_emision=Carbon::now('America/La_Paz')->format('YmdHisv');
+            $empresa = Empresa::first();
+            $agencia = Agencia::first();
+            $factura = new Factura($request->all());
+            $cantFactura = Factura::count();
+            $factura->nitEmisor = $empresa->nit;
+            $factura->razonSocialEmisor = $empresa->actividad;
+            $factura->municipio = $agencia->municipio;
+            $factura->telefono = $agencia->telefono;
+            $factura->numeroFactura = $cantFactura++;            
+            $factura->cuf =  $factura->generarCUF($empresa->nit, 
+                                                $fecha_emision,
+                                                $agencia->sucursal, 
+                                                $empresa->modalidad,
+                                                $empresa->emision,
+                                                $empresa->documento,
+                                                
+                                            );// llenar
+
             if ($request->Factura=="factura") {
                 $nit=$request->Nit;
                 $razon=$request->Razon;
