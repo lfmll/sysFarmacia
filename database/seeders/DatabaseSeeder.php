@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Caja;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
-        // \App\Models\User::factory(10)->create();
+        if (empty(Caja::count())) {
+            $this->call(AperturaCajaSeeder::class);
+        }
         $this->call(FormatoSeeder::class);
         $this->call(ViasSeeder::class);
         $this->call(DosisSeeder::class);
         $this->call(AccionSeeder::class);
+        $this->call(DocsectorSeeder::class);        
     }
 }

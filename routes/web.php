@@ -101,5 +101,5 @@ Route::get('importCliente',[ExcelController::class,'importCliente']);
 Route::post('importC',[ExcelController::class,'importC']);
 Route::get('generarXML/{id}',[FacturaController::class,'generarXML']);
 Route::get('enviarCorreo/{id}',[MensajeController::class,'enviarCorreo']);
-
+Route::get('crearRespaldo',[AjusteController::class,'crearRespaldo']);
 

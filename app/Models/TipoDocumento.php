@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class TipoDocumento extends Model
 {
     protected $fillable=[
-        'nombre'
+        'nombre',
+        'descripcion',
+        'tipo_documento'
     ];
 
     public function factura(){

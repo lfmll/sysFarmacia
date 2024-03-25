@@ -15,18 +15,18 @@ class CreateAjustesTable extends Migration
     {
         Schema::create('ajustes', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('cuis');
+            $table->string('cuis',50);
             $table->datetime('fecha_cuis');
-            $table->string('cuifd');
+            $table->string('cuifd',50);
             $table->datetime('fecha_cuifd');
             $table->string('driver',5);
-            $table->string('host');
+            $table->string('host',5);
             $table->string('port',5);
             $table->string('encryption',10);
-            $table->string('username');
-            $table->string('password');
-            $table->string('from');
-            $table->string('name')->nullable();
+            $table->string('username',50);
+            $table->string('password',50);
+            $table->string('from',50);
+            $table->string('name',50)->nullable();
             $table->timestamps();
         });
     }

@@ -189,7 +189,7 @@ class FacturaController extends Controller
         return ($touppercase) ? strtoupper($hexval):$hexval;
     }
     /**************************************
-     * Imprimir Factura
+     * Imprimir Factura XML
      **************************************/
     public function generarXML($idfactura){        
         $factura=Factura::find($idfactura);

@@ -140,13 +140,15 @@ class VentaController extends Controller
             $factura->municipio = $agencia->municipio;
             $factura->telefono = $agencia->telefono;
             $factura->numeroFactura = $cantFactura++;            
-            $factura->cuf =  $factura->generarCUF($empresa->nit, 
-                                                $fecha_emision,
-                                                $agencia->sucursal, 
-                                                $empresa->modalidad,
-                                                $empresa->emision,
-                                                $empresa->documento,
-                                                
+            $factura->cuf =  $factura->generarCUF($empresa->nit,    //$nit
+                                                $agencia->sucursal, //$sucursal
+                                                $fecha_emision,     //$fecha
+                                                $empresa->modalidad,//$modalidad
+                                                $empresa->emision,  //$tipo_emision
+                                                $empresa->documento,//$tipo_factura
+                                                                    //$tipo_documento_sector
+                                                                    //$nro_factura
+                                                                    //$pos
                                             );// llenar
 
             if ($request->Factura=="factura") {

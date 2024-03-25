@@ -26,21 +26,29 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <span style="font-size: 10px;"><b>CUIS (Código Único de Inicio Semanal)</b></span>
-                                        {{Form::text('cuis',$ajuste->cuis,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @if (!is_null($ajuste))
+                                            {{Form::text('cuis',$ajuste->cuis,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @endif
                                     </div>
                                     <div class="col-sm-6">
                                         <span style="font-size: 10px;"><b>Fecha Expiración</b></span>
-                                        {{Form::text('fecha_cuis',$ajuste->fecha_cuis,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @if (!is_null($ajuste))
+                                            {{Form::text('fecha_cuis',$ajuste->fecha_cuis,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <span style="font-size: 10px;"><b>CUIFD (Código Único de Facturación Diario)</b></span>
-                                        {{Form::text('cuifd',$ajuste->cuifd,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @if (!is_null($ajuste))
+                                            {{Form::text('cuifd',$ajuste->cuifd,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @endif
                                     </div>
                                     <div class="col-sm-6">
                                         <span style="font-size: 10px;"><b>Fecha Expiración</b></span>
-                                        {{Form::text('fecha_cuifd',$ajuste->fecha_cuifd,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @if (!is_null($ajuste))
+                                            {{Form::text('fecha_cuifd',$ajuste->fecha_cuifd,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                        @endif
                                     </div>
                                 </div>                                                                
                             </div>
@@ -154,19 +162,28 @@
                             <div class="card-header">
                                 <h4 class="card-title">Sectores</h4>
                             </div>
-                            <div class="card-body">
-                                <table style="boder-collapse: collapse; width:100%;">
+                            <div class="card-body">                                
+                                <table class="table table-bordered">
                                     <thead>
                                         <tr>
+                                            <th>No</th>
+                                            <th>Nombre</th>
                                             <th>Descripcion</th>
-                                            <th>Activo</th>
+                                            <th>Tipo Documento</th>
                                         </tr>                                        
                                     </thead>
                                     <tbody>
-                                        <td>...</td>
-                                        <td>...</td>                                        
+                                        @foreach($docsector as $doc)
+                                        <tr>
+                                            <td><span style="font-size: 10px;">{{$doc->codigo}}</span></td>
+                                            <td><span style="font-size: 10px;">{{$doc->nombre}}</span></td>
+                                            <td><span style="font-size: 10px;">{{$doc->descripcion}}</span></td>  
+                                            <td><span style="font-size: 10px;">{{$doc->tipo_documento}}</span></td>
+                                        </tr>
+                                        @endforeach                                    
                                     </tbody>
                                 </table>
+                                                               
                             </div>
                         </div>
                     </div>
@@ -257,7 +274,22 @@
                             </div>
                         </div>
                         {!! Form::close() !!}
-                    </div>                                        
+                    </div> 
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Crear Copia de Respaldo</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span>Crea una copia de respaldo de los usuarios, productos, clientes e historial de facturas, de modo que si pierde sus datos puede restaurarlos</span>
+                                </div>                                                            
+                                <div class="form-group">
+                                    <a href="{{url('crearRespaldo')}}"><button type="button" class="btn btn-primary btn-lg btn-block"><i class="fas fa-download"></i> Crear Copia de respaldo</button></a>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>                                       
                 </div>
             </div>
         </div>
@@ -272,9 +304,9 @@
     <style>
         div.card-body{
             overflow-y: auto;
-            white-space: nowrap;
+            height: 200px;
         }
-        
+        table {}
     </style>
 @stop
 @section('js')
