@@ -43,7 +43,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 {{Form::label('precio_compra','Precio Compra')}}
-                                {{Form::number('precio_compra',$lote->precio_compra,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Compra','step'=>'any']) }}
+                                {{Form::number('precio_compra',$lote->precio_compra,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Compra','step'=>'any','required']) }}
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -55,7 +55,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 {{Form::label('precio_venta','Precio Venta')}}
-                                {{Form::number('precio_venta',$lote->precio_venta,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Venta','step'=>'any','onchange'=>'porcentuarB(this.value)']) }}
+                                {{Form::number('precio_venta',$lote->precio_venta,['class'=>'form-control','min'=>'0', 'placeholder'=>'Precio Venta','step'=>'any','onchange'=>'porcentuarB(this.value)','required']) }}
                             </div> 
                         </div>
                          

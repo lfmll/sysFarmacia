@@ -84,7 +84,7 @@ class LoteController extends Controller
     {
         $lote=new Lote();
         $laboratorios=Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
-        $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial');
+        $medicamentos=Medicamento::orderBy('nombre_comercial','ASC')->pluck('nombre_comercial','id');
         
         return view('lote.create_medicamento',['lote'=>$lote])
                 ->with('medicamento_id',$medicamento_id)

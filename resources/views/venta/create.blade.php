@@ -4,28 +4,30 @@
 
 @section('content')
 @include('sweetalert::alert')
-
     {!! Form::open(['url' => '/venta', 'method' => 'POST']) !!}       
     {{Form::token()}}     
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title"><i class="fa fa-bookmark"></i> Venta</h3>    
+                    <h3 class="card-title" id="nombreDocSec"><i class="fa fa-bookmark"></i> {{$nombreDocSec->nombre}}</h3>                        
                 </div>   
                 <div class="card-body">                                                                                                                                                                                                     
                     <div class="card">
                         <div class="card-header">
+                            {{ Form::text('tdcodigoDocSec',$codigoDocSec->codigo, ['id'=>'tdcodigoDocSec', 'style'=>'display:none'])  }}                                    
+                            {{ Form::text('tdnombreDocSec', $nombreDocSec->nombre, ['id'=>'tdnombreDocSec','class'=>'form-control','style'=>'display:none']) }}
+                            {{ Form::text('tdtipoDoc',$tipoDoc->tipo_documento, ['id'=>'tdtipoDoc', 'style'=>'display:none'])  }}
                             <div class="row">
                                 <div class="col-lg-9">
-                                    <div class="form-group">
-                                        {!! Form::label('cliente','Nombre o Razon Social: ') !!}   
-                                        <div class="row">
+                                    <div class="form-group">                                                                                   
+                                        <div class="row">                                        
+                                        {!! Form::label('cliente','Nombre o Razon Social: ') !!}
                                             {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control','style'=>'width:88%;']) !!} 
                                             <a href="#modalBuscarCliente" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalBuscarCliente">
                                                 <i class="fa fa-lg fa-search"></i>
                                             </a>
                                         </div>   
-                                        {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente', 'style'=>'display:none']) !!}                                     
+                                        {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente', 'style'=>'display:none']) !!}
                                     </div>                                    
                                 </div>
                                 <div class="col-lg-3">
@@ -125,7 +127,7 @@
                                         <tr>
                                             <td colspan="4"></td>                                                                                
                                             <td>SubTotal: </td>                                 
-                                            <td><input type="number" name="eSubTotal" id="eSubTotal" class="form-control" step="any" readonly></td>
+                                            <td><input type="number" name="eSubTotal" id="eSubTotal" class="form-control" step="any" readonly required></td>
                                         </tr>    
                                         <tr>
                                             <td colspan="4"></td>
@@ -135,7 +137,7 @@
                                         <tr>
                                             <td colspan="4"></td>
                                             <td>Total: </td>
-                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" value="0" min="0" step="any"></td>
+                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" value="0" min="0" step="any" required></td>
                                         </tr>
                                         <tr>
                                             <td colspan="4"></td>
@@ -163,7 +165,7 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                        {!! Form::number('ppago_efectivo', null, ['id'=>'ppago_efectivo','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'onchange'=>'pagar()', 'step'=>'any']) !!}
+                                                        {!! Form::number('ppago_efectivo', 0, ['id'=>'ppago_efectivo','class'=>'form-control','value'=>'0','placeholder'=>'0.00','min'=>'0', 'onchange'=>'pagar()', 'step'=>'any']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="1" id="chkefectivo" onchange="onchkefectivo()" checked>
@@ -173,7 +175,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_giftcard', null, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_giftcard', 0, ['id'=>'ppago_giftcard','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="2" id="chkgiftcard" onchange="onchkgiftcard()">
@@ -183,7 +185,7 @@
                                                             </div> 
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_tarjeta', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_tarjeta', null, ['id'=>'ppago_tarjeta','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="3" id="chktarjeta" onchange="onchktarjeta()">
@@ -193,7 +195,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_otro', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'required', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_otro', null, ['id'=>'ppago_otro','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
                                                                 <input class="form-check-input" type="radio" name="forma_pago" value="4" id="chkotros" onchange="onchkotros()">
@@ -207,30 +209,10 @@
                                             </table>
                                         </div>                                        
                                     </div>
-                                    <!-- <div class="col">
-                                        <div class="form-group">                                    
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="fcheck" onclick="onFactura()"/>
-                                                <label>Facturar</label>
-                                            </div>    
-                                        </div>
-                                        <div class="form-group">
-                                            {!! Form::number('Nit', null, ['id'=>'fnit','class'=>'form-control','placeholder'=>'NIT', 'style'=>'display: none;']) !!}
-                                        </div>                                                                            
-                                        <div class="form-group">
-                                            {!! Form::number('Razon', null, ['id'=>'frazon','class'=>'form-control','placeholder'=>'Razón Social', 'style'=>'display: none;']) !!}    
-                                        </div>                                            
-                                        <div class="form-group">
-                                            {!! Form::number('Autorizacion', null, ['id'=>'fautorizacion','class'=>'form-control','placeholder'=>'Autorización', 'style'=>'display: none;']) !!}
-                                        </div>
-                                        <div class="form-group">
-                                            {!! Form::text('Factura', '', ['id'=>'ffactura','hidden']) !!}
-                                        </div>
-                                    </div>  -->
                                     <div class="col-sm-4">
                                         <div class="float-right">
                                             {!! Form::label('Cambio', 'Cambio') !!}
-                                            {!! Form::number('cambio', null, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'step'=>'any']) !!}
+                                            {!! Form::number('cambio', 0, ['id'=>'pcambio','class'=>'form-control','placeholder'=>'0.00','min'=>'0', 'step'=>'any']) !!}
                                         </div>                                        
                                     </div>                                        
                                 </div>                                                                                                                                                                                                     
@@ -606,7 +588,7 @@
             document.getElementById('eSubTotal').value = total.toFixed(2);
             document.getElementById('eTotal').value = total.toFixed(2);
             document.getElementById('eTotalIVA').value = total.toFixed(2); //Cambiar al saber el monto que cobrara IVA
-            var fila='<tr class="selectd" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
+            var fila='<tr class="detalle" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
             $('#detalles').append(fila);                                                              
         }
         limpiar();        
@@ -633,7 +615,8 @@
     function eliminar(index, cont){            
         total=parseFloat(total)-parseFloat(subtotal[cont]);
         document.getElementById('eSubTotal').value = total.toFixed(2);
-        document.getElementById('eTotal').value = total.toFixed(2);        
+        document.getElementById('eTotal').value = total.toFixed(2);
+        document.getElementById('eTotalIVA').value = total.toFixed(2);
         subtotal.splice(cont,1);        
         limpiarMetodosPago();
         $('#fila'+index).remove();                
@@ -704,16 +687,17 @@
     }
 
     function limpiarMetodosPago(){
-        document.getElementById("ppago_efectivo").value = "";
-        document.getElementById("ppago_giftcard").value = "";
-        document.getElementById("ppago_tarjeta").value  = "";
-        document.getElementById("ppago_otro").value     = "";
-        document.getElementById("pcambio").value        = "";
+        document.getElementById("ppago_efectivo").value = "0";
+        document.getElementById("ppago_giftcard").value = "0";
+        document.getElementById("ppago_tarjeta").value  = "0";
+        document.getElementById("ppago_otro").value     = "0";
+        document.getElementById("pcambio").value        = "0";
     }
 
     function pagar(){
         pago=document.getElementById('ppago_efectivo').value;
-        document.getElementById('pcambio').value = pago-total;
+        cambio = pago - total;
+        document.getElementById('pcambio').value = cambio.toFixed(2);
     }
 
     function descuentoTotal(val){

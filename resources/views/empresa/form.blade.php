@@ -9,14 +9,6 @@
         </div>
     </div>
     <div class="input-group mb-3">
-        {{Form::text('actividad',$empresa->actividad,['class'=>'form-control', 'placeholder'=>'Razon Social','required'])}}
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-first-aid"></span>
-            </div>
-        </div>
-    </div>
-    <div class="input-group mb-3">
         {{Form::text('nit',$empresa->nit,['class'=>'form-control','placeholder'=>'NIT'])}}
         <div class="input-group-append">
             <div class="input-group-text">
@@ -24,6 +16,14 @@
             </div>            
         </div>
     </div>
+    <div class="input-group mb-3">
+        {{Form::text('actividad',$empresa->actividad,['class'=>'form-control', 'placeholder'=>'Razon Social','required'])}}
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <span class="fas fa-first-aid"></span>
+            </div>
+        </div>
+    </div>    
     <div class="input-group mb-3">
         {{Form::text('correo',$empresa->correo,['class'=>'form-control', 'placeholder'=>'Correo'])}}    
         <div class="input-group-append">
