@@ -15,11 +15,12 @@ class CreateAgenciasTable extends Migration
     {
         Schema::create('agencias', function (Blueprint $table) {
             $table->smallIncrements('id');
+            $table->string('codigo',5);
             $table->string('nombre',50);
-            $table->string('direccion',50);
-            $table->string('telefono',10);
-            $table->string('ciudad',50);
+            $table->string('departamento',50);            
             $table->string('municipio',50);
+            $table->string('direccion',50);
+            $table->string('telefono',10);            
             $table->char('estado',1);
             $table->smallinteger('empresa_id')->unsigned();
             $table->timestamps();

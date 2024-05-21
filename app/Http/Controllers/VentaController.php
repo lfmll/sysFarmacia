@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Luecano\NumeroALetras\NumeroALetras;
+use GuzzleHttp\Client;
+use SoapClient;
 
 class VentaController extends Controller
 {
@@ -138,6 +140,45 @@ class VentaController extends Controller
 
             //Factura
             
+            // $client = new \SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl');
+            // $client = new SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl'); //SERVICIO DE OBTENCIÓN DE CÓDIGOS
+            // $client = new \SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionOperaciones?wsdl');
+            // $client = new \SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/ServicioFacturacionCompraVenta?wsdl');
+            
+            // $respuesta = $client->request('GET','https://pilotosiatservicios.impuestos.gob.bo/v2/verificarComunicacion?wsdl=');
+
+            // $parametros = [
+            //     'codigoAmbiente' => 2,
+            //     'codigoModalidad'   => 2,
+            //     'codigoPuntoVenta'  => 0,
+            //     'codigoSistema' => '7C49BFA4983BC9FAE824BA6',
+            //     'codigoSucursal'    => 0,                
+            //     'nit'   => '8928903012'                                              
+            // ];
+            $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzE1MjkxMjc3LCJpYXQiOjE3MTQ3MDA4NDcsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.pOg1A9PDr_k3Mv5FjRANPnTDL7iw58BcLZFDFHh76kd-zN8HNC4SZKtWmwtRMj_IX1IFlENlNwEjlfomq9W6WA';
+
+            $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v1/FacturacionCodigos?wsdl";
+
+            // $opts = array(
+            //         'http' => array(
+            //             'header' => "Content-Type: application/soap+xml\r\ncharset=utf-8\r\nAuthorization:".$token,
+            //         )
+            // );
+            
+            // $context = stream_context_create($opts);
+            
+            $client = new SoapClient($wsdl, [ 
+                'stream_context' => stream_context_create([ 
+                 'http'=> [ 
+                  'header' => "Authorization: Token $token"   
+                 ] 
+                ]) 
+            ]); 
+            $respons = $client->verificarComunicacion();
+
+            
+            dd($respons);
+    
             $tdcodigoDocSec = $request->get('tdcodigoDocSec');
             $fecha_emision=Carbon::now('America/La_Paz')->format('YmdHisv');
             $empresa = Empresa::first();
@@ -149,7 +190,8 @@ class VentaController extends Controller
             $factura->razonSocialEmisor = $empresa->actividad;
             $factura->municipio = $agencia->municipio;
             $factura->telefono = $agencia->telefono;
-            $factura->numeroFactura = $cantFactura++;            
+            $factura->numeroFactura = $cantFactura++; 
+            
             $factura->cuf =  $this->generarCUF(123456789, //$empresa->nit,    //$nit
                                                 0, //$agencia->id,       //$sucursal [0=Casa Matriz; 1=Sucursal 1,..etc.]
                                                 20190113163721231, //$fecha_emision,     //$fecha

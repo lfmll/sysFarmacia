@@ -284,8 +284,20 @@ class PDFController extends Controller
         
         $pdf=PDF::loadView('factura.factura_carta',['factura'=>$factura, 
                                                     'detalleFactura'=>$detalleFactura,
+                                                    'venta'=>$venta]);       
+        return $pdf->setPaper('letter','landscape')->stream(); 
+    }
+
+    public function facturaRollo($id)
+    {
+        $factura=Factura::find($id);
+        $detalleFactura=DetalleFactura::where('factura_id',$id)->get();
+        $venta=Venta::find($factura->venta_id);
+        
+        $pdf=PDF::loadView('factura.factura_rollo',['factura'=>$factura,
+                                                    'detalleFactura'=>$detalleFactura,
                                                     'venta'=>$venta]);
-        $pdf->setPaper('letter','landscape');
-        return $pdf->download('factura_carta.pdf');
+        
+        return $pdf->setPaper('B7','portrait')->stream();        
     }
 }

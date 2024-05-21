@@ -15,7 +15,8 @@ class CreatePuntoVentasTable extends Migration
     {
         Schema::create('punto_ventas', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('descripcion',50);
+            $table->string('codigo',5);
+            $table->string('nombre',50);
             $table->smallinteger('agencia_id')->unsigned();
             $table->smallinteger('user_id')->unsigned();
             $table->char('estado',1);

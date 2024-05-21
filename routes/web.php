@@ -93,6 +93,7 @@ Route::get('reporteCompraAnual',[PDFController::class,'reporteCompraAnual']);
 Route::get('reporteCierreAnterior',[PDFController::class,'reporteCierreAnterior']);
 Route::get('reporteLotesVencimiento',[PDFController::class,'reporteLotesVencimiento']);
 Route::get('facturaCarta/{id}',[PDFController::class,'facturaCarta']);
+Route::get('facturaRollo/{id}',[PDFController::class,'facturaRollo']);
 Route::get('importMedicamento',[ExcelController::class,'importMedicamento']);
 Route::post('importM',[ExcelController::class,'importM']);
 Route::get('formatoMedicamentos',[ExcelController::class,'formatoMedicamentos']);

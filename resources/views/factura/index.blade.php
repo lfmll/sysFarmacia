@@ -38,6 +38,7 @@
                                     <td>
                                         <a href="#" class="btn btn-warning btn-sm"><i class="fa fa-laptop"></i> Ver SIAT</a>
                                         <a href="{{url('facturaCarta/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF</a>
+                                        <a href="{{url('facturaRollo/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF Rollo</a>
                                         <a href="{{url('generarXML/'.$fact->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
                                         <a href="{{url('enviarCorreo/'.$fact->id)}}" class="btn btn-info btn-sm" onClick="loading()"><i class="fa fa-envelope"></i> Notificacion</a>
                                         <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Anular</a>

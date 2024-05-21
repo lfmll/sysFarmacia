@@ -16,7 +16,7 @@
                         <thead>
                             <tr>
                                 <td>Fecha Venta</td>            
-                                <td>Forma Pago</td> 
+                                <!-- <td>Forma Pago</td>  -->
                                 <td>Total</td>                                                 
                                 <td>Acciones</td>
                             </tr>
@@ -25,7 +25,7 @@
                             @foreach($ventas as $venta)
                             <tr>
                                 <td>{{$venta->fecha_venta}}</td>
-                                <td>{{$venta->metodo_pago->nombre}}</td>
+                                
                                 <td>{{$venta->total}}</td>
                                 <td>                                
                                     <a href="{{url('/venta/'.$venta->id)}}" class="btn btn-info btn-sm"><i class="fa fa-bars"></i> Detalle</a>
