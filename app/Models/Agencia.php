@@ -9,17 +9,22 @@ class Agencia extends Model
 {
     use HasFactory;
 
-    protected $fillable=[
+    protected $fillable=[        
+        'codigo',
         'nombre',
+        'departamento',
+        'municipio',
         'direccion',
         'telefono',
-        'ciudad',
-        'municipio',
         'estado',
         'empresa_id'
     ];
 
     public function puntoventas(){
         return $this->hasMany(PuntoVenta::class);
+    }
+
+    public function empresa(){
+        return $this->belongsTo(Empresa::class);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCatalogosTable extends Migration
+class CreateParametrosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateCatalogosTable extends Migration
      */
     public function up()
     {
-        Schema::create('catalogos', function (Blueprint $table) {
+        Schema::create('parametros', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('codigo_actividad',10);
-            $table->string('codigo_producto',10);
-            $table->string('descripcion_producto',500);
+            $table->smallInteger('codigo_clasificador');
+            $table->string('descripcion',250);
+            $table->smallInteger('tipo_parametro_id')->unsigned();
             $table->smallInteger('cuis_id')->unsigned();
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ class CreateCatalogosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('catalogos');
+        Schema::dropIfExists('parametros');
     }
 }

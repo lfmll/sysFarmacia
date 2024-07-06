@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Empresa;
+use App\Models\Agencia;
+use App\Models\PuntoVenta;
+use App\Models\Ajuste;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmpresaController extends Controller
 {
@@ -24,7 +29,7 @@ class EmpresaController extends Controller
      */
     public function create()
     {
-        $empresa=new Empresa();        
+        $empresa=new Empresa();
         return view('empresa.create',['empresa' => $empresa]);       
     }
 
@@ -35,31 +40,65 @@ class EmpresaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $hasFile=$request->hasFile('cover') && $request->cover->isValid();
-        $empresa= new Empresa($request->all());
-        $empresa->nombre = $request->nombre;
-        $empresa->nit = $request->nit;
-        $empresa->correo = $request->correo;
-        $empresa->actividad = $request->actividad;
-        $empresa->documento = $request->documento;
-        $empresa->modalidad = $request->modalidad;
-        $empresa->emision = $request->emision;
-        $empresa->cuis =  $request->cuis;
-        $empresa->vigencia_cuis = $request->vigencia_cuis;
-        
-        if ($hasFile) {
-            $extension=$request->cover->extension();
-            $empresa->extension=$extension;
-        }        
-        if ($empresa->save()) {
+    {        
+        try {
+            DB::beginTransaction();
+            $hasFile=$request->hasFile('cover') && $request->cover->isValid();
+            $empresa= new Empresa($request->all());
+            $empresa->nombre = $request->nombre;
+            $empresa->nit = $request->nit;
+            $empresa->correo = $request->correo;
+            if ($hasFile) {
+                $extension=$request->cover->extension();
+                $empresa->extension=$extension;
+            }
+            $empresa->sistema = $request->sistema;
+            $empresa->codigo_sistema = $request->codigo_sistema;
+            $empresa->version = $request->version;
+            $empresa->modalidad = $request->modalidad;
+            $empresa->estado = 'A';
+            $empresa->save();
             if ($hasFile) {
                 $request->cover->move('imagen',"$empresa->id.$extension");
-            }
-            return redirect('/home');
+            }                
+            $sucursal = new Agencia;
+            $sucursal->codigo = 0;
+            $sucursal->nombre = "Casa Matriz";
+            $sucursal->departamento = $request->departamento;
+            $sucursal->municipio = $request->municipio;
+            $sucursal->direccion = $request->direccion;
+            $sucursal->telefono = $request->telefono;
+            $sucursal->estado = 'A';
+            $sucursal->empresa_id = $empresa->id;
+            $sucursal->save();
+            
+            $idUsuario = Auth::id();
+            
+            $puntoventa = new PuntoVenta;
+            $puntoventa->codigo = 0;
+            $puntoventa->nombre = "Por defecto";            
+            $puntoventa->agencia_id = $sucursal->id;
+            $puntoventa->user_id = $idUsuario;
+            $puntoventa->estado = "A";
+            $puntoventa->save();                
+
+            $ajuste = new Ajuste;
+            $ajuste->username = $request->correo;
+            $ajuste->punto_venta_id = $puntoventa->id;
+            $ajuste->save();
+
+            DB::commit();
+                            
+        } catch (Exception $e) {            
+            DB::rollBack();
+        }   
+
+        if ($ajuste->save() && $puntoventa->save() && $sucursal->save() && $empresa->save()) {
+            return redirect('/')->with('toast_success','Datos de Empresa registrados');
         } else {
-            return view('empresa.create',['empresa'=>$empresa]);
+            return view('empresa.create')->with('toast_error',"Error al registrar");
         }
+                           
     }
 
     /**

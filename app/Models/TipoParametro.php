@@ -5,17 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Empresa extends Model
+class TipoParametro extends Model
 {
     protected $fillable=[
-        'nombre',
-        'nit',
-        'correo',
-
-        
+        'nombre'
     ];
 
-    public function agencias(){
-        return $this->hasMany(Agencia::class);
+    public function parametros(){
+        return $this->hasMany(Parametro::class);
     }
 }

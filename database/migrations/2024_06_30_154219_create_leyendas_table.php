@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTipoDocumentosTable extends Migration
+class CreateLeyendasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateTipoDocumentosTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipo_documentos', function (Blueprint $table) {
+        Schema::create('leyendas', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('codigo',3);
-            $table->string('nombre',100);
-            $table->string('descripcion',350);
-            $table->string('tipo_documento',50);
+            $table->string('codigo_actividad',10);
+            $table->string('descripcion_leyenda',500);
+            $table->smallInteger('cuis_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateTipoDocumentosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipo_documentos');
+        Schema::dropIfExists('leyendas');
     }
 }

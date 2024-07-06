@@ -57,4 +57,5 @@ class Factura extends Model
     public function tipoDocumento(){
         return $this->belongsTo(TipoDocumento::class);
     }
+    
 }

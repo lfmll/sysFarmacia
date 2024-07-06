@@ -62,8 +62,10 @@ class Kernel extends HttpKernel
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'aperturar' => \App\Http\Middleware\ControlAccesoArqueoMiddleware::class,
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,        
         'sweetalert' => \UxWeb\SweetAlert\ConvertMessagesIntoSweetAlert::class,
+        //Mis Middleware
+        'aperturar' => \App\Http\Middleware\ControlAccesoArqueoMiddleware::class,
+        'iniciar' => \App\Http\Middleware\ControlAccesoEmpresaMiddleware::class,
     ];
 }

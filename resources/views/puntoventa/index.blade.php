@@ -16,7 +16,7 @@
                         <thead>
                             <tr>                            
                                 <td>ID</td>    
-                                <td>Descripcion</td>            
+                                <td>Nombre</td>            
                                 <td>Sucursal</td>
                                 <td>Empleado</td>
                             </tr>
@@ -25,12 +25,9 @@
                             @foreach($puntoventas as $puntoventa)
                             <tr>
                                 <td>{{$puntoventa->id}}</td>
-                                <td>{{$puntoventa->descripcion}}</td>
-                                <td>{{$puntoventa->agencia_id->nombre}}</td>
-                                <td>{{$puntoventa->user_id->name}}</td>
-                                <td>
-                                    <!-- <a href="{{url('/agente/'.$agente->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Editar</a> -->
-                                </td>
+                                <td>{{$puntoventa->nombre}}</td>
+                                <td>{{$puntoventa->agencia->nombre}}</td>
+                                <td>{{$puntoventa->user->name}}</td>
                             </tr>
                             @endforeach
                         </tbody>

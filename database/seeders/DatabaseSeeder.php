@@ -21,6 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ViasSeeder::class);
         $this->call(DosisSeeder::class);
         $this->call(AccionSeeder::class);
-        $this->call(DocsectorSeeder::class);        
+        $this->call(TipoParametroSeeder::class);
     }
 }

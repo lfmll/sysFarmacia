@@ -1,80 +1,144 @@
-{!! Form::open(['url' => $url, 'method' => $method, 'files' => true]) !!}
-<div class="card-body">
-    <div class="input-group mb-3">
-        {{Form::text('nombre',$empresa->nombre,['class'=>'form-control', 'placeholder'=>'Nombre de Farmacia','required'])}}
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-first-aid"></span>
+{!! Form::open(['url' => $url, 'method' => $method, 'files' => true, 'id' => 'regForm']) !!}
+    <div class="tab">        
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-11">
+                <h5 class="input-group mb-12"><i class="fas fa-fw fa-hospital"></i>Registro Inicial de Farmacia</h5>
             </div>
         </div>
-    </div>
-    <div class="input-group mb-3">
-        {{Form::text('nit',$empresa->nit,['class'=>'form-control','placeholder'=>'NIT'])}}
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-id-card"></span>
-            </div>            
-        </div>
-    </div>
-    <div class="input-group mb-3">
-        {{Form::text('actividad',$empresa->actividad,['class'=>'form-control', 'placeholder'=>'Razon Social','required'])}}
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-first-aid"></span>
+        <div class="input-group mb-3">
+            {{Form::text('nombre',null,['class'=>'form-control', 'placeholder'=>'Nombre/Razon Social','required'])}}
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-first-aid"></span>
+                </div>
             </div>
         </div>
-    </div>    
-    <div class="input-group mb-3">
-        {{Form::text('correo',$empresa->correo,['class'=>'form-control', 'placeholder'=>'Correo'])}}    
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-envelope"></span>
+        <div class="input-group mb-3">
+            {{Form::text('nit',null,['class'=>'form-control','placeholder'=>'NIT','required'])}}
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-id-card"></span>
+                </div>            
+            </div>
+        </div>       
+        <div class="input-group mb-3">
+            {{Form::text('correo',null,['class'=>'form-control', 'placeholder'=>'Correo','required'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-envelope"></span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="input-group mb-3">
-        {{Form::select('documento', ['FACTURA COMPRA-VENTA'=>'FACTURA COMPRA-VENTA',
-                                    'FACTURA COMERCIAL DE EXPORTACION'=>'FACTURA COMERCIAL DE EXPORTACION',
-                                    'FACTURA DE SEGUROS'=>'FACTURA DE SEGUROS',
-                                    'FACTURA COMPRA VENTA BONIFICACIONES'=>'FACTURA COMPRA VENTA BONIFICACIONES'],$empresa->documento,['class'=>'form-control', 'placeholder'=>'Documento de Emision', 'min'=>'0'])}}
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-file-alt"></span>
+        <div class="input-group mb-3">
+            {{Form::text('telefono',null,['class'=>'form-control', 'placeholder'=>'Teléfono','required'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-phone"></span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="input-group mb-3">
-    {{Form::text('modalidad', $empresa->modalidad,['class'=>'form-control', 'placeholder'=>'COMPUTARIZADA EN LINEA', 'readonly'=>'true'])}}    
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-inbox"></span>
+        <div class="input-group mb-4">
+            {{Form::select('departamento', ['Beni'=>'Beni', 
+                                        'Cochabamba'=>'Cochabamba',
+                                        'Chuquisaca'=>'Chuquisaca',
+                                        'La Paz'=>'La Paz',
+                                        'Oruro'=>'Oruro',
+                                        'Pando'=>'Pando',
+                                        'Potosí'=>'Potosí',
+                                        'Santa Cruz'=>'Santa Cruz',
+                                        'Tarija'=>'Tarija'], null, ['class'=>'form-control','placeholder'=>'Departamento','required'])}}
+                                        <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-align-justify"></span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="input-group mb-3">
-    {{Form::number('cuis', $empresa->cuis,['class'=>'form-control', 'placeholder'=>'CUIS'])}}    
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-money-check"></span>
+        <div class="input-group mb-3">
+            {{Form::text('municipio',null,['class'=>'form-control', 'placeholder'=>'Municipio','required'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-home"></span>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="input-group mb-3">
-    {{Form::date('vigencia_cuis', $empresa->vigencia_cuis,['class'=>'form-control', 'placeholder'=>'Vigencia CUIS'])}}    
-    </div>
-    <div class="input-group mb-3">
-        {{Form::file('cover')}}
-    </div>
-</div>
-<div class="row">
-    <div class="col-8">
+        <div class="input-group mb-3">
+            {{Form::text('direccion',null,['class'=>'form-control', 'placeholder'=>'Dirección','required'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-map-marker-alt"></span>
+                </div>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            {{Form::file('cover')}}
+        </div>        
+        <hr>
+        <div class="input-group mb-2">
+            <h6 class="input-group mb-12"><i class="fas fa-fw fa-desktop"></i> Sistema</h6>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group mb-3">
+                    {{Form::text('sistema', $empresa->sistema,['class'=>'form-control', 'placeholder'=>'Nombre de Sist.'])}}    
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-desktop"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                {{Form::text('version', $empresa->version,['class'=>'form-control', 'placeholder'=>'Version'])}}            
+            </div>
+        </div>
         
+        <div class="input-group mb-3">
+        {{Form::text('codigo_sistema', $empresa->codigo_sistema,['class'=>'form-control', 'placeholder'=>'Codigo Sistema'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-code"></span>
+                </div>
+            </div>
+        </div> 
+        <div class="input-group mb-3">
+        {{Form::select('modalidad', ['1'=>'Electronica en Linea','2'=>'Computarizada en Linea'], '2', ['class'=>'form-control', 'readonly'=>'true'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-inbox"></span>
+                </div>
+            </div>
+        </div>                
     </div>
-    <div class="col-4">
-        <button type=submit class="btn-flat btn-primary">Aceptar
-            <span class="fas fa-sign-in-alt"></span>
-        </button>
+    <div class="tab">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-11">
+                <h5 class="input-group mb-12"><i class="fas fa-fw fa-cogs"></i> Asociar Sistema</h5>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            {{Form::text('token', null,['class'=>'form-control', 'placeholder'=>'Token Delegado'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-laptop-code"></span>
+                </div>
+            </div>
+        </div> 
     </div>
-</div>
+    <div class="col-md-12" style="overflow:auto;">
+        <div class="btn-group" style="float:right;">
+            <button type="button" class="form-control btn btn-default" id="prevBtn" onclick="nextPrev(-1)">Atras</button>
+            <button type="button" class="form-control btn btn-success" id="nextBtn" onclick="nextPrev(1)">Siguiente</button>
+        </div>
+    </div>
+    
+    
+    <!-- Circles which indicates the steps of the form: -->
+    <div class="col-md-12" style="text-align:center;margin-top:40px;">
+        <span class="step"></span>
+        <span class="step"></span>
+    </div>
+    
 
 {!! Form::close() !!}

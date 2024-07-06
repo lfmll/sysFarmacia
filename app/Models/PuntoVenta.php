@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class PuntoVenta extends Model
 {
     protected $fillable=[
-        'descripcion',
+        'codigo',
+        'nombre',
         'agencia_id',
         'user_id',
         'estado'
@@ -17,5 +18,17 @@ class PuntoVenta extends Model
     public function agencia(){
         return $this->belongsTo(Agencia::class);
     }
+
+    public function ajustes(){
+        return $this->hasMany(Ajuste::class);
+    }
+
+    public function cuis(){
+        return $this->hasMany(Cuis::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }    
 
 }

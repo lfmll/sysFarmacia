@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use RealRashid\SweetAlert\Facades\Alert;
+use SoapClient;
 
 class CajaController extends Controller
 {
@@ -48,6 +49,40 @@ class CajaController extends Controller
      */
     public function store(Request $request)
     {
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+        $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
+
+        $opts = array(
+            'http'=> array(
+                'header' => "apikey: TokenApi $token",
+            )
+        );
+        
+        $context = stream_context_create($opts);
+        
+        $parametros = array(
+            'SolicitudCuis' => array(
+                'codigoAmbiente' => 2, 
+                'codigoModalidad' => 2,
+                'codigoPuntoVenta' => 0,
+                'codigoSistema' => '7C49BFA4983BC9FAE824BA6',
+                'codigoSucursal' => 0,
+                'nit' => 8928903012
+            )            
+        );
+
+        $client = new SoapClient($wsdl, [ 
+            'stream_context' => $context,
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,                  
+        ]);
+        // $parametros = new \SoapParam($parametros, 'SolicitudCuis');
+        
+        $respons = $client->cuis($parametros);
+        // $client->__soapCall('cuis', array('SolicitudCuis' => $params), array(), null, $outputHeaders);
+        // $client->__soapCall('cuis',$parametros);
+        dd($respons->RespuestaCuis->codigo);
+
         $caja = new Caja($request->all());
         $caja->fecha = $request->fecha;
         

@@ -256,6 +256,23 @@ return [
         ],        
         ['header' => 'Módulos'],
         [
+            'text' => 'Empresa',
+            'url'  => '/empresa',
+            'icon' => 'fas fa-fw fa-hospital',
+            'submenu' => [
+                [
+                    'text'  =>  'Sucursales',
+                    'url'   =>  '/agencia',
+                    'icon'  =>  'fas fa-fw fa-building',
+                ],
+                [
+                    'text'  =>  'Puntos de Venta',
+                    'url'   =>  '/puntoventa',
+                    'icon'  =>  'fas fa-fw fa-cash-register',
+                ],
+            ]
+        ],
+        [
             'text' => 'Clientes',
             'url'  => '/cliente',
             'icon' => 'fas fa-fw fa-user',
@@ -265,7 +282,7 @@ return [
             'text'        => 'Farmacología',
             'icon_color'  => 'cyan',
             'icon'        => 'fas fa-fw fa-prescription-bottle-alt',
-            'submenu' => [
+            'submenu' => [                
                 [
                     'text' => 'Medicamentos',
                     'url'  => '/medicamento',

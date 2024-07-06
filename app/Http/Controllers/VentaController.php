@@ -155,25 +155,25 @@ class VentaController extends Controller
             //     'codigoSucursal'    => 0,                
             //     'nit'   => '8928903012'                                              
             // ];
-            $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzE1MjkxMjc3LCJpYXQiOjE3MTQ3MDA4NDcsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.pOg1A9PDr_k3Mv5FjRANPnTDL7iw58BcLZFDFHh76kd-zN8HNC4SZKtWmwtRMj_IX1IFlENlNwEjlfomq9W6WA';
-
-            $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v1/FacturacionCodigos?wsdl";
-
-            // $opts = array(
-            //         'http' => array(
-            //             'header' => "Content-Type: application/soap+xml\r\ncharset=utf-8\r\nAuthorization:".$token,
-            //         )
-            // );
+            $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
             
-            // $context = stream_context_create($opts);
+
+            // $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v1/FacturacionCodigos?wsdl";
+            $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionOperaciones?wsdl";
+
+            $opts = array(
+                'http'=> array(
+                    'header' => "apikey: TokenApi $token",
+                )
+            );
+            
+            $context = stream_context_create($opts);
             
             $client = new SoapClient($wsdl, [ 
-                'stream_context' => stream_context_create([ 
-                 'http'=> [ 
-                  'header' => "Authorization: Token $token"   
-                 ] 
-                ]) 
-            ]); 
+                'stream_context' => $context,
+                'cache_wsdl' => WSDL_CACHE_NONE,
+                'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,                  
+            ]);
             $respons = $client->verificarComunicacion();
 
             

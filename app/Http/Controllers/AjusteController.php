@@ -9,11 +9,27 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use ZipArchive;
 use PDO;
-
 use App\Models\Medida;
+use App\Models\Empresa;
+use App\Models\Agencia;
+use App\Models\PuntoVenta;
+use App\Models\Cuis;
+use App\Models\Cufd;
+use App\Models\Parametro;
+use App\Models\TipoParametro;
+use App\Models\Codigo;
+use App\Models\Leyenda;
+use App\Models\Catalogo;
+use App\Models\ActividadDocumento;
+use Illuminate\Support\Facades\Auth;
+use SoapClient;
 
 class AjusteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -22,9 +38,42 @@ class AjusteController extends Controller
     public function index()
     {
         $ajustes = Ajuste::first();
-        $docsector = TipoDocumento::all();
-        return view('ajuste.index',['ajuste'=>$ajustes, 
-                                    'docsector'=>$docsector]);
+        $userId = Auth::id();
+        $empresa = Empresa::where('estado','A')->first();
+        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+        $puntoVenta = PuntoVenta::where('user_id',$userId)
+                                ->where('agencia_id',$sucursal->id)
+                                ->first();
+        $cuis = Cuis::where('estado', 'A')
+                    ->where('punto_venta_id',$puntoVenta->id)
+                    ->first(); 
+        $tipo_parametro = TipoParametro::all();                         
+        if (is_null($cuis)) {
+            $cufd = null;
+            $parametros = null;
+            $actividades = null;
+            $leyendas = null;
+            $catalogos = null;
+            $actividad_documentos = null;
+        } else {
+            $cufd = Cufd::where('estado','A')
+                    ->where('cuis_id',$cuis->id)
+                    ->first();
+            $parametros = Parametro::where('cuis_id',$cuis->id)->get();        
+            $actividades = Codigo::where('cuis_id',$cuis->id)->get();          
+            $leyendas = Leyenda::where('cuis_id',$cuis->id)->get();
+            $catalogos = Catalogo::where('cuis_id',$cuis->id)->get();
+            $actividad_documentos = ActividadDocumento::where('cuis_id',$cuis->id)->get();
+        }
+        return view('ajuste.index',['ajuste'=>$ajustes])
+                ->with('cuis',$cuis)
+                ->with('cufd',$cufd)
+                ->with('parametros',$parametros)
+                ->with('tipo_parametro',$tipo_parametro)
+                ->with('actividades',$actividades)
+                ->with('leyendas',$leyendas)
+                ->with('catalogos',$catalogos)
+                ->with('actividad_documentos',$actividad_documentos);
     }
 
     /**
@@ -116,6 +165,166 @@ class AjusteController extends Controller
     {
         //
     }
+    public function obtenerCuis()
+    {
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+        $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
+        $userId = Auth::id();
+        $empresa = Empresa::where('estado','A')->first();
+        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+        $puntoVenta = PuntoVenta::where('user_id',$userId)
+                                ->where('agencia_id',$sucursal->id)
+                                ->first();                
+        $codigoModalidad = $empresa->modalidad;
+        $codigoSistema = $empresa->codigo_sistema;
+        $nit = $empresa->nit;
+        $codigoSucursal = $sucursal->codigo;
+        $codigoPuntoVenta = $puntoVenta->codigo;
+        $clienteCuis = Ajuste::consumoSIAT($token,$wsdlCodigos);
+        if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
+        {
+            $parametrosCUIS = array(
+                'SolicitudCuis' => array(
+                    'codigoAmbiente' => 2, 
+                    'codigoModalidad' => $codigoModalidad,
+                    'codigoPuntoVenta' => $codigoPuntoVenta,
+                    'codigoSistema' => $codigoSistema,
+                    'codigoSucursal' => $codigoSucursal,
+                    'nit' => $nit,
+                )            
+            );            
+            $responseCuis = Cuis::soapCuis($clienteCuis, $parametrosCUIS, $puntoVenta->id);
+            if (($responseCuis->RespuestaCuis->transaccion==true) || ($responseCuis->RespuestaCuis->mensajesList->codigo == 980)) 
+            {
+                return redirect('/ajuste')->with('toast_success',$responseCuis->RespuestaCuis->mensajesList->descripcion);
+            } else {
+                return redirect('/ajuste')->with('toast_error',$responseCuis->RespuestaCuis->mensajesList->descripcion);
+            }
+            
+        } else {
+            return redirect('/ajuste')->with('toast_error', $responseCuis->RespuestaComunicacion->mensajesList->descripcion);
+        }
+    }
+
+    public function obtenerCufd()
+    {        
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+        $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
+        $userId = Auth::id();
+        $empresa = Empresa::where('estado','A')->first();
+        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+        $puntoVenta = PuntoVenta::where('user_id',$userId)
+                                ->where('agencia_id',$sucursal->id)
+                                ->first();
+        $cuis = Cuis::where('estado', 'A')
+                    ->where('punto_venta_id',$puntoVenta->id)
+                    ->first();
+        $codigoModalidad = $empresa->modalidad;
+        $codigoSistema = $empresa->codigo_sistema;
+        $nit = $empresa->nit;
+        $codigoSucursal = $sucursal->codigo;
+        $codigoPuntoVenta = $puntoVenta->codigo;
+        $codigoCuis = $cuis->codigo_cuis;
+        $clienteCufd = Ajuste::consumoSIAT($token,$wsdlCodigos);
+        if ($clienteCufd->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
+        {
+            $parametrosCUFD = array(
+                'SolicitudCufd' => array(
+                    'codigoAmbiente' => 2, 
+                    'codigoModalidad' => $codigoModalidad,
+                    'codigoPuntoVenta' => $codigoPuntoVenta,
+                    'codigoSistema' => $codigoSistema,
+                    'codigoSucursal' => $codigoSucursal,
+                    'cuis' => $codigoCuis,
+                    'nit' => $nit
+                )
+            );            
+            $responseCufd = Cufd::soapCufd($clienteCufd, $parametrosCUFD, $cuis->id);
+            if ($responseCufd->RespuestaCufd->transaccion==true) 
+            {
+                return redirect('/ajuste')->with('toast_success',"CUFD Actualizado");
+            } else {
+                return redirect('/ajuste')->with('toast_error',$responseCufd->RespuestaCufd->mensajesList->descripcion);
+            }
+            
+        } else {
+            return redirect('/ajuste')->with('toast_error', $responseCufd->RespuestaComunicacion->mensajesList->descripcion);
+        }
+    }
+
+    public function sincronizar()
+    {        
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+                
+        //PASO 1: Consumir servicios SIAT Sincronizacion  
+        $wsdlSincronizacion = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+        
+        $userId = Auth::id();
+        $empresa = Empresa::where('estado','A')->first();
+        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+        $puntoVenta = PuntoVenta::where('user_id',$userId)
+                                ->where('agencia_id',$sucursal->id)
+                                ->first();
+        $cuis = Cuis::where('estado', 'A')
+                    ->where('punto_venta_id',$puntoVenta->id)
+                    ->first(); 
+        if (!is_null($cuis)) {
+            $codigoModalidad = $empresa->modalidad;
+            $codigoSistema = $empresa->codigo_sistema;
+            $nit = $empresa->nit;
+            $codigoSucursal = $sucursal->codigo;
+            $codigoPuntoVenta = $puntoVenta->codigo;        
+            $codigoCuis = $cuis->codigo_cuis;                           
+            // PASO 2: Consumir Servicios de Sincronizacion
+            $clienteSincronizacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
+            
+            //PASO 2.1: Verificar Comunicacion
+            if ($clienteSincronizacion->verificarComunicacion()->return->mensajesList->codigo == "926") 
+            {
+                //Comunicacion Exitosa            
+                //Iniciar Parametros
+                $parametrosSincronizacion = array(
+                    'SolicitudSincronizacion' => array(
+                        'codigoAmbiente' => 2, 
+                        'codigoPuntoVenta' => $codigoPuntoVenta,
+                        'codigoSistema' => $codigoSistema,
+                        'codigoSucursal' => $codigoSucursal,
+                        'cuis' => $codigoCuis,
+                        'nit' => $nit
+                    )
+                );
+
+                //PARAMETROS
+                $responseParametros = Parametro::soapParametro($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);            
+                                        
+                //SECTOR
+                //Sincronizar Actividades
+                $responseActividades = Codigo::soapActividad($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);
+
+                //Sincronizar Leyendas
+                $responseLeyendas = Leyenda::soapLeyenda($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);            
+                
+                //Sincronizar Catalogos (Productos/Servicios)
+                $responseCatalogos = Catalogo::soapCatalogo($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);
+                
+                //Sincronizar Actividad Documento Sector
+                $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);
+
+                // $responseFechaHora = $clienteSincronizacion->sincronizarFechaHora($parametrosSincronizacion);
+                // $fechaHora = $responseFechaHora->RespuestaFechaHora->fechaHora;
+                            
+
+                return redirect('/ajuste')->with('toast_succes', 'Sincronizacion Completada');
+                
+            } else {
+                return redirect('/ajuste')->with('toast_error','Error en el consumo de Servicios de Sincronizacion');
+            }
+        } else {
+            return redirect('/ajuste')->with('toast_error','Error, el CUIS no se encuentra registrado o esta desactualizado');
+        }
+                    
+                                      
+    }
 
     public function crearRespaldo()
     {
@@ -187,12 +396,6 @@ class AjusteController extends Controller
             $zip->addFromString('backup_archivo.sql', $script, ZipArchive::FL_OVERWRITE);
             $zip->close();
             
-            // header("Content-type: application/zip"); 
-            // header("Content-Disposition: attachment; filename=$zipFileName");
-            // header("Content-length: " . filesize($zipFileName));
-            // header("Pragma: no-cache"); 
-            // header("Expires: 0"); 
-            // readfile("$zipFileName");
             return redirect('/ajuste')->with('toast_success','Respaldo guardado en: '.$path);
         } else {
             return redirect('/ajuste')->with('toast_error','Error al abrir Zip');                           

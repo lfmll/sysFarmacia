@@ -19,6 +19,11 @@ class CreateEmpresasTable extends Migration
             $table->string('nit',25);
             $table->string('correo',50);            
             $table->string('extension',5)->nullable();
+            $table->string('sistema',50)->nullable();
+            $table->string('codigo_sistema',25)->nullable();
+            $table->string('version',10)->nullable();
+            $table->char('modalidad',1)->nullable();
+            $table->char('estado',1)->nulllable();
             $table->timestamps();
         });
     }

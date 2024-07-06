@@ -40,7 +40,7 @@ use App\Http\Controllers\AjusteController;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('iniciar');
 // Route::get('charts',[App\Http\Controllers\HomeController::class,'index'])->name('home');
 Route::resource('empresa',EmpresaController::class);
 Route::resource('laboratorio',LaboratorioController::class);
@@ -57,10 +57,12 @@ Route::resource('compra', CompraController::class)->middleware('aperturar');
 Route::resource('venta', VentaController::class)->middleware('aperturar');
 Route::resource('factura', FacturaController::class);
 Route::resource('cliente', ClienteController::class);
-Route::resource('catalogo', CatalogoController::class);
 Route::resource('agencia', AgenciaController::class);
 Route::resource('puntoventa', PuntoVentaController::class);
 Route::resource('ajuste', AjusteController::class);
+Route::get('obtenerCuis', [AjusteController::class, 'obtenerCuis']);
+Route::get('obtenerCufd', [AjusteController::class, 'obtenerCufd']);
+Route::get('sincronizar', [AjusteController::class, 'sincronizar']);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);

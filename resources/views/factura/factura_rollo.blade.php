@@ -11,19 +11,29 @@
             font-size: 8px;			
         }
 
-        table.detalle{
+        hr{
+            width: 90%;
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        table.detalle, .leyenda{
             border-collapse: collapse;
             table-layout: auto;
             margin-left: auto; 
-            margin-right: auto;     
+            margin-right: auto; 
+            width: 90%;
         }
-        td {
-            vertical-align: top;
-        }      
+
+        table.detalle td {
+            border-bottom: 0.5px solid;
+        } 
+
 		body {
 			margin: 0;
             padding: 0;
 		}
+
 		@page {
             height: auto;
             margin-top: 0cm;
@@ -70,8 +80,7 @@
 		</tr>
         <tr>
             <td colspan="4" style="text-align: center;"><h4>Nombre/Razón Social: {{$factura->nombreRazonSocialEmisor}}</h4></td> 
-        </tr>
-        
+        </tr>        
     </table>   
     <hr>
     <table style="width: 100%">
@@ -84,48 +93,50 @@
         <tr><td colspan="4" style="text-align: center;">Fecha: {{$factura->fechaEmision}}</td></tr>       
     </table>
     <hr>
-    <table class="detalle" style="width: 80%">
+    <table class="detalle">
         <thead>
-            <th style="border: 1px; text-align: left">PRODUCTO</th>
-            <th style="border: 1px; text-align: right">CANTIDAD</th>
-            <th style="border: 1px; text-align: right">P/U</th>
-            <th style="border: 1px; text-align: right">SUBTOTAL</th>
+            <tr style="border-bottom: 1px solid;">
+                <th style="text-align: left">PRODUCTO</th>
+                <th style="text-align: right">CANTIDAD</th>
+                <th style="text-align: right">P/U</th>
+                <th style="text-align: right">SUBTOTAL</th>
+            </tr>            
         </thead>
-        <tbody>
-            @foreach($detalleFactura as $item)
-                <td style="border: 1px;">{{$item->descripcion}}</td>
-                <td style="border: 1px; text-align: right">{{$item->cantidad}}</td>
-                <td style="border: 1px; text-align: right">{{$item->precioUnitario}}</td>
-                <td style="border: 1px; text-align: right">{{$item->subTotal}}</td>
-            @endforeach
+        <tbody style="border-bottom: 1px solid;">
+        @foreach($detalleFactura as $item)
+            <td>{{$item->descripcion}}</td>
+            <td style="text-align: right">{{$item->cantidad}}</td>
+            <td style="text-align: right">{{$item->precioUnitario}}</td>
+            <td style="text-align: right">{{$item->subTotal}}</td>
+        @endforeach
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="3" style="text-align: right">TOTAL</td>
-                <td style="border: 1px; text-align: right">{{$venta->total}}</td>
+                <td style="border: 0.5px; text-align: right">{{$venta->total}}</td>
             </tr>                     
             @if($venta->descuento > 0)
             <tr>
                 <td colspan="3" style="text-align: right">DESCUENTO</td>
-                <td style="border: 1px; text-align: right">{{$venta->descuento}}</td>
+                <td style="border: 0.5px; text-align: right">{{$venta->descuento}}</td>
             </tr>            
             @endif
             <tr>
                 <td colspan="3" style="text-align: right">MONTO</td>
-                <td style="border: 1px; text-align: right">{{$venta->monto_pagar}}</td>
+                <td style="border: 0.5px; text-align: right">{{$venta->monto_pagar}}</td>
             </tr>
             <tr>
                 <td colspan="3" style="text-align: right">CAMBIO</td>
-                <td style="border: 1px; text-align: right">{{$venta->cambio_venta}}</td>
+                <td style="border: 0.5px; text-align: right">{{$venta->cambio_venta}}</td>
             </tr>
             <tr>
                 <td colspan="3" style="text-align: right">IMPORTE BASE CREDITO FISCAL</td>
-                <td style="border: 1px; text-align: right">{{$venta->importe_iva}}</td>
+                <td style="border: 0.5px; text-align: right">{{$venta->importe_iva}}</td>
             </tr>            
         </tfoot>
     </table>
     <br>
-    <table style="width: 100%">
+    <table class="leyenda">
         <tr>
             <td colspan="4" style="text-align: center;">
                 "ESTA FACTURA CONTRIBUYE AL DESARROLLO DE NUESTRO PAÍS, EL USO ILÍCITO DE ÉSTA SERÁ SANCIONADO DE ACUERDO A LEY"
