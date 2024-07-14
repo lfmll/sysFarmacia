@@ -14,4 +14,9 @@ class TipoParametro extends Model
     public function parametros(){
         return $this->hasMany(Parametro::class);
     }
+
+    public function medicamentos(){
+        return $this->hasManyThrough(Medicamento::class, Parametro::class,'tipo_parametro_id','codigo_clasificador','id','codigo_clasificador');
+    }
+    
 }

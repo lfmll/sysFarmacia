@@ -11,6 +11,8 @@ use App\Models\Medida;
 use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
 use App\Models\Catalogo;
+use App\Models\Parametro;
+use App\Models\Codigo;
 use Illuminate\Support\Facades\DB;
 
 class MedicamentoController extends Controller
@@ -36,13 +38,16 @@ class MedicamentoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {                
-        $c=Medicamento::count();        
-        $codigo="MED".str_pad(++$c, 6, '0', STR_PAD_LEFT);        
+    {                                
+        $actividad=Codigo::orderBy('descripcion','ASC')->pluck('descripcion','codigo_caeb');
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
-        $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        
+        $unidad_medida=Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                            ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                            ->orderBy('parametros.descripcion','ASC')
+                            ->pluck('parametros.descripcion','parametros.codigo_clasificador');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
-        $catalogos=Catalogo::orderBy('nombre','ASC')->pluck('nombre','id');
+        $catalogos=Catalogo::orderBy('descripcion_producto','ASC')->pluck('descripcion_producto','codigo_producto');
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
@@ -51,10 +56,10 @@ class MedicamentoController extends Controller
         $dosis_estandar3=null;
         $medicamento=new Medicamento();        
         $clasemedicamento=new ClaseMedicamento();
-        return view('medicamento.create',['medicamento'=>$medicamento]) 
-            ->with('codigo',$codigo)                   
+        return view('medicamento.create',['medicamento'=>$medicamento])
+            ->with('actividad',$actividad)                               
             ->with('vias',$vias)
-            ->with('formatos',$formatos)
+            ->with('unidad_medida',$unidad_medida)
             ->with('clases',$clases)
             ->with('catalogos',$catalogos)
             ->with('dosis1',$dosis1)
@@ -65,7 +70,7 @@ class MedicamentoController extends Controller
             ->with('dosis_estandar3',$dosis_estandar3)       
             ->with('clasemedicamento',$clasemedicamento);
     }
-
+    
     /**
      * Store a newly created resource in storage.
      *
@@ -73,11 +78,13 @@ class MedicamentoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {             
         try {
             DB::beginTransaction();
             $medicamento=new Medicamento($request->all());
-            $medicamento->codigo=$request->codigo;
+            $medicamento->codigo_actividad=$request->actividad;
+            $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento($request->clases);
+            $medicamento->codigo_producto_sin=$request->catalogos;
             $medicamento->nombre_comercial=$request->nombre_comercial;
             $medicamento->nombre_generico=$request->nombre_generico;
             $medicamento->composicion=$request->composicion;
@@ -87,9 +94,9 @@ class MedicamentoController extends Controller
             $medicamento->stock=0;
             $medicamento->stock_minimo=$request->stock_minimo;
 
-            $medicamento->formato_id=$request->formatos;            
+            // $medicamento->formato_id=$request->formatos;            
+            $medicamento->codigo_clasificador=$request->unidad_medida;
             $medicamento->via_id=$request->vias;
-            $medicamento->catalogo_id=$request->catalogos;
             $medicamento->save();
             
             $clases=$request->clases;
@@ -137,7 +144,7 @@ class MedicamentoController extends Controller
             return view('medicamento.create',['medicamento'=>$medicamento])->with('toast_error','Error al registrar');
         }
     }
-
+    
     /**
      * Display the specified resource.
      *
@@ -147,7 +154,7 @@ class MedicamentoController extends Controller
     public function show($id)
     {
         $medicamento=Medicamento::findOrFail($id);
-        $formatos=Formato::where('id',$medicamento->formato_id)->first();        
+        $unidad_medida=Parametro::where('codigo_clasificador',$medicamento->codigo_clasificador)->first();
         $vias=Via::where('id',$medicamento->via_id)->first();
         
         $clases = DB::table('clases')
@@ -212,7 +219,7 @@ class MedicamentoController extends Controller
                             
         return view('medicamento.show',['medicamento'=>$medicamento])
             ->with('vias',$vias)
-            ->with('formatos',$formatos)
+            ->with('unidad_medida',$unidad_medida)
             ->with('clases',$clases)            
             ->with('medidamedicamento1',$medidamedicamento1)
             ->with('medidamedicamento2',$medidamedicamento2)
@@ -232,11 +239,14 @@ class MedicamentoController extends Controller
     public function edit($id)
     {        
         $medicamento = Medicamento::find($id);                 
-                
+        $actividad=Codigo::orderBy('descripcion','ASC')->pluck('descripcion','codigo_caeb');        
         $vias=Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
-        $formatos=Formato::orderBy('descripcion','ASC')->pluck('descripcion','id');
+        $unidad_medida=Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                            ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                            ->orderBy('parametros.descripcion','ASC')
+                            ->pluck('parametros.descripcion','parametros.codigo_clasificador');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
-        $catalogos=Catalogo::orderBy('nombre','ASC')->pluck('nombre','id');
+        $catalogos=Catalogo::orderBy('descripcion_producto','ASC')->pluck('descripcion_producto','codigo_producto');
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
@@ -297,11 +307,12 @@ class MedicamentoController extends Controller
                 $dosis_estandar3=$dosis_estandar3->dosis_estandar;
             }                        
         } 
-        return view("medicamento.edit",["medicamento"=>$medicamento])                    
+        return view("medicamento.edit",["medicamento"=>$medicamento])
+            ->with('actividad',$actividad)
             ->with('vias',$vias)
-            ->with('formatos',$formatos)
-            ->with('catalogos',$catalogos)
+            ->with('unidad_medida',$unidad_medida)
             ->with('clases',$clases)
+            ->with('catalogos',$catalogos)            
             ->with('dosis1',$dosis1)
             ->with('dosis2',$dosis2)
             ->with('dosis3',$dosis3)
@@ -326,7 +337,8 @@ class MedicamentoController extends Controller
         try {
             DB::beginTransaction();
             $medicamento=Medicamento::find($id);
-            $medicamento->codigo=$request->codigo;
+            $medicamento->codigo_actividad=$request->actividad;
+            $medicamento->codigo_producto_sin=$request->catalogos;
             $medicamento->nombre_comercial=$request->nombre_comercial;
             $medicamento->nombre_generico=$request->nombre_generico;
             $medicamento->composicion=$request->composicion;
@@ -335,9 +347,8 @@ class MedicamentoController extends Controller
             $medicamento->observacion=$request->observacion;
             $medicamento->stock_minimo=$request->stock_minimo;
 
-            $medicamento->formato_id=$request->formatos;
+            $medicamento->codigo_clasificador_unidad_medida=$request->unidad_medida;
             $medicamento->via_id=$request->vias;
-            $medicamento->catalogo_id=$request->catalogos;
             $medicamento->save();
             
             $clases=$request->clases;                                    

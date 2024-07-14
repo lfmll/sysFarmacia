@@ -48,7 +48,7 @@ Route::resource('via',ViaController::class);
 Route::resource('medida',MedidaController::class);
 Route::resource('formato',FormatoController::class);
 Route::resource('clase',ClaseController::class);
-Route::resource('medicamento',MedicamentoController::class);
+Route::resource('medicamento',MedicamentoController::class)->middleware('parametrizar');
 Route::resource('lote', LoteController::class);
 Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);

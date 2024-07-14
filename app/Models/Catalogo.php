@@ -16,6 +16,10 @@ class Catalogo extends Model
         'cuis_id'
     ];
     
+    public function medicamentos(){
+        return $this->hasMany(Medicamento::class);
+    }
+    
     public function cuis()
     {
         return $this->belongsTo(Cuis::class);

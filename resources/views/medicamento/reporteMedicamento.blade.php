@@ -18,45 +18,43 @@
     </header>
     <main>   
         <div class="row">
-            <div class="col-xs-6">
-                <h4>Nombre Comercial</h4>    
-                <p>{{$medicamento->nombre_comercial}}</p>
+            <div class="col-md-6">
+                <h4>Nombre Comercial</h4><span>{{$medicamento->nombre_comercial}}</span>
             </div>
-            <div class="col-xs-6">
-                <h4>Nombre Genérico</h4>
-                <p>{{$medicamento->nombre_generico}}</p>
+            <div class="col-md-6">
+                <h4>Nombre Genérico</h4><span>{{$medicamento->nombre_generico}}</p>
             </div>
         </div>     
         <div class="row">
+            @if (!is_null($medicamento->composicion))
             <div class="col-xs-6">
-                <h5>Composición:</h5>
-                <span>{{$medicamento->composicion}}</span>
+                <h5>Composición:</h5><span>{{$medicamento->composicion}}</span>
             </div>
+            @endif
+            @if (!is_null($medicamento->observacion))
             <div class="col-xs-6">
-                <h5>Observación:</h5>
-                <span>{{$medicamento->observacion}}</span>
+                <h5>Observación:</h5><span>{{$medicamento->observacion}}</span>
             </div>
-        </div>      
-        <hr>              
+            @endif
+        </div>                            
         <div class="row">
+            @if (!is_null($medicamento->indicacion))
             <div class="col-xs-6">
-                <h5>Indicación:</h5>
-                <span>{{$medicamento->indicacion}}</span>
+                <h5>Indicación:</h5><span>{{$medicamento->indicacion}}</span>
             </div>
+            @endif
+            @if (!is_null($medicamento->contraindicacion))
             <div class="col-xs-6">
-                <h5>Contra-Indicación:</h5>
-                <span>{{$medicamento->contraindicacion}}</span>                 
-            </div>                                        
-        </div>
-        <hr>                    
+                <h5>Contra-Indicación:</h5><span>{{$medicamento->contraindicacion}}</span>                 
+            </div>                                       
+            @endif 
+        </div>                           
         <div class="row">
-            <div class="col-xs-6">
-                <h5>Presentación:</h5>
-                <span>{{$medicamento->formato->descripcion}}</span> 
+            <div class="col-sm-6">                
+                <h5>Unidad Medida:</h5><span>{{$unidad_medida->descripcion}}</span>                
             </div>        
-            <div class="col-xs-6">
-                <h5>Vía Administración:</h5>
-                <span>{{$medicamento->via->descripcion}}</span>                        
+            <div class="col-sm-6">
+                <h5>Vía Administración:</h5><span>{{$medicamento->via->descripcion}}</span>                        
             </div>
         </div>
         <div class="row">
@@ -69,7 +67,6 @@
                 </ul>                
             </div> 
         </div>
-        <hr style="border: none;">
         <div class="row">
             <div class="col-sm-12">
                 <h5>Dosís:</h5>

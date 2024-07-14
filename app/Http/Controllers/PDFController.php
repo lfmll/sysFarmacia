@@ -21,6 +21,8 @@ use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\DetalleFactura;
 use App\Models\Venta;
+use App\Models\Parametro;
+use App\Models\TipoParametro;
 
 class PDFController extends Controller
 {
@@ -41,9 +43,14 @@ class PDFController extends Controller
     public function listaMedicamentos()
     {
         $fecha=Carbon::now('America/La_Paz')->format('d/m/y h:i A');
-        $medicamentos=Medicamento::orderBy('nombre_comercial')->get();
+        $medicamentos=DB::table('medicamentos')
+                ->join('parametros','medicamentos.codigo_clasificador','=','parametros.codigo_clasificador')
+                ->join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                ->get();
         $pdf = PDF::loadView('medicamento.reporte',['medicamentos' => $medicamentos,'fecha'=>$fecha]);
-        return $pdf->download('medicamentos.pdf');
+        return $pdf->setPaper('letter','portrait')
+                    ->stream('lista_medicamentos.pdf',array('Attachment'=>0));
     }
     public function listaInsumos()
     {
@@ -86,13 +93,19 @@ class PDFController extends Controller
     {
         $fecha=Carbon::now('America/La_Paz')->format('d/m/y h:i A');
         $medicamento=Medicamento::find($idMedicamento);
-
-        $clases = DB::table('clases')
-                    ->join('clases_medicamentos','clases.id','=','clases_medicamentos.clase_id')
-                    ->where('clases_medicamentos.medicamento_id','=',$medicamento->id) 
-                    ->where('clases_medicamentos.estado','=','A') 
-                    ->select('clases.nombre')
-                    ->get();
+        
+        $unidad_medida = Parametro::join('medicamentos','medicamentos.codigo_clasificador','=','parametros.codigo_clasificador')
+                                ->join('tipo_parametros','tipo_parametros.id','=','parametros.tipo_parametro_id')
+                                ->where('medicamentos.codigo_clasificador','=',$medicamento->codigo_clasificador)
+                                ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                                ->first();
+        
+        $clases = Clase::join('clases_medicamentos','clases_medicamentos.clase_id','=','clases.id')
+                        ->join('medicamentos','medicamentos.id','=','clases_medicamentos.medicamento_id')
+                        ->where('clases_medicamentos.medicamento_id','=',$medicamento->id)
+                        ->where('clases_medicamentos.estado','=','A')
+                        ->select('clases.nombre')
+                        ->get();
 
         $medidamedicamento1=MedidaMedicamento::where('medicamento_id',$medicamento->id)
                             ->where('medida_id',1)
@@ -150,13 +163,14 @@ class PDFController extends Controller
         $pdf=PDF::loadView('medicamento.reporteMedicamento',['medicamento'=>$medicamento,
                                                             'clases'=>$clases,
                                                             'fecha'=>$fecha,
+                                                            'unidad_medida'=>$unidad_medida,
                                                             'medidamedicamento1'=>$medidamedicamento1,
                                                             'medidamedicamento2'=>$medidamedicamento2,
                                                             'medidamedicamento3'=>$medidamedicamento3,
                                                             'dosis_estandar1'=>$dosis_estandar1,
                                                             'dosis_estandar2'=>$dosis_estandar2,
                                                             'dosis_estandar3'=>$dosis_estandar3]);
-        return $pdf->download('medicamento.pdf');
+        return $pdf->setPaper('letter','portrait')->stream();
     }
      
     public function reporteVentaDia()

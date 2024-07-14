@@ -18,10 +18,14 @@ class Parametro extends Model
         return $this->belongsTo(Cuis::class);
     }
 
+    public function medicamentos(){
+        return $this->hasMany(Medicamento::class, 'codigo_clasificador');
+    }
+
     public function tipo_parametro(){
         return $this->belongsTo(TipoParametro::class);
     }
-
+    
     public static function soapParametro($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
     {
         Parametro::where('cuis_id',$cuisId)->delete();

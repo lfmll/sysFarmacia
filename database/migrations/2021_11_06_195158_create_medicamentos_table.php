@@ -15,18 +15,20 @@ class CreateMedicamentosTable extends Migration
     {
         Schema::create('medicamentos', function (Blueprint $table) {
             $table->smallIncrements('id');
-            $table->string('codigo',50);
+            $table->string('codigo_actividad',10);
+            $table->string('codigo_producto',10);
+            $table->string('codigo_producto_sin',10);
             $table->string('nombre_comercial',50);
             $table->string('nombre_generico',50);
-            $table->string('composicion',255)->nullable();
-            $table->string('indicacion',255)->nullable();
-            $table->string('contraindicacion',255)->nullable();
-            $table->string('observacion',255)->nullable();
+            $table->string('composicion')->nullable();
+            $table->string('indicacion')->nullable();
+            $table->string('contraindicacion')->nullable();
+            $table->string('observacion')->nullable();
             $table->integer('stock')->unsigned();
             $table->integer('stock_minimo')->unsigned();
-            $table->smallinteger('formato_id')->unsigned();            
-            $table->smallinteger('via_id')->unsigned();
-            $table->smallinteger('catalogo_id')->unsigned();
+            $table->smallInteger('codigo_clasificador');
+            $table->smallInteger('via_id')->unsigned();
+            
             $table->timestamps();
         });
     }

@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Medicamento extends Model
 {
     protected $fillable=[
-        'codigo',
+        'codigo_actividad',
+        'codigo_producto',
+        'codigo_producto_sin',
         'nombre_comercial',
         'nombre_generico',
         'composicion',
@@ -17,13 +20,29 @@ class Medicamento extends Model
         'observacion',
         'stock',
         'stock_minimo',
-        'formato_id',
-        'via_id',
-        'catalogo_id'
+        'codigo_clasificador',
+        'via_id'
     ];
 
-    public function formato(){
-        return $this->belongsTo(Formato::class);
+    // public function formato(){
+    //     return $this->belongsTo(Formato::class);
+    // }
+    public function parametro(){
+        return $this->belongsTo(Parametro::class, 'codigo_clasificador');
+    }
+
+    public function tipo_parametro(): HasOneThrough
+    {
+        return $this->hasOneThrough(TipoParametro::class, 
+                                    Parametro::class, 
+                                    'codigo_clasificador',
+                                    'id',
+                                    'codigo_clasificador',
+                                    'tipo_parametro_id' );
+    }
+
+    public function codigo(){
+        return $this->belongsTo(Codigo::class);
     }
 
     public function via(){
@@ -42,7 +61,16 @@ class Medicamento extends Model
         return $this->hasMany(Lote::class);
     }
 
-    public function catalogos(){
+    public function catalogo(){
         return $this->belongsTo(Catalogo::class);
+    }
+
+    public static function generarCodigoMedicamento($claseId)
+    {
+        $atc = Clase::where('id',$claseId[0])->first();
+        $prefijo = substr($atc->nombre,1,3);
+        $c = ClaseMedicamento::where('clase_id',$claseId[0])->count();
+        $codigoMedicamento = $prefijo.str_pad(++$c, 6, '0', STR_PAD_LEFT);
+        return $codigoMedicamento;
     }
 }

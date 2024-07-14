@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         //Mis Middleware
         'aperturar' => \App\Http\Middleware\ControlAccesoArqueoMiddleware::class,
         'iniciar' => \App\Http\Middleware\ControlAccesoEmpresaMiddleware::class,
+        'parametrizar' => \App\Http\Middleware\ControlParametroMiddleware::class,
     ];
 }

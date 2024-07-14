@@ -18,6 +18,10 @@ class Codigo extends Model
         return $this->belongsTo(Cuis::class);
     }
 
+    public function medicamentos(){
+        return $this->hasMany(Medicamento::class);
+    }
+
     public static function soapActividad($clienteSoap, $parametrosActividad, $cuisId)
     {
         Codigo::where('cuis_id',$cuisId)->delete();

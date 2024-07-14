@@ -26,7 +26,6 @@
                     <th>Stock</th>
                     <th>Stock Min</th>
                     <th>Presentación</th>
-                    <th>Vía Adm</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,8 +36,7 @@
                     <td>{{$medicamento->nombre_generico}}</td>
                     <td>{{$medicamento->stock}}</td>
                     <td>{{$medicamento->stock_minimo}}</td>
-                    <td>{{$medicamento->formato->descripcion}}</td>
-                    <td>{{$medicamento->via->descripcion}}</td>
+                    <td>{{$medicamento->descripcion}}</td>
                 </tr>
                 @endforeach
             </tbody>

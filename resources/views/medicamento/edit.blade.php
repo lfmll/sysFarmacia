@@ -17,7 +17,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        {!!Form::text('codigo',$medicamento->codigo,['class'=>'form-control','required']) !!}
+                                    {!!Form::select('actividad',$actividad, $medicamento->codigo_actividad,['class'=>'form-control','required']) !!}
                                     </div>                                    
                                 </div>
                                 <div class="col-md-6">
@@ -79,7 +79,7 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                {!! Form::select('formatos', $formatos, $medicamento->formato_id, ['class'=>'form-control','placeholder'=>'','required']) !!}    
+                                {!! Form::select('unidad_medida', $unidad_medida, $medicamento->codigo_clasificador, ['class'=>'form-control','placeholder'=>'','required']) !!}
                             </div>    
                         </div>            
                     </div>
@@ -164,7 +164,6 @@
 <script>
     $(document).ready(function() {
         $('.sclases').select2();
-        // $('.slaboratorios').select2();
     });
 </script>
 @stop

@@ -59,7 +59,7 @@ class AjusteController extends Controller
             $cufd = Cufd::where('estado','A')
                     ->where('cuis_id',$cuis->id)
                     ->first();
-            $parametros = Parametro::where('cuis_id',$cuis->id)->get();        
+            $parametros = Parametro::where('cuis_id',$cuis->id)->orderBy('codigo_clasificador','ASC')->get();        
             $actividades = Codigo::where('cuis_id',$cuis->id)->get();          
             $leyendas = Leyenda::where('cuis_id',$cuis->id)->get();
             $catalogos = Catalogo::where('cuis_id',$cuis->id)->get();
@@ -167,7 +167,7 @@ class AjusteController extends Controller
     }
     public function obtenerCuis()
     {
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
         $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
         $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();
@@ -196,7 +196,7 @@ class AjusteController extends Controller
             $responseCuis = Cuis::soapCuis($clienteCuis, $parametrosCUIS, $puntoVenta->id);
             if (($responseCuis->RespuestaCuis->transaccion==true) || ($responseCuis->RespuestaCuis->mensajesList->codigo == 980)) 
             {
-                return redirect('/ajuste')->with('toast_success',$responseCuis->RespuestaCuis->mensajesList->descripcion);
+                return redirect('/ajuste')->with('toast_success',"CUIS Actualizado");
             } else {
                 return redirect('/ajuste')->with('toast_error',$responseCuis->RespuestaCuis->mensajesList->descripcion);
             }
@@ -208,7 +208,7 @@ class AjusteController extends Controller
 
     public function obtenerCufd()
     {        
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
         $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
         $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();
@@ -254,7 +254,7 @@ class AjusteController extends Controller
 
     public function sincronizar()
     {        
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
                 
         //PASO 1: Consumir servicios SIAT Sincronizacion  
         $wsdlSincronizacion = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
@@ -314,7 +314,7 @@ class AjusteController extends Controller
                 // $fechaHora = $responseFechaHora->RespuestaFechaHora->fechaHora;
                             
 
-                return redirect('/ajuste')->with('toast_succes', 'Sincronizacion Completada');
+                return redirect('/ajuste')->with('toast_success', 'Sincronizacion Completada');
                 
             } else {
                 return redirect('/ajuste')->with('toast_error','Error en el consumo de Servicios de Sincronizacion');
