@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use Response;
 use Illuminate\Http\Request;
+use App\Models\Parametro;
 
 class ClienteController extends Controller
 {
@@ -27,7 +28,12 @@ class ClienteController extends Controller
     public function create()
     {
         $cliente=new Cliente();
-        return view('cliente.create',['cliente' => $cliente]);
+        $tipo_documento = Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                                        ->where('tipo_parametros.nombre','=','TIPO DOCUMENTO IDENTIDAD')
+                                        ->orderBy('parametros.codigo_clasificador','ASC')
+                                        ->pluck('parametros.descripcion','parametros.codigo_clasificador');
+        
+        return view('cliente.create',['cliente' => $cliente])->with('tipo_documento',$tipo_documento);
     }
 
     /**
@@ -97,7 +103,11 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::find($id);
-        return view('cliente.edit',['cliente'=>$cliente]);
+        $tipo_documento = Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                                        ->where('tipo_parametros.nombre','=','TIPO DOCUMENTO IDENTIDAD')
+                                        ->orderBy('parametros.codigo_clasificador','ASC')
+                                        ->pluck('parametros.descripcion','parametros.codigo_clasificador');
+        return view('cliente.edit',['cliente'=>$cliente])->with('tipo_documento',$tipo_documento);
     }
 
     /**

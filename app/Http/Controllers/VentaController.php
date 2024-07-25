@@ -10,9 +10,12 @@ use App\Models\Insumo;
 use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Factura;
-use App\Models\TipoDocumento;
 use App\Models\Empresa;
 use App\Models\Agencia;
+use App\Models\Cuis;
+use App\Models\Codigo;
+use App\Models\Catalogo;
+use App\Models\Parametro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -44,37 +47,52 @@ class VentaController extends Controller
      */
     public function create()
     {
-        $venta=new Venta();
-
+        $venta=new Venta();        
         $fecha_venta = Carbon::now('America/La_Paz')->toDateString();
         $horai = date('00:00:00');
         $horaf = date('23:59:59');
 
-        $lotesm = Lote::where('estado','A')
-                    ->where('medicamento_id','<>',null)                    
-                    ->get(); 
-        
+        $cuis = Cuis::obtenerCuis();
+
+        $codigoInicial = Codigo::where('cuis_id',$cuis->id)->orderBy('descripcion','ASC')->first();
+        $catalogoInicial = Catalogo::join('codigos','catalogos.codigo_actividad','=','codigos.codigo_caeb')
+                                    ->where('codigos.codigo_caeb','=',$codigoInicial->codigo_caeb)                                    
+                                    ->orderBy('catalogos.descripcion_producto','ASC')                                    
+                                    ->pluck('catalogos.descripcion_producto','catalogos.codigo_producto');
+                                
+        if ($catalogoInicial->isEMpty()) {
+            $catalogoInicial = [];
+            $lotesm = [];
+        } else {
+            $productoInicial = Catalogo::where('codigo_actividad',$codigoInicial->codigo_caeb)
+                                    ->orderBy('descripcion_producto','ASC')
+                                    ->first();
+            $lotesm = Lote::join('medicamentos','lotes.medicamento_id','=','medicamentos.id')
+                        ->join('laboratorios','lotes.laboratorio_id','=','laboratorios.id')
+                        ->where('medicamentos.codigo_actividad','=',$codigoInicial->codigo_caeb)
+                        ->where('medicamentos.codigo_producto_sin','=',$productoInicial->codigo_producto)
+                        ->where('lotes.estado','A')                  
+                        ->get();
+        }
+                        
         $clientes = Cliente::where('estado','A')
-                    ->get();
-
-        $codigoDocSec = TipoDocumento::where('codigo',1)
-                        ->select('codigo')
-                        ->first();
-
-        $nombreDocSec = TipoDocumento::where('codigo',1)
-                        ->select('nombre')
-                        ->first();
-
-        $tipoDoc = TipoDocumento::where('codigo',1)
-                        ->select('tipo_documento')
-                        ->first();
-
+                    ->get();        
+        
+        $actividades = Codigo::where('cuis_id',$cuis->id)
+                            ->orderBy('descripcion','ASC')
+                            ->pluck('descripcion','codigo_caeb');        
+                                   
+        $tipo_documento_identidad = Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                                            ->where('tipo_parametros.nombre','=','TIPO DOCUMENTO IDENTIDAD')
+                                            ->orderBy('parametros.codigo_clasificador','ASC')
+                                            ->get();
+        
         return view('venta.create',['venta'=>$venta])
                 ->with('lotesm',$lotesm)
                 ->with('clientes',$clientes)
-                ->with('codigoDocSec',$codigoDocSec)
-                ->with('nombreDocSec',$nombreDocSec)
-                ->with('tipoDoc',$tipoDoc);
+                ->with('tipo_documento_identidad',$tipo_documento_identidad)
+                ->with('actividades',$actividades)
+                ->with('catalogos',$catalogoInicial);
     }
 
     /**

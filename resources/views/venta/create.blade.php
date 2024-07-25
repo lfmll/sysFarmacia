@@ -9,27 +9,38 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title" id="nombreDocSec"><i class="fa fa-bookmark"></i> {{$nombreDocSec->nombre}}</h3>                        
+                    <h3>TITULO</h3>                        
                 </div>   
                 <div class="card-body">                                                                                                                                                                                                     
                     <div class="card">
-                        <div class="card-header">
-                            {{ Form::text('tdcodigoDocSec',$codigoDocSec->codigo, ['id'=>'tdcodigoDocSec', 'style'=>'display:none'])  }}                                    
-                            {{ Form::text('tdnombreDocSec', $nombreDocSec->nombre, ['id'=>'tdnombreDocSec','class'=>'form-control','style'=>'display:none']) }}
-                            {{ Form::text('tdtipoDoc',$tipoDoc->tipo_documento, ['id'=>'tdtipoDoc', 'style'=>'display:none'])  }}
+                        <div class="card-header">                            
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        {{ Form::select('actividades',$actividades, null, ['class'=>'form-control','id'=>'codigo_caeb', 'onchange'=>'catalogarActividad()'])  }}
+                                    </div>
+                                    <div class="col-sm-6">
+                                        {{ Form::select('catalogos',$catalogos, null, ['class'=>'form-control','id'=>'codigo_producto', 'onchange'=>'catalogarProducto()'])  }}
+                                    </div>                                        
+                                </div>
+                            </div>
+                            <hr>
                             <div class="row">
-                                <div class="col-lg-9">
-                                    <div class="form-group">                                                                                   
-                                        <div class="row">                                        
+                                <div class="col-lg-8">
+                                    <div class="form-group">
                                         {!! Form::label('cliente','Nombre o Razon Social: ') !!}
-                                            {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control','style'=>'width:88%;']) !!} 
-                                            <a href="#modalBuscarCliente" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalBuscarCliente">
-                                                <i class="fa fa-lg fa-search"></i>
-                                            </a>
-                                        </div>   
+                                        <div class="input-group mb-3">
+                                            {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control']) !!}
+                                            <div class="input-group-append">
+                                                <a href="#modalBuscarCliente" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalBuscarCliente">
+                                                    <i class="fa fa-lg fa-search"></i>
+                                                </a>
+                                            </div>
+                                        </div>
                                         {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente', 'style'=>'display:none']) !!}
                                     </div>                                    
                                 </div>
+                                <div class="col-lg-1"></div>
                                 <div class="col-lg-3">
                                     <div class="row">                                                                                        
                                         <label> Accion:</label>   
@@ -77,11 +88,13 @@
                                 <div class="col-lg-3 col-md-3 col-xs-12">
                                     <div class="form-group">                                        
                                         {!! Form::label('Producto', 'Producto') !!}                                          
-                                        <div class="row">                                                                                                                                   
-                                            {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control','style'=>'width:80%;']) !!}                                            
-                                            <a href="#modalLote" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalLote" >
-                                                <i class="fa fa-lg fa-receipt"></i>
-                                            </a>
+                                        <div class="input-group mb-3">                                                                                                                                   
+                                            {!! Form::text('producto', null, ['id'=>'pproducto','class'=>'form-control']) !!}
+                                            <div class="input-group-append">
+                                                <a href="#modalLote" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modalLote">
+                                                    <i class="fa fa-lg fa-receipt"></i>
+                                                </a>
+                                            </div>                                            
                                         </div>
                                         {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo', 'style'=>'display:none']) !!}
                                     </div>
@@ -310,11 +323,9 @@
                                 <div class="col-md-12">
                                     <label>Tipo Documento (*)</label>                        
                                     <select name="cctipodoc" id="cctipodoc" class="form-control" required>
-                                        <option value="CI - Cedula de Identidad">CI - Cedula de Identidad</option>
-                                        <option value="CEX - Cedula de Indentidad Extranjero">CEX - Cedula de Indentidad Extranjero</option>
-                                        <option value="PAS - Pasaporte">PAS - Pasaporte</option>
-                                        <option value="NIT - Numero de Certificacion Tributaria">NIT - Numero de Certificacion Tributaria</option>
-                                        <option value="OO - Otros Documentos">OO - Otros Documentos</option>                            
+                                        @foreach ($tipo_documento_identidad as $tdi)
+                                            <option value="{{$tdi->codigo_clasificador}}">{{$tdi->descripcion}}</option>
+                                        @endforeach                                        
                                     </select>                                
                                 </div>
                             </div>
@@ -384,7 +395,7 @@
                                     <th>Laboratorio</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="tbodyLotem">
                                 @foreach ($lotesm as $lotem)
                                     <tr id="{{$lotem->id}}">
                                         <td>
@@ -393,11 +404,11 @@
                                             </div>
                                         </td>
                                         <td>{{$lotem->numero}}</td>
-                                        <td>{{$lotem->medicamento->nombre_comercial}}</td>
+                                        <td>{{$lotem->nombre_comercial}}</td>
                                         <td>{{$lotem->fecha_vencimiento}}</td>
                                         <td>{{$lotem->cantidad}}</td>
                                         <td>{{$lotem->precio_venta}}</td>
-                                        <td>{{$lotem->laboratorio->nombre}}</td>
+                                        <td>{{$lotem->nombre}}</td>
                                     </tr>                                            
                                 @endforeach                                                                                
                             </tbody>
@@ -488,7 +499,7 @@
     let total=0;
     let subtotal=[];
 
-    $('#modalLote.save').click(function (e) {
+    $('#modalLote.save').click(function (e) {        
         e.preventDefault();
         addImage(5);
         $('#modalLote').modal('hide');
@@ -531,9 +542,8 @@
             type: type,
             url: '{{url("/cliente")}}',
             data: formData,
-            dataType: 'json',           
-            data: formData,
-            success: function(data){
+            dataType: 'json',
+            success: function(data){                
                 $('#cnombre').val(data.nombre);
                 $('#ctipodoc').val(data.tipo_documento);
                 $('#cnrodoc').val(data.numero_documento);
@@ -550,6 +560,76 @@
             }
         });
     })
+    
+    function catalogarActividad()
+    {
+        var formData = { codCaeb: $('#codigo_caeb').val(),};
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: '{{url("/catalogarA")}}',
+            data: formData,
+            dataType: 'json',
+            success: function(data) {
+                let n = data.length;
+                $('#codigo_producto').empty();
+                var fila = "";
+                for (let i = 0; i < n; i++) {
+                    fila += "<option value="+data[i].codigo_producto+">"+data[i].descripcion_producto+"</option>"                                     
+                }
+                $("#codigo_producto").append(fila);
+                catalogarProducto();
+            },
+            error: function (data) {
+                if (data.status==409) {
+                    $('#codigo_producto').empty();
+                    swal.fire("Error",JSON.parse(data.responseText).mensaje,"error");    
+                } else {
+                    swal.fire("Error","Error en la consulta","error");
+                }                
+            }
+        });
+    }
+    function catalogarProducto()
+    {      
+        var formData = {
+            codCaeb: $('#codigo_caeb').val(),
+            codProducto: $('#codigo_producto').val(),
+        };
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "GET",
+            url: '{{url("/catalogarP")}}',
+            data: formData,
+            dataType: 'json',
+            success: function(data) {
+                let n = data.length;
+                $("#tbodyLotem tr").remove();
+                var fila="";
+                for (let i = 0; i < n; i++) {
+                    fila += "<tr id="+data[i].id+"><td><div class='chk'><input type='checkbox' name='chk' class='chk' id="+data[i].id+" value="+data[i].id+","+data[i].nombre_comercial+","+data[i].cantidad+","+data[i].precio_venta+"></div></td><td>"+data[i].numero+"</td><td>"+data[i].nombre_comercial+"</td><td>"+data[i].fecha_vencimiento+"</td><td>"+data[i].cantidad+"</td><td>"+data[i].precio_venta+"</td><td>"+data[i].nombre+"</td></tr>";                    
+                }
+                $('#tlotem').append(fila);
+            },
+            error: function (data) {
+                if (data.status==409) {
+                    $("#tbodyLotem tr").remove();
+                    swal.fire("Alerta",JSON.parse(data.responseText).mensaje,"warning");    
+                } else {
+                    swal.fire("Error","Error en la consulta","error");
+                }
+                
+            }
+        });
+    }
 
     function agregar(){
         arreglo = document.getElementById("pcodigo").innerText;

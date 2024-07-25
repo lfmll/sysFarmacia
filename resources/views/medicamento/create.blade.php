@@ -17,12 +17,12 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        {!!Form::select('actividad',$actividad, $medicamento->codigo_actividad,['class'=>'form-control','required']) !!}
+                                        {!!Form::select('actividad',$actividad, $medicamento->codigo_actividad,['class'=>'form-control', 'id'=>'codigo_caeb', 'onchange'=>'catalogarActividad()','required']) !!}
                                     </div>                                    
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">                                    
-                                        {{ Form::select('catalogos', $catalogos, $medicamento->catalogo_id,['class'=>'form-control','required']) }}
+                                        {{ Form::select('catalogos', $catalogos, $medicamento->catalogo_id,['class'=>'form-control', 'id'=>'codigo_producto','required']) }}
                                     </div>                                    
                                 </div>
                             </div>                            
@@ -171,11 +171,47 @@
 @section('js')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('.sclases').select2();
         });
+    </script>
+    <script>
+        function catalogarActividad()
+        {
+            var formData = { codCaeb: $('#codigo_caeb').val(),};
+            
+            $.ajax({
+                type: "GET",
+                url: '{{url("/catalogarA")}}',
+                data: formData,
+                dataType: 'json',
+                success: function(data) {
+                    let n = data.length;
+                    $('#codigo_producto').empty();
+                    var fila = "";
+                    for (let i = 0; i < n; i++) {
+                        fila += "<option value="+data[i].codigo_producto+">"+data[i].descripcion_producto+"</option>"                                     
+                    }
+                    $("#codigo_producto").append(fila);
+                },
+                error: function (data) {
+                    if (data.status==409) {
+                        $('#codigo_producto').empty();
+                        swal.fire("Error",JSON.parse(data.responseText).mensaje,"error");    
+                    } else {
+                        swal.fire("Error","Error en la consulta","error");
+                    }                
+                }
+            });
+        }
     </script>
 @stop
 {!! Form::close() !!}

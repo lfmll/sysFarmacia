@@ -54,7 +54,8 @@ class LoteController extends Controller
             DB::beginTransaction();
             $lote=new Lote($request->all());
             $lote->numero=$request->numero;
-            $lote->cantidad=0;
+            // $lote->cantidad=0;   //Definir en cero si solo entra con compra
+            $lote->cantidad=$request->cantidad;
             $lote->fecha_vencimiento=$request->fecha_vencimiento;
             $lote->precio_compra=$request->precio_compra;
             $lote->ganancia=$request->ganancia;
@@ -180,6 +181,38 @@ class LoteController extends Controller
         if ($request->ajax()) {
             $data=DB::table('lote')->where('id',$request->search)->get();
         }
+        return response()->json($data);
+    }
+    public function catalogarActividad(Request $request)
+    {
+        if ($request->ajax()) {
+            $data=DB::table('catalogos')
+                    ->join('codigos','catalogos.codigo_actividad','=','codigos.codigo_caeb')
+                    ->where('codigos.codigo_caeb','=',$request->codCaeb)
+                    ->orderBy('catalogos.descripcion_producto','ASC')
+                    ->get();
+                    
+            if ($data->isEmpty()) {
+                return response()->json(["mensaje"=>"No existe Productos con esa Actividad"],409);
+            }
+            return response()->json($data);    
+        }
+        
+    }
+
+    public function catalogarProducto(Request $request)
+    {   
+        if ($request->ajax()) {
+            $data=DB::table('lotes')
+                    ->join('medicamentos','lotes.medicamento_id','=','medicamentos.id')
+                    ->join('laboratorios','lotes.laboratorio_id','=','laboratorios.id')
+                    ->where('medicamentos.codigo_producto_sin',$request->codProducto)
+                    ->get();
+            if ($data->isEmpty()) {
+                return response()->json(["mensaje"=>"No existe lotes con este catalogo"],409);
+            }
+        }        
+        
         return response()->json($data);
     }
 }

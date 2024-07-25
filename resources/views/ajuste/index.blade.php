@@ -354,7 +354,7 @@
     <script>
         function tipoParametro(tp, par) {            
             let arr = JSON.parse(par);
-            let n=arr.length;            
+            let n=arr.length;
             $("#tbodyParametro tr").remove(); 
             var tparametro = document.getElementById ("tparametro");
             var fila="";

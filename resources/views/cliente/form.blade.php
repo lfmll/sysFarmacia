@@ -5,12 +5,7 @@
         <div class="col-sm-12">
             <div class="form-group">        
                 {{ Form::label('tipodoc', 'Tipo de Documento'); }}
-                {!! Form::select('tipo_documento', ['CI - Cedula de Identidad'=>'CI - Cedula de Identidad',
-                                                    'CEX - Cedula de Indentidad Extranjero'=>'CEX - Cedula de Indentidad Extranjero',
-                                                    'PAS - Pasaporte'=>'PAS - Pasaporte',
-                                                    'NIT - Numero de Certificacion Tributaria'=>'NIT - Numero de Certificacion Tributaria',
-                                                    'OO - Otros Documentos'=>'OO - Otros Documentos'], 
-                                                    null, ['class'=>'form-control','placeholder'=>'Tipo de Documento','required']) !!}
+                {!! Form::select('tipo_documento', $tipo_documento, $cliente->tipo_documento, ['class'=>'form-control','placeholder'=>'Tipo de Documento','required']) !!}
             </div>
         </div>                
     </div>

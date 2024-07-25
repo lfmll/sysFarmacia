@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Cuis extends Model
 {
@@ -36,6 +37,15 @@ class Cuis extends Model
     
     public function actividad_documentos(){
         return $this->hasMany(ActividadDocumento::class);
+    }
+
+    public static function obtenerCuis()
+    {
+        $fechaActual = Carbon::now('America/La_Paz')->toDatetimeString();
+        $cuis =  Cuis::where('estado','A')
+                    ->where('fecha_vigencia','>',$fechaActual)
+                    ->first();
+        return $cuis;
     }
     
     public static function soapCuis($clienteSoap, $parametrosCUIS, $punto_venta_id)

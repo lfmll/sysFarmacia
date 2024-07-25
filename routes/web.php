@@ -53,8 +53,10 @@ Route::resource('lote', LoteController::class);
 Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
 Route::get('/lote/{id}/create_producto',[LoteController::class,'create_producto']);
+Route::get('/catalogarA',[LoteController::class,'catalogarActividad'])->name('lote.catalogarA');
+Route::get('/catalogarP',[LoteController::class,'catalogarProducto'])->name('lote.catalogarP');
 Route::resource('compra', CompraController::class)->middleware('aperturar');
-Route::resource('venta', VentaController::class)->middleware('aperturar');
+Route::resource('venta', VentaController::class);
 Route::resource('factura', FacturaController::class);
 Route::resource('cliente', ClienteController::class);
 Route::resource('agencia', AgenciaController::class);
@@ -105,4 +107,3 @@ Route::post('importC',[ExcelController::class,'importC']);
 Route::get('generarXML/{id}',[FacturaController::class,'generarXML']);
 Route::get('enviarCorreo/{id}',[MensajeController::class,'enviarCorreo']);
 Route::get('crearRespaldo',[AjusteController::class,'crearRespaldo']);
-

@@ -10,6 +10,7 @@ use App\Models\Clase;
 use App\Models\Medida;
 use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
+use App\Models\Cuis;
 use App\Models\Catalogo;
 use App\Models\Parametro;
 use App\Models\Codigo;
@@ -47,7 +48,12 @@ class MedicamentoController extends Controller
                             ->orderBy('parametros.descripcion','ASC')
                             ->pluck('parametros.descripcion','parametros.codigo_clasificador');
         $clases=Clase::orderBy('nombre','ASC')->pluck('nombre','id');
-        $catalogos=Catalogo::orderBy('descripcion_producto','ASC')->pluck('descripcion_producto','codigo_producto');
+        $cuis = Cuis::obtenerCuis();
+        $codigoInicial = Codigo::where('cuis_id',$cuis->id)->orderBy('descripcion','ASC')->first();
+        $catalogos=Catalogo::join('codigos','catalogos.codigo_actividad','=','codigos.codigo_caeb')
+                            ->where('codigos.codigo_caeb','=',$codigoInicial->codigo_caeb)                                    
+                            ->orderBy('catalogos.descripcion_producto','ASC')                                    
+                            ->pluck('catalogos.descripcion_producto','catalogos.codigo_producto');
         $dosis1=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis2=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
         $dosis3=Medida::orderBy('descripcion','ASC')->pluck('descripcion','id');
@@ -92,9 +98,7 @@ class MedicamentoController extends Controller
             $medicamento->contraindicacion=$request->contraindicacion;
             $medicamento->observacion=$request->observacion;
             $medicamento->stock=0;
-            $medicamento->stock_minimo=$request->stock_minimo;
-
-            // $medicamento->formato_id=$request->formatos;            
+            $medicamento->stock_minimo=$request->stock_minimo;          
             $medicamento->codigo_clasificador=$request->unidad_medida;
             $medicamento->via_id=$request->vias;
             $medicamento->save();
@@ -346,8 +350,7 @@ class MedicamentoController extends Controller
             $medicamento->contraindicacion=$request->contraindicacion;
             $medicamento->observacion=$request->observacion;
             $medicamento->stock_minimo=$request->stock_minimo;
-
-            $medicamento->codigo_clasificador_unidad_medida=$request->unidad_medida;
+            $medicamento->codigo_clasificador=$request->unidad_medida;
             $medicamento->via_id=$request->vias;
             $medicamento->save();
             
