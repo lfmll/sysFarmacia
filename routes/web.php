@@ -62,8 +62,8 @@ Route::resource('cliente', ClienteController::class);
 Route::resource('agencia', AgenciaController::class);
 Route::resource('puntoventa', PuntoVentaController::class);
 Route::resource('ajuste', AjusteController::class);
-Route::get('obtenerCuis', [AjusteController::class, 'obtenerCuis']);
-Route::get('obtenerCufd', [AjusteController::class, 'obtenerCufd']);
+Route::get('sincronizarCuis', [AjusteController::class, 'sincronizarCuis']);
+Route::get('sincronizarCufd', [AjusteController::class, 'sincronizarCufd']);
 Route::get('sincronizar', [AjusteController::class, 'sincronizar']);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
@@ -96,6 +96,7 @@ Route::get('reporteCompraMensual',[PDFController::class,'reporteCompraMensual'])
 Route::get('reporteCompraAnual',[PDFController::class,'reporteCompraAnual']);
 Route::get('reporteCierreAnterior',[PDFController::class,'reporteCierreAnterior']);
 Route::get('reporteLotesVencimiento',[PDFController::class,'reporteLotesVencimiento']);
+Route::get('firmarFactura/{id}',[FacturaController::class, 'firmarFactura']);
 Route::get('facturaCarta/{id}',[PDFController::class,'facturaCarta']);
 Route::get('facturaRollo/{id}',[PDFController::class,'facturaRollo']);
 Route::get('importMedicamento',[ExcelController::class,'importMedicamento']);

@@ -116,7 +116,7 @@ class VentaController extends Controller
             $venta->importe_iva = $request->eTotalIVA;
             
             $literal = new NumeroALetras();
-            $venta->literal = $literal->toMoney($venta->eTotalIVA,2);
+            $venta->literal = $literal->toMoney($request->eTotalIVA,2);
             
             $venta->estado='A';
             $venta->metodo_pago_id = $request->forma_pago;
@@ -130,72 +130,30 @@ class VentaController extends Controller
             $dprecio = $request->get('dprecio');
             $dlote = $request->get('dcodigo');
             
-            $cont = 0;
             $n = count($dcantidad);
             
-            while ($cont < $n) {
+            for ($i=0; $i < $n; $i++) { 
                 $detalle = new DetalleVenta();
                 $detalle->venta_id = $venta->id;
-                $detalle->cantidad = $dcantidad[$cont];
-                $detalle->precio_venta = $dprecio[$cont];                
-                $detalle->lote_id = $dlote[$cont];                                                       
+                $detalle->cantidad = $dcantidad[$i];
+                $detalle->precio_venta = $dprecio[$i];                
+                $detalle->lote_id = $dlote[$i];                                                       
                 // $detalle->save();
 
-                $lote = Lote::find($dlote[$cont]);
+                $lote = Lote::find($dlote[$i]);
                 $cantlote = $lote->cantidad;
-                $cantlote = $cantlote - $dcantidad[$cont];                
+                $cantlote = $cantlote - $dcantidad[$i];                
                 $lote->cantidad = $cantlote;
-                $lote->precio_venta = $dprecio[$cont];
+                $lote->precio_venta = $dprecio[$i];
                 // $lote->save();
                 
                 if (!is_null($lote->medicamento_id)) {
                     $medicamento = Medicamento::find($lote->medicamento_id);
-                    $medicamento->stock = $medicamento->stock - $dcantidad[$cont];
+                    $medicamento->stock = $medicamento->stock - $dcantidad[$i];
                     // $medicamento->save();
-                }               
-                $cont = $cont + 1;
+                }
             }
-
-            //Factura
             
-            // $client = new \SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl');
-            // $client = new SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl'); //SERVICIO DE OBTENCIÓN DE CÓDIGOS
-            // $client = new \SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionOperaciones?wsdl');
-            // $client = new \SoapClient('https://pilotosiatservicios.impuestos.gob.bo/v2/ServicioFacturacionCompraVenta?wsdl');
-            
-            // $respuesta = $client->request('GET','https://pilotosiatservicios.impuestos.gob.bo/v2/verificarComunicacion?wsdl=');
-
-            // $parametros = [
-            //     'codigoAmbiente' => 2,
-            //     'codigoModalidad'   => 2,
-            //     'codigoPuntoVenta'  => 0,
-            //     'codigoSistema' => '7C49BFA4983BC9FAE824BA6',
-            //     'codigoSucursal'    => 0,                
-            //     'nit'   => '8928903012'                                              
-            // ];
-            $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzQ5QkZBNDk4M0JDOUZBRTgyNEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzI1NjQwODgyLCJpYXQiOjE3MTUwMjgwNTIsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.CafF0rusf1JiihcRHUWeZKpUc6_R46sfgh8c-SYINcYKyOvX4a3QmOQEAC8aK0rTw-bvMGD-nPt8-IPwde30tA';
-            
-
-            // $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v1/FacturacionCodigos?wsdl";
-            $wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionOperaciones?wsdl";
-
-            $opts = array(
-                'http'=> array(
-                    'header' => "apikey: TokenApi $token",
-                )
-            );
-            
-            $context = stream_context_create($opts);
-            
-            $client = new SoapClient($wsdl, [ 
-                'stream_context' => $context,
-                'cache_wsdl' => WSDL_CACHE_NONE,
-                'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP | SOAP_COMPRESSION_DEFLATE,                  
-            ]);
-            $respons = $client->verificarComunicacion();
-
-            
-            dd($respons);
     
             $tdcodigoDocSec = $request->get('tdcodigoDocSec');
             $fecha_emision=Carbon::now('America/La_Paz')->format('YmdHisv');
@@ -210,7 +168,7 @@ class VentaController extends Controller
             $factura->telefono = $agencia->telefono;
             $factura->numeroFactura = $cantFactura++; 
             
-            $factura->cuf =  $this->generarCUF(123456789, //$empresa->nit,    //$nit
+            $factura->cuf =  Factura::generarCUF(123456789, //$empresa->nit,    //$nit
                                                 0, //$agencia->id,       //$sucursal [0=Casa Matriz; 1=Sucursal 1,..etc.]
                                                 20190113163721231, //$fecha_emision,     //$fecha
                                                 1,//$modalidad [1=Electronica Linea; 2=Computarizada Linea; 3=Portal Web]
@@ -290,77 +248,5 @@ class VentaController extends Controller
         return view("venta.entrada");
     }
 
-    /**************************************
-     * Generar CUF
-     **************************************/
-    public function generarCUF($nit, $sucursal, $fecha, $modalidad, $tipo_emision, $tipo_factura, $tipo_documento_sector, $nro_factura, $pos){
-        /**
-         * PASO 1 y PASO 2 Completa con ceros cada campo y concatena todo en una
-         * sola cadena
-         */
-        $cadena = "";
-        $cadena .= str_pad($nit, 13, '0', STR_PAD_LEFT);
-        $cadena .= $fecha;
-        $cadena .= str_pad($sucursal, 4, '0', STR_PAD_LEFT);
-        $cadena .= $modalidad;
-        $cadena .= $tipo_emision;
-        $cadena .= $tipo_factura;
-        $cadena .= str_pad($tipo_documento_sector, 2, '0', STR_PAD_LEFT);
-        $cadena .= str_pad($nro_factura, 10, '0', STR_PAD_LEFT);
-        $cadena .= str_pad($pos, 4, '0', STR_PAD_LEFT);
-        /**
-         * PASO 3 Obtiene modulo 11 y adjunta resultado a la cadena
-         */
-        $cadena .= $this->calculaDigitoMod11($cadena, 1, 9, false);
-        
-        /**
-         * PASO 4 Aplica base16
-         */
-        $baseH = $this->base16($cadena);
-        
-        return $baseH;
-        // return $cadena;
-
-    }
-
-    public function calculaDigitoMod11(string $cadena, int $numDig, int $limMult, bool $sw_10){
-        if (!$sw_10) $numDig = 1;
-        
-        for ($n=1; $n <= $numDig; $n++) { 
-            $suma = 0;
-            $mult = 2;
-            for ($i=strlen($cadena)-1; $i >= 0 ; $i--) { 
-                $suma += ($mult * substr($cadena, $i, $i+1));
-                if (++$mult > $limMult) {
-                    $mult = 2;
-                }
-            }
-            if ($sw_10) {
-                $dig = (($suma * 10) % 11) % 10;
-            } else {
-                $dig = $suma % 11;
-            }
-            if ($dig == 10) {
-                $cadena .= "1";
-            }
-            if ($dig == 11) {
-                $cadena .= "0";
-            }
-            if ($dig < 10) {
-                $cadena .= $dig;
-            }
-        }
-        return substr($cadena, strlen($cadena) - $numDig, strlen($cadena));
-    }
-
-    public function base16($nro, $touppercase = true) {
-        $hexvalues = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
-        $hexval = '';
-        while ($nro != '0') {
-            $hexval = $hexvalues[bcmod($nro, '16')].$hexval;
-            $nro = bcdiv($nro, '16', 0);
-        }
-        return ($touppercase) ? strtoupper($hexval):$hexval;
-    }
 
 }

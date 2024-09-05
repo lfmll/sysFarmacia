@@ -29,6 +29,7 @@
                                 <div class="col-lg-8">
                                     <div class="form-group">
                                         {!! Form::label('cliente','Nombre o Razon Social: ') !!}
+                                        {!! Form::text('cid', null, ['id'=>'cid','class'=>'form-control', 'style'=>'display:none']) !!}
                                         <div class="input-group mb-3">
                                             {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control']) !!}
                                             <div class="input-group-append">
@@ -37,7 +38,7 @@
                                                 </a>
                                             </div>
                                         </div>
-                                        {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente', 'style'=>'display:none']) !!}
+                                        {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente']) !!}
                                     </div>                                    
                                 </div>
                                 <div class="col-lg-1"></div>
@@ -400,7 +401,7 @@
                                     <tr id="{{$lotem->id}}">
                                         <td>
                                             <div class="chk">
-                                                <input type="checkbox" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_venta}}" id="{{$lotem->id}}">
+                                                <input type="radio" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->medicamento->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_venta}}" id="{{$lotem->id}}">
                                             </div>
                                         </td>
                                         <td>{{$lotem->numero}}</td>
@@ -449,7 +450,7 @@
             "ordering": false,
             "info": false,
             "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
-            "autoWidth": false
+            "autoWidth": true
         });
     });
 
@@ -464,38 +465,24 @@
             "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
             "autoWidth": false
         });
+    });   
+  
+    $("input:checkbox").on('click', function() {
+    // in the handler, 'this' refers to the box clicked on
+    var $box = $(this);
+    if ($box.is(":checked")) {
+        // the name of the box is retrieved using the .attr() method
+        // as it is assumed and expected to be immutable
+        var group = "input:checkbox[name='" + $box.attr("name") + "']";
+        // the checked state of the group/box on the other hand will change
+        // and the current value is retrieved using .prop() method
+        $(group).prop("checked", false);
+        $box.prop("checked", true);
+    } else {
+        $box.prop("checked", false);
+    }
     });
 
-    $(function () {
-        $('#tlotei').DataTable({
-            "responsive" : false,
-            "paging": true,
-            "lengthMenu": [4, 8, "All"],
-            "searching": true,
-            "ordering": false,
-            "info": false,
-            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
-            "autoWidth": false
-        });
-    });
-
-    $(function () {
-        $('#tlotep').DataTable({
-            "responsive" : false,
-            "paging": true,
-            "lengthMenu": [4, 8, "All"],
-            "searching": true,
-            "ordering": false,
-            "info": false,
-            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
-            "autoWidth": false
-        });
-    });
-    
-    $('input.chk').on('change', function() {
-        $('input.chk').not(this).prop('checked', false);  
-    });
-   
     let total=0;
     let subtotal=[];
 
@@ -528,6 +515,7 @@
         });
         e.preventDefault();
         var formData = {
+            id: $('#cid').val(),
             estado: encodeURIComponent('A'),
             tipo_documento: $('#cctipodoc').val(),
             numero_documento: $('#ccnrodoc').val(),
@@ -543,7 +531,8 @@
             url: '{{url("/cliente")}}',
             data: formData,
             dataType: 'json',
-            success: function(data){                
+            success: function(data){
+                $('#cid').val(data.id)
                 $('#cnombre').val(data.nombre);
                 $('#ctipodoc').val(data.tipo_documento);
                 $('#cnrodoc').val(data.numero_documento);
@@ -612,16 +601,19 @@
             dataType: 'json',
             success: function(data) {
                 let n = data.length;
-                $("#tbodyLotem tr").remove();
+                $("#tbodyLotem tr").empty();
                 var fila="";
                 for (let i = 0; i < n; i++) {
-                    fila += "<tr id="+data[i].id+"><td><div class='chk'><input type='checkbox' name='chk' class='chk' id="+data[i].id+" value="+data[i].id+","+data[i].nombre_comercial+","+data[i].cantidad+","+data[i].precio_venta+"></div></td><td>"+data[i].numero+"</td><td>"+data[i].nombre_comercial+"</td><td>"+data[i].fecha_vencimiento+"</td><td>"+data[i].cantidad+"</td><td>"+data[i].precio_venta+"</td><td>"+data[i].nombre+"</td></tr>";                    
+                    fila += "<tr id="+data[i].id+"><td><div class='chk'><input type='radio' name='chk' class='chk' id="+data[i].id+" value="+data[i].id+","+data[i].nombre_comercial+","+data[i].cantidad+","+data[i].precio_venta+"></div></td><td>"+data[i].numero+"</td><td>"+data[i].nombre_comercial+"</td><td>"+data[i].fecha_vencimiento+"</td><td>"+data[i].cantidad+"</td><td>"+data[i].precio_venta+"</td><td>"+data[i].nombre+"</td></tr>";                    
                 }
-                $('#tlotem').append(fila);
+                // $('#tlotem').append(fila);
+                $('#tlotem').DataTable().destroy();
+                $('#tlotem').find('tbody').append(fila);
+                $('#tlotem').DataTable().search().draw();                
             },
             error: function (data) {
                 if (data.status==409) {
-                    $("#tbodyLotem tr").remove();
+                    $("#tbodyLotem tr").empty();
                     swal.fire("Alerta",JSON.parse(data.responseText).mensaje,"warning");    
                 } else {
                     swal.fire("Error","Error en la consulta","error");
@@ -685,6 +677,7 @@
     }
 
     function limpiarCliente(){
+        document.getElementById("cid").value = "";
         document.getElementById("cnombre").value = "";
         document.getElementById("ctipodoc").value = "";
         document.getElementById("cnrodoc").value = "";
@@ -709,16 +702,18 @@
         });
         cliente=document.getElementById("ccliente").innerText;
         cl=cliente.split(',');
+        id=cl[0];
         nombre=cl[1];
         tipodoc=cl[2];
         nrodoc=cl[3];
         cmpl=cl[4];
         correo=cl[5];
-        document.getElementById('cnombre').value =nombre;
-        document.getElementById('ctipodoc').value =tipodoc;
-        document.getElementById('cnrodoc').value  =nrodoc;
-        document.getElementById('ccmpl').value    =cmpl;
-        document.getElementById('ccorreo').value  =correo;        
+        document.getElementById('cid').value        = id;
+        document.getElementById('cnombre').value    = nombre;
+        document.getElementById('ctipodoc').value   = tipodoc;
+        document.getElementById('cnrodoc').value    = nrodoc;
+        document.getElementById('ccmpl').value      = cmpl;
+        document.getElementById('ccorreo').value    = correo;        
     }
 
     function seleccionar(){          

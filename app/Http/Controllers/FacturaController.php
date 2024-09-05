@@ -6,6 +6,7 @@ use App\Models\Factura;
 use App\Models\DetalleFactura;
 use App\Models\Empresa;
 use App\Models\TipoDocumento;
+use App\Models\Ajuste;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Milon\Barcode\DNS2D;
@@ -119,6 +120,64 @@ class FacturaController extends Controller
     {
         //
     }
+    /**************************************
+     * Soap Factura
+     **************************************/
+
+     public function emitirFactura()
+     {
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
+        $wsdlFactura = "https://pilotosiatservicios.impuestos.gob.bo/v2/ServicioRecepcionCompras?wsdl";
+        $facturaSincronizacion = Ajuste::consumoSIAT($token,$wsdlFactura);
+        if ($facturaSincronizacion->verificarComunicacion()->return->transaccion == true) {
+            alert("com factura");
+        } else {
+            alert("something wrong");
+        }
+        
+     }
+    /**************************************
+     * Firmar Factura
+     **************************************/
+    public function firmarFactura($idfactura)
+    {
+        $factura=Factura::find($idfactura);
+        $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
+        if (!$this->existeArchivos('factura.xml','facturaComputarizadaCompraVenta.xsd')) {
+            dd("error archivos no encontrados");
+        }
+        $m = $this->validarArchivo('factura.xml','facturaComputarizadaCompraVenta.xsd');
+        dd($m);
+
+    }
+    public function existeArchivos($filexml, $xsd): bool {
+        if (!file_exists(public_path('siat/'.$filexml))|| !file_exists(public_path('siat/'.$xsd))) {
+            return false;
+        }        
+        return true;
+    }
+
+    public function validarArchivo($filexml, $xsd)
+    {
+        $xmlReader = new \XMLReader();
+        $xmlReader->open(public_path('siat/'.$filexml));
+        $xmlReader->setParserProperty(\XMLReader::VALIDATE, true);
+        $xmlReader->setSchema(public_path('siat/'.$xsd));
+
+        \libxml_use_internal_errors(true);
+
+        $msj = [];
+
+        while ($xmlReader->read()) {
+            if (!$xmlReader->isValid()) {
+                $err = \libxml_get_last_error();
+                if ($err && $err instanceof \libXMLError) {
+                    $msj[] = \trim($err->message). 'on line '.$err->line;
+                }
+            }
+        }
+        return $msj;
+    }
     
     /**************************************
      * Imprimir Factura XML
@@ -184,37 +243,39 @@ class FacturaController extends Controller
                 $xml->writeElement('codigoMoneda',$factura->codigoMoneda);
                 $xml->writeElement('tipoCambio',$factura->tipoCambio);
                 $xml->writeElement('montoTotalMoneda',$factura->montoTotalMoneda);
-                if (is_null($factura->montoGiftCard) || empty($factura->montoGiftCard)) {
-                    $xml->startElement('montoGiftCard');
-                        $xml->startAttribute('xsi:nil');
-                        $xml->text('true');
-                        $xml->endAttribute();
-                    $xml->endElement();
-                } else {
-                    $xml->writeElement('montoGiftCard',$factura->montoGiftCard);                    
-                }                 
-                $xml->writeElement('descuentoAdicional',$factura->descuentoAdicional);
-                if (is_null($factura->codigoExcepcion) || empty($factura->codigoExcepcion)) {
-                    $xml->startElement('codigoExcepcion');
-                        $xml->startAttribute('xsi:nil');
-                        $xml->text('true');
-                        $xml->endAttribute();
-                    $xml->endElement();
-                } else {
-                    $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);                    
-                }                
-                if (is_null($factura->cafc) || empty($factura->cafc)) {
-                    $xml->startElement('cafc');
-                        $xml->startAttribute('xsi:nil');
-                        $xml->text('true');
-                        $xml->endAttribute();
-                    $xml->endElement();
-                } else {
-                    $xml->writeElement('cafc',$factura->cafc);                    
-                }                
                 $xml->writeElement('leyenda',$factura->leyenda);
                 $xml->writeElement('usuario',$factura->usuario);
                 $xml->writeElement('codigoDocumentoSector',$factura->codigoDocumentoSector);
+                // if (is_null($factura->montoGiftCard) || empty($factura->montoGiftCard)) {
+                //     $xml->startElement('montoGiftCard');
+                //         $xml->startAttribute('xsi:nil');
+                //         $xml->text('true');
+                //         $xml->endAttribute();
+                //     $xml->endElement();
+                // } else {
+                //     $xml->writeElement('montoGiftCard',$factura->montoGiftCard);                    
+                // }                 
+                // $xml->writeElement('descuentoAdicional',$factura->descuentoAdicional);
+                // if (is_null($factura->codigoExcepcion) || empty($factura->codigoExcepcion)) {
+                //     $xml->startElement('codigoExcepcion');
+                //         $xml->startAttribute('xsi:nil');
+                //         $xml->text('true');
+                //         $xml->endAttribute();
+                //     $xml->endElement();
+                // } else {
+                //     $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);                    
+                // }                
+                // if (is_null($factura->cafc) || empty($factura->cafc)) {
+                //     $xml->startElement('cafc');
+                //         $xml->startAttribute('xsi:nil');
+                //         $xml->text('true');
+                //         $xml->endAttribute();
+                //     $xml->endElement();
+                // } else {
+                //     $xml->writeElement('cafc',$factura->cafc);                    
+                // }                
+                
+                
                 $xml->endElement();
 
                 $xml->startElement('detalle');

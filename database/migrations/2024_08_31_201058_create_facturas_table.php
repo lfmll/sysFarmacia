@@ -25,7 +25,7 @@ class CreateFacturasTable extends Migration
             $table->string('codigoSucursal');
             $table->string('direccion');
             $table->string('codigoPuntoVenta');
-            $table->datetime('fechaEmision');
+            $table->string('fechaEmision');
             $table->string('nombreRazonSocial');
             $table->string('codigoTipoDocumentoIdentidad');
             $table->string('numeroDocumento');

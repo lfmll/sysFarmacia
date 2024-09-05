@@ -165,7 +165,7 @@ class AjusteController extends Controller
     {
         //
     }
-    public function obtenerCuis()
+    public function sincronizarCuis()
     {
         $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
         $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
@@ -206,7 +206,7 @@ class AjusteController extends Controller
         }
     }
 
-    public function obtenerCufd()
+    public function sincronizarCufd()
     {        
         $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
         $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";

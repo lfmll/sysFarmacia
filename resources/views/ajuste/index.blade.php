@@ -54,12 +54,12 @@
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <a href="{{url('obtenerCuis')}}"><button type="button" class="btn btn-primary form-control"> Obtener CUIS</button></a>
+                                    <a href="{{url('sincronizarCuis')}}"><button type="button" class="btn btn-primary form-control"> Obtener CUIS</button></a>
                                 </div>
                             </div>
                             <div class="col-sm-6">                                        
                                 <div class="form-group">
-                                    <a href="{{url('obtenerCufd')}}"><button type="button" class="btn btn-primary form-control"> Obtener CUFD</button></a>                                    
+                                    <a href="{{url('sincronizarCufd')}}"><button type="button" class="btn btn-primary form-control"> Obtener CUFD</button></a>                                    
                                 </div>
                             </div>
                         </div>
