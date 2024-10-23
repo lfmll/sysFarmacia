@@ -130,4 +130,135 @@ class Factura extends Model
         }
         return ($touppercase) ? strtoupper($hexval):$hexval;
     }
+
+    /**************************************
+     * Generar XML
+     **************************************/
+    public static function generarXML($id)
+    {
+        $factura=Factura::find($id);
+        $detallefactura=DetalleFactura::where('factura_id','=',$id)->get();
+        
+        try {            
+            $xml = new \XMLWriter();
+            $xml->openMemory();
+            // $xml->openURI('factura.xml');
+            // $xml->setIndent(true);
+            // $xml->startDocument('1.0','UTF-8');
+            $xml->startElement('facturaComputarizadaCompraVenta');
+            $xml->writeAttribute('xsi:noNamespaceSchemaLocation','facturaComputarizadaCompraVenta.xsd');
+            $xml->writeAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');            
+                $xml->startElement('cabecera');            
+                $xml->writeElement('nitEmisor',$factura->nitEmisor);
+                $xml->writeElement('razonSocialEmisor',$factura->razonSocialEmisor);
+                $xml->writeElement('municipio',$factura->municipio);
+                $xml->writeElement('telefono',$factura->telefono);
+                $xml->writeElement('numeroFactura',$factura->numeroFactura);
+                $xml->writeElement('cuf',$factura->cuf);
+                $xml->writeElement('cufd',$factura->cufd);
+                $xml->writeElement('codigoSucursal',$factura->codigoSucursal);
+                $xml->writeElement('direccion',$factura->direccion);
+                if (is_null($factura->codigoPuntoVenta) || empty($factura->codigoPuntoVenta)) {
+                    $xml->startElement('codigoPuntoVenta');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('codigoPuntoVenta',$factura->codigoPuntoVenta);                    
+                }                
+                $xml->writeElement('fechaEmision',$factura->fechaEmision);
+                $xml->writeElement('nombreRazonSocial',$factura->nombreRazonSocial);
+                $xml->writeElement('codigoTipoDocumentoIdentidad',$factura->codigoTipoDocumentoIdentidad);
+                $xml->writeElement('numeroDocumento',$factura->numeroDocumento);
+                if (is_null($factura->complemento) || empty($factura->complemento)) {
+                    $xml->startElement('complemento');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('complemento',$factura->complemento);                    
+                }                                            
+                $xml->writeElement('codigoCliente',$factura->codigoCliente);
+                $xml->writeElement('codigoMetodoPago',$factura->codigoMetodoPago);
+                if (is_null($factura->numeroTarjeta) || empty($factura->numeroTarjeta)) {
+                    $xml->startElement('numeroTarjeta');
+                        $xml->startAttribute('xsi:nil');
+                        $xml->text('true');
+                        $xml->endAttribute();
+                    $xml->endElement();
+                } else {
+                    $xml->writeElement('numeroTarjeta',$factura->numeroTarjeta);                    
+                }                 
+                $xml->writeElement('montoTotal',$factura->montoTotal);
+                $xml->writeElement('montoTotalSujetoIva',$factura->montoTotalSujetoIva);
+                $xml->writeElement('codigoMoneda',$factura->codigoMoneda);
+                $xml->writeElement('tipoCambio',$factura->tipoCambio);
+                $xml->writeElement('montoTotalMoneda',$factura->montoTotalMoneda);
+                $xml->writeElement('leyenda',$factura->leyenda);
+                $xml->writeElement('usuario',$factura->usuario);
+                $xml->writeElement('codigoDocumentoSector',$factura->codigoDocumentoSector);
+                // if (is_null($factura->montoGiftCard) || empty($factura->montoGiftCard)) {
+                //     $xml->startElement('montoGiftCard');
+                //         $xml->startAttribute('xsi:nil');
+                //         $xml->text('true');
+                //         $xml->endAttribute();
+                //     $xml->endElement();
+                // } else {
+                //     $xml->writeElement('montoGiftCard',$factura->montoGiftCard);                    
+                // }                 
+                // $xml->writeElement('descuentoAdicional',$factura->descuentoAdicional);
+                // if (is_null($factura->codigoExcepcion) || empty($factura->codigoExcepcion)) {
+                //     $xml->startElement('codigoExcepcion');
+                //         $xml->startAttribute('xsi:nil');
+                //         $xml->text('true');
+                //         $xml->endAttribute();
+                //     $xml->endElement();
+                // } else {
+                //     $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);                    
+                // }                
+                // if (is_null($factura->cafc) || empty($factura->cafc)) {
+                //     $xml->startElement('cafc');
+                //         $xml->startAttribute('xsi:nil');
+                //         $xml->text('true');
+                //         $xml->endAttribute();
+                //     $xml->endElement();
+                // } else {
+                //     $xml->writeElement('cafc',$factura->cafc);                    
+                // }                
+                
+                
+                $xml->endElement();
+
+                $xml->startElement('detalle');
+                foreach ($detallefactura as $detalle) {
+                    $xml->writeElement('actividadEconomica', $detalle->actividadEconomica);
+                    $xml->writeElement('codigoProductoSin', $detalle->codigoProductoSin);
+                    $xml->writeElement('codigoProducto', $detalle->codigoProducto);
+                    $xml->writeElement('descripcion', $detalle->descripcion);
+                    $xml->writeElement('cantidad', $detalle->cantidad);
+                    $xml->writeElement('unidadMedida', $detalle->unidadMedida);
+                    $xml->writeElement('precioUnitario', $detalle->precioUnitario);
+                    $xml->writeElement('montoDescuento', $detalle->montoDescuento);
+                    $xml->writeElement('subTotal', $detalle->subTotal);
+                    $xml->writeElement('numeroSerie', $detalle->numeroSerie);
+                    $xml->writeElement('numeroImei', $detalle->numeroImei);
+                    $xml->endElement();
+                }                
+                $xml->endElement();
+
+            $xml->endElement();
+            $xml->endDocument();
+            // $content = $xml->outputMemory();
+            // ob_end_clean();
+            // ob_start();
+            $xml->flush();                        
+            return $xml;
+
+        } catch (\Exception $e) {
+            // return redirect('/factura')->with('toast_error',$e);            
+            return $e;
+        }
+    }
 }

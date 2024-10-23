@@ -167,7 +167,7 @@ class AjusteController extends Controller
     }
     public function sincronizarCuis()
     {
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
+        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzlCMjQ0NTVEMjc4MEZFRTlGNkJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MTU1ODA3NCwiZXhwIjoxNzM3NjI3MjQ1LCJpYXQiOjE3Mjk2OTI4MTUsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.4h83p2QdpIbVzszAmsXzHoy7MZ0v01YwGK9IewKfjHHRmLd0CYwrU1Y3jY53UVPie7xeW1vvBjNLQuzCW7ov0Q';
         $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
         $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();

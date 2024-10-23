@@ -147,7 +147,11 @@ class FacturaController extends Controller
             dd("error archivos no encontrados");
         }
         $m = $this->validarArchivo('factura.xml','facturaComputarizadaCompraVenta.xsd');
-        dd($m);
+        if (empty($m)) {
+            dd("xml correcto");
+        } else {
+            dd($m);
+        }        
 
     }
     public function existeArchivos($filexml, $xsd): bool {
@@ -182,14 +186,15 @@ class FacturaController extends Controller
     /**************************************
      * Imprimir Factura XML
      **************************************/
-    public function generarXML($idfactura){        
+    public function generarXML($idfactura){      
         $factura=Factura::find($idfactura);
         $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
         
         try {            
             $xml = new \XMLWriter();
             $xml->openMemory();
-            $xml->openURI('factura.xml');
+            // $xml->openURI('factura.xml');
+            $xml->openURI($factura->numeroFactura.'.xml');
             $xml->setIndent(true);
             $xml->startDocument('1.0','UTF-8');
             $xml->startElement('facturaComputarizadaCompraVenta');
@@ -301,7 +306,8 @@ class FacturaController extends Controller
             ob_end_clean();
             ob_start();
                         
-            return response()->download('factura.xml');
+            return response()->download($factura->numeroFactura.'.xml');
+            // return response()->download('factura.xml');
 
         } catch (\Exception $e) {
             return redirect('/factura')->with('toast_error',$e);            
