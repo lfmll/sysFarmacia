@@ -70,12 +70,16 @@
                 </div>
             </div>
         </div>
-        <div class="input-group mb-3">
-            {{Form::file('cover')}}
-        </div>        
-        <hr>
-        <div class="input-group mb-2">
-            <h6 class="input-group mb-12"><i class="fas fa-fw fa-desktop"></i> Sistema</h6>
+        <div class="mb-3">
+            <label for="logo">Subir Imagen Logo</label>
+            <input type="file" class="form-control" id="logo">
+        </div>                               
+    </div>
+    <div class="tab">
+        <div class="row">            
+            <div class="col-12">
+                <h5 class="input-group mb-12"><i class="fas fa-fw fa-laptop"></i> Sistema</h5>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-8">
@@ -92,9 +96,8 @@
                 {{Form::text('version', $empresa->version,['class'=>'form-control', 'placeholder'=>'Version'])}}            
             </div>
         </div>
-        
         <div class="input-group mb-3">
-        {{Form::text('codigo_sistema', $empresa->codigo_sistema,['class'=>'form-control', 'placeholder'=>'Codigo Sistema'])}}    
+            {{Form::text('codigo_sistema', $empresa->codigo_sistema,['class'=>'form-control', 'placeholder'=>'Codigo Sistema'])}}    
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-code"></span>
@@ -102,28 +105,16 @@
             </div>
         </div> 
         <div class="input-group mb-3">
-        {{Form::select('modalidad', ['1'=>'Electronica en Linea','2'=>'Computarizada en Linea'], '2', ['class'=>'form-control', 'readonly'=>'true'])}}    
+            {{Form::select('modalidad', ['1'=>'Electronica en Linea','2'=>'Computarizada en Linea'], '2', ['class'=>'form-control', 'readonly'=>'true'])}}    
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-inbox"></span>
                 </div>
             </div>
-        </div>                
-    </div>
-    <div class="tab">
-        <div class="row">
-            <div class="col-1"></div>
-            <div class="col-11">
-                <h5 class="input-group mb-12"><i class="fas fa-fw fa-cogs"></i> Asociar Sistema</h5>
-            </div>
         </div>
+        <h5 class="input-group mb-12"><i class="fas fa-fw fa-cogs"></i> Token Delegado</h5>
         <div class="input-group mb-3">
-            {{Form::text('token', null,['class'=>'form-control', 'placeholder'=>'Token Delegado'])}}    
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-laptop-code"></span>
-                </div>
-            </div>
+            <textarea name="token" id="token" class="form-control" rows="6" cols="30"></textarea>            
         </div> 
     </div>
     <div class="col-md-12" style="overflow:auto;">
@@ -132,8 +123,7 @@
             <button type="button" class="form-control btn btn-success" id="nextBtn" onclick="nextPrev(1)">Siguiente</button>
         </div>
     </div>
-    
-    
+        
     <!-- Circles which indicates the steps of the form: -->
     <div class="col-md-12" style="text-align:center;margin-top:40px;">
         <span class="step"></span>

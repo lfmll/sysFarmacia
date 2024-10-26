@@ -94,7 +94,7 @@ class AjusteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -127,25 +127,28 @@ class AjusteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Ajuste $ajuste)
-    {
-        $ajuste = Ajuste::first();
-        
-        if ($request->inlineRadioOptions == "option1") {    //gmail
-            $ajuste->driver = "smtp";
-            $ajuste->host = "smtp.gmail.com";
-            $ajuste->port = "587";
-            $ajuste->encryption = "tls";
-            $ajuste->username = $request->fromgmail;
-            $ajuste->password = $request->passgmail;
-            $ajuste->from = $request->fromgmail;
+    {           
+        $ajuste = Ajuste::first();     
+        if ($request->token !=null) {
+            $ajuste->token = $request->token;
         } else {
-            $ajuste->driver = "smtp";
-            $ajuste->host = $request->host;
-            $ajuste->port = $request->port;
-            $ajuste->encryption = "tls";
-            $ajuste->username = $request->username;
-            $ajuste->password = $request->password;
-            $ajuste->from = $request->username;
+            if ($request->inlineRadioOptions == "option1") {    //gmail
+                $ajuste->driver = "smtp";
+                $ajuste->host = "smtp.gmail.com";
+                $ajuste->port = "587";
+                $ajuste->encryption = "tls";
+                $ajuste->username = $request->fromgmail;
+                $ajuste->password = $request->passgmail;
+                $ajuste->from = $request->fromgmail;
+            } else {
+                $ajuste->driver = "smtp";
+                $ajuste->host = $request->host;
+                $ajuste->port = $request->port;
+                $ajuste->encryption = "tls";
+                $ajuste->username = $request->username;
+                $ajuste->password = $request->password;
+                $ajuste->from = $request->username;
+            }
         }
         
         if ($ajuste->save()) {
@@ -167,8 +170,9 @@ class AjusteController extends Controller
     }
     public function sincronizarCuis()
     {
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzlCMjQ0NTVEMjc4MEZFRTlGNkJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MTU1ODA3NCwiZXhwIjoxNzM3NjI3MjQ1LCJpYXQiOjE3Mjk2OTI4MTUsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.4h83p2QdpIbVzszAmsXzHoy7MZ0v01YwGK9IewKfjHHRmLd0CYwrU1Y3jY53UVPie7xeW1vvBjNLQuzCW7ov0Q';
-        $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";        
         $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();
         $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
@@ -181,6 +185,7 @@ class AjusteController extends Controller
         $codigoSucursal = $sucursal->codigo;
         $codigoPuntoVenta = $puntoVenta->codigo;
         $clienteCuis = Ajuste::consumoSIAT($token,$wsdlCodigos);
+        
         if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
         {
             $parametrosCUIS = array(
@@ -208,8 +213,9 @@ class AjusteController extends Controller
 
     public function sincronizarCufd()
     {        
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
-        $wsdlCodigos = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionCodigos?wsdl";
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
         $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();
         $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
@@ -254,10 +260,10 @@ class AjusteController extends Controller
 
     public function sincronizar()
     {        
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJMbWVkaW5hMzAxMiIsImNvZGlnb1Npc3RlbWEiOiI3QzcxOTg0QTlBRTNBRjBFREI2NEJBNiIsIm5pdCI6Ikg0c0lBQUFBQUFBQUFMT3dOTEt3TkRBMk1EUUNBQWhwY3d3S0FBQUEiLCJpZCI6MzA0MTU3MSwiZXhwIjoxNzMwNDEyMDQzLCJpYXQiOjE3MjA1NzY4MTMsIm5pdERlbGVnYWRvIjo4OTI4OTAzMDEyLCJzdWJzaXN0ZW1hIjoiU0ZFIn0.PAkJ6OQaL0XsIF4uylSHwSHf4gcLf_v7uDFmk9yALYMAATozJuCHfO5tg_fUbe5JM59J8Qgkwnw1IGooE6GJjw';
-                
-        //PASO 1: Consumir servicios SIAT Sincronizacion  
-        $wsdlSincronizacion = "https://pilotosiatservicios.impuestos.gob.bo/v2/FacturacionSincronizacion?wsdl";
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        //PASO 1: Consumir servicios SIAT Sincronizacion
+        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
         
         $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();

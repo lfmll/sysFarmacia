@@ -23,6 +23,8 @@ class CreateAjustesTable extends Migration
             $table->string('password',50)->nullable();
             $table->string('from',50)->nullable();
             $table->string('name',50)->nullable();
+            $table->string('token',500)->nullable();
+            $table->string('wsdl',50)->nullable();
             $table->smallInteger('punto_venta_id')->unsigned();
             $table->timestamps();
         });

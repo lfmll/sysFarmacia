@@ -51,8 +51,22 @@ class Cuis extends Model
     public static function soapCuis($clienteSoap, $parametrosCUIS, $punto_venta_id)
     {
         $responseCuis = $clienteSoap->cuis($parametrosCUIS);
-        if ($responseCuis->RespuestaCuis->transaccion==true) {
-            $lastCuis = Cuis::orderBy('created_at', 'desc')->first();
+        $lastCuis = Cuis::orderBy('created_at', 'desc')->first();
+        if ($responseCuis->RespuestaCuis->mensajesList->codigo == 980) {
+            if (is_null($lastCuis)) {
+                $cuis = new Cuis;
+                $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
+                $fecha = date("Y-m-d H:i:s", $fechaUTC);
+                $cuis->fill([
+                    'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
+                    'fecha_vigencia' => $fecha,
+                    'estado' => 'A',
+                    'punto_venta_id' => $punto_venta_id
+                ]);
+                $cuis->save();
+            }
+        }
+        if ($responseCuis->RespuestaCuis->transaccion==true) {            
             if (!is_null($lastCuis)) {
                 $lastCuis->estado = "N";
                 $lastCuis->save();

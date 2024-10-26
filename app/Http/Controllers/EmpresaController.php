@@ -9,6 +9,7 @@ use App\Models\Ajuste;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+Use Alert;
 
 class EmpresaController extends Controller
 {
@@ -19,7 +20,7 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -85,6 +86,8 @@ class EmpresaController extends Controller
             $ajuste = new Ajuste;
             $ajuste->username = $request->correo;
             $ajuste->punto_venta_id = $puntoventa->id;
+            $ajuste->token = $request->token;
+            $ajuste->wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v2";
             $ajuste->save();
 
             DB::commit();
@@ -120,7 +123,8 @@ class EmpresaController extends Controller
      */
     public function edit(Empresa $empresa)
     {
-        //
+        $empresa = Empresa::first();
+        return view('empresa.edit',['empresa'=>$empresa]);
     }
 
     /**
@@ -130,9 +134,30 @@ class EmpresaController extends Controller
      * @param  \App\Models\Empresa  $empresa
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Empresa $empresa)
+    public function update(Request $request)
     {
-        //
+        $empresa = Empresa::first();
+        $hasFile=$request->hasFile('cover') && $request->cover->isValid();
+        $empresa->nombre = $request->nombre;
+        $empresa->nit = $request->nit;
+        $empresa->correo = $request->correo;
+        if ($hasFile) {
+            $extension=$request->cover->extension();
+            $empresa->extension=$extension;
+        }
+        $empresa->sistema = $request->sistema;
+        $empresa->codigo_sistema = $request->codigo_sistema;
+        $empresa->version = $request->version;
+        if ($hasFile) {
+            $request->cover->move('imagen',"$empresa->id.$extension");
+        }        
+        Alert::warning('Actualizar Datos Empresa', 'Desea guardar los cambios?');
+
+        if ($empresa->save()) {
+            return view('empresa.edit',['empresa'=>$empresa])->with('toast_success','Datos de Empresa actualizado');
+        } else {
+            return view('empresa.edit',['empresa'=>$empresa])->with('toast_error',"Error al registrar");        
+        }
     }
 
     /**

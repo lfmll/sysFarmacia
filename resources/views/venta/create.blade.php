@@ -29,7 +29,7 @@
                                 <div class="col-lg-8">
                                     <div class="form-group">
                                         {!! Form::label('cliente','Nombre o Razon Social: ') !!}
-                                        {!! Form::text('cid', null, ['id'=>'cid','class'=>'form-control', 'style'=>'display:none']) !!}
+                                        {!! Form::text('cid', null, ['id'=>'cid','class'=>'form-control']) !!}
                                         <div class="input-group mb-3">
                                             {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control']) !!}
                                             <div class="input-group-append">

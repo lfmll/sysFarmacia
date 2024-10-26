@@ -261,6 +261,11 @@ return [
             'icon' => 'fas fa-fw fa-hospital',
             'submenu' => [
                 [
+                    'text'  => 'Empresa',
+                    'url'   =>  '/empresa/1/edit',
+                    'icon'  =>  'fas fa-fw fa-hospital',
+                ],
+                [
                     'text'  =>  'Sucursales',
                     'url'   =>  '/agencia',
                     'icon'  =>  'fas fa-fw fa-building',
