@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<facturaComputarizadaCompraVenta xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<facturaComputarizadaCompraVenta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd" >
  <cabecera>
   <nitEmisor>1003579028</nitEmisor>
   <razonSocialEmisor>Carlos Loza</razonSocialEmisor>
@@ -24,7 +24,6 @@
   <codigoMoneda>1</codigoMoneda>
   <tipoCambio>1</tipoCambio>
   <montoTotalMoneda>99</montoTotalMoneda>
-  
   <leyenda>Ley N° 453: Tienes derecho a recibir información sobre las características y contenidos de los servicios que utilices.</leyenda>
   <usuario>pperez</usuario>
   <codigoDocumentoSector>1</codigoDocumentoSector>

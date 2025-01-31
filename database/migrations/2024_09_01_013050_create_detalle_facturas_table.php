@@ -24,8 +24,8 @@ class CreateDetalleFacturasTable extends Migration
             $table->string('precioUnitario');
             $table->string('montoDescuento');
             $table->string('subTotal');
-            $table->string('numeroSerie');
-            $table->string('numeroImei');
+            $table->string('numeroSerie')->nullable();
+            $table->string('numeroImei')->nullable();
 
             $table->smallInteger('factura_id')->unsigned();
             $table->timestamps();

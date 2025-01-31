@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Milon\Barcode\DNS2D;
 use Response;
+use App\Models\Cufd;
+use ZipArchive;
 
 class FacturaController extends Controller
 {
@@ -140,19 +142,68 @@ class FacturaController extends Controller
      * Firmar Factura
      **************************************/
     public function firmarFactura($idfactura)
-    {
-        $factura=Factura::find($idfactura);
-        $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
-        if (!$this->existeArchivos('factura.xml','facturaComputarizadaCompraVenta.xsd')) {
-            dd("error archivos no encontrados");
+    {   
+        $fecha_emision=Carbon::now('America/La_Paz')->format('YmdHisv');
+        dd($fecha_emision);
+        $cufd = Cufd::obtenerCufd();
+        $cuf =  Factura::generarCUF(123456789,     //$nit
+                                    0,     //$sucursal [0=Casa Matriz; 1=Sucursal 1,..etc.]
+                                    20190113163721231,     //$fecha
+                                    1,//$modalidad [1=Electronica Linea; 2=Computarizada Linea; 3=Portal Web]
+                                    1,  //$tipo_emision [1=Online; 2=Offline; 3=Masiva]
+                                    1,//$tipo_factura [1=Doc Cred Fiscal; 2=Doc Sin Cred Fiscal; 3=Doc Ajuste]
+                                    1,    //$tipo_documento_sector [1=Fac Compra Venta,...,24=Nota Credito Debito]
+                                    1,     //$nro_factura
+                                    0                   //$pos
+                                );    
+                                dd($cuf);
+        // $factura=Factura::find($idfactura);
+        // $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
+        // if (!$this->existeArchivos('factura.xml','facturaComputarizadaCompraVenta.xsd')) {
+        //     dd("error archivos no encontrados");
+        // }
+        // $m = $this->validarArchivo('factura.xml','facturaComputarizadaCompraVenta.xsd');
+        // if (empty($m)) {
+        //     dd("xml correcto");
+        // } else {
+        //     dd($m);
+        // }        
+        $fecha_envio = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
+        $fecha_envio = $fecha_envio.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wslSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
+        $clienteFacturacion = Ajuste::consumoSIAT($token,$wslSincronizacion);
+        // dd($clienteFacturacion);
+        if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") 
+        {
+            $parametrosFactura = array(
+                'SolicitudServicioRecepcionFactura' => array(
+                    'codigoAmbiente' => 2,
+                    'codigoDocumentoSector' => 1,
+                    'codigoEmision' => 1,
+                    'codigoModalidad' => 2,
+                    'codigoPuntoVenta' => 0,
+                    'codigoSistema' => '7C9B24455D2780FEE9F6BA6',
+                    'codigoSucursal' => 0,
+                    'cufd' => 'QUFVQkRfw5NJQQ==ODBGRUU5RjZCQTY=Qz7CsHJNUGFMWVVBN0M5QjI0NDU1RDI3',
+                    'cuis' => 'AA877314',
+                    'nit' => '8928903012',
+                    'tipoFacturaDocumento' => 1, //ojo
+                    'archivo' => 'H4sIAAAAAAAACoVV227jNhB9368g3MfC1j2+gOFCkeUgrm/xDcW+0RSdsJVELyXFTv6pQIH+QffHOrr5GnQRJM6cGc4czhmO8ddDFKI3rhIh4/uG0dIbiMdMBiJ+uW+sloNmp/GVfMFbytJMUU9GuyylSnzQoDAUXfM4peiQiF4sJzTiyY4yvmCvPKIjyWha5P3J8dYhCRoImMRJDzLdN17TdNfTtP1+39pbLaleNFPXDe338ajM3BRxktKY8QbBjG4444oSHIvUj0QiFTF03XLaXd3sYO2EYkU/ZLyQTNCwgjyqQpmgkfygWLt14yiLBRM7IcmIohn9wNoJwSkP+VbGkrQ7Tte569hYO0I4ziKu5KC8ODGAxwWAWbYltu26vqfr/Ye+ZXuO5Vm+6Xm+4VoDt+0ODN909c6dfufe3bXdtuN6HXNg2l4bCuXH8xwBeXhe+b8+v6ffn1f9h9/Wq8F0sZ7Pnv88rOeDb5P1YD18GPfdffFbnAvgIAj8IhcZy1RCQ6IDfongQCjOGIhH3HULDafzRx+NpjP/G/rFMC2snfxVslkWp/JsGER430hVxhsawVvOXmne0jze1E27qRtNw17qVk93eqaDtYsIHMtoo/j8JAcZC1Sog5LChm7ehFQ8lmIn+5JBs4HPUwB/RUCDXID/9Vd6HT3EMQyn0+nWup0cUCfahbwwbq9aFvFCAW5eJzkWr/EqbMxTGcgZfZEnfmdYxWlJ1R/8s7ZGEigsZQqX7wLRM/PMtcjgsHx6o1cxJ7wmI2Me0DMipY1TaJhHo40oSJ5ZZ0Wq2MsKdYICeRTbFB5bcHuLgCcsy5vpBiIfKKAPdT5BK57+gfFdDn3SfLplt2jI33kMREb8HU3+/RvZjtVDSxCCJyjgMMavElEEn2IjFBLxVqqIMvHjn3zaYMhQSBPEqIKXy9WPv5JUMADeEYN78VgEMk+D8jWScPWWs03Q94yjLBWhYDxpYa2mgLMkg/UnyW4HhWGb1HZ1t+OULThL8z1Wi3HtAPy49gIYjjCEoQKC4i2fZh+oyQhoEtsxdAOe9yeu+t0qGWSQcyFiYncN41jy3HEVS4aTpmHBHrgJLuVUohCIDFePU9T30cSdu5Ohi/wJWruLaaluHQSqnb3R+n8MaxY+xzwQ5VBe2HiXyyVXsNuL9sG+x9oVVs5dv56jfMldITjJNuV7Kc4frerdLbgSnBim7dideg2UWBXwFHFBHDv/qf0FlN+vkkT7yTcf+fIfEW640oIHAAA=',
+                    'fechaEnvio' => $fecha_envio,
+                    'hashArchivo' => 'cefb32a8b85c591ee459efda23b5c779702ac7d7e74017b70ec94eb4340b78c4'
+                )
+            );
+            $responseRecepcionFactura = Factura::soapRecepcionFactura($clienteFacturacion, $parametrosFactura);
+            dd($responseRecepcionFactura);
+            if (($responseRecepcionFactura->RespuestaServicioFacturacion->transaccion == transliterator_create_from_rules)) {
+                return redirect('/factura')->with('toast_success','Factura Recepcionada');
+            } else {
+                return redirect('/factura')->with('toast_error', $RespuestaServicioFacturacion->RespuestaServicioFacturacion->mensajesList->descripcion);
+            }
+            
         }
-        $m = $this->validarArchivo('factura.xml','facturaComputarizadaCompraVenta.xsd');
-        if (empty($m)) {
-            dd("xml correcto");
-        } else {
-            dd($m);
-        }        
-
     }
     public function existeArchivos($filexml, $xsd): bool {
         if (!file_exists(public_path('siat/'.$filexml))|| !file_exists(public_path('siat/'.$xsd))) {
@@ -186,16 +237,65 @@ class FacturaController extends Controller
     /**************************************
      * Imprimir Factura XML
      **************************************/
-    public function generarXML($idfactura){      
+    public function generarXML($idfactura)
+    {  
+        $fecha=Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');        
+        
+        //PASO 1: Generar Cadena XML
+        $a = Factura::generarXML($idfactura);
+        
+        //PASO 2: Validar XML con XSD
+        $m = Factura::validarXML($a,'facturaComputarizadaCompraVenta.xsd');
+        
+        // if (empty($m)) {
+        //     $zip = new ZipArchive();
+        //     $zipFileName = 'pruebaXML.zip';
+        //     $path = public_path('/siat/facturas');
+        //     if (!file_exists($path)) {
+        //         mkdir($path, 0777, true);
+        //     }
+        //     $path = public_path('/siat/facturas/'.$zipFileName);
+        //     $abrirZip = $zip->open($path, ZipArchive::CREATE);
+        //     if ($abrirZip === TRUE) {
+        //         $zip->addFromString('facturas.xml', $a, ZipArchive::FL_OVERWRITE);
+        //         $zip->close();
+        //     }
+            
+        // }
+        // dd($a);
+
+        if (empty($m)) {
+            $gzipFileName = 'pruebaXML.txt.gz';
+            $path = public_path('/siat/facturas');
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+            $path = public_path('/siat/facturas/'.$gzipFileName);
+
+            $gzdata = gzencode($a);
+            file_put_contents($path,$gzdata);
+            $byteArray = base64_encode($gzdata);
+
+            $zp = gzopen($path, "w9");
+            gzwrite($zp, $a);
+            gzclose($zp);            
+        }
+        $hashArchivo = hash('sha256', $byteArray);
+        // dd("archivo".$hashArchivo);
+        // $b = pack("C","Tfafaefdyweyqy brown dog");
+        
+        // dd($b); 
+        
         $factura=Factura::find($idfactura);
+        // dd($factura->codigoPuntoVenta);
         $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
         
         try {            
             $xml = new \XMLWriter();
             $xml->openMemory();
             // $xml->openURI('factura.xml');
-            $xml->openURI($factura->numeroFactura.'.xml');
-            $xml->setIndent(true);
+            // $xml->openURI($factura->numeroFactura.'.xml');
+            // $xml->setIndent(true);
             $xml->startDocument('1.0','UTF-8');
             $xml->startElement('facturaComputarizadaCompraVenta');
             $xml->writeAttribute('xsi:noNamespaceSchemaLocation','facturaComputarizadaCompraVenta.xsd');
@@ -302,10 +402,10 @@ class FacturaController extends Controller
 
             $xml->endElement();
             $xml->endDocument();
-            $content = $xml->outputMemory();
-            ob_end_clean();
-            ob_start();
-                        
+            // $xml->fullEndElement();
+            // $content = $xml->outputMemory();
+            $content = $xml->flush();
+              
             return response()->download($factura->numeroFactura.'.xml');
             // return response()->download('factura.xml');
 

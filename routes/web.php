@@ -56,7 +56,7 @@ Route::get('/lote/{id}/create_producto',[LoteController::class,'create_producto'
 Route::get('/catalogarA',[LoteController::class,'catalogarActividad'])->name('lote.catalogarA');
 Route::get('/catalogarP',[LoteController::class,'catalogarProducto'])->name('lote.catalogarP');
 Route::resource('compra', CompraController::class)->middleware('aperturar');
-Route::resource('venta', VentaController::class);
+Route::resource('venta', VentaController::class)->middleware('aperturar');
 Route::resource('factura', FacturaController::class);
 Route::resource('cliente', ClienteController::class);
 Route::resource('agencia', AgenciaController::class);
@@ -67,7 +67,7 @@ Route::get('sincronizarCufd', [AjusteController::class, 'sincronizarCufd']);
 Route::get('sincronizar', [AjusteController::class, 'sincronizar']);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
-Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
+Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']); //ojo: aperturar?
 
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 

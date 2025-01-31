@@ -268,7 +268,7 @@ return [
                 [
                     'text'  =>  'Sucursales',
                     'url'   =>  '/agencia',
-                    'icon'  =>  'fas fa-fw fa-building',
+                    'icon'  =>  'fas fa-fw fa-clinic-medical',
                 ],
                 [
                     'text'  =>  'Puntos de Venta',

@@ -19,7 +19,8 @@ class CreateVentasTable extends Migration
             $table->decimal('subtotal',10,2);
             $table->decimal('descuento',10,2);                      
             $table->decimal('total',10,2);    
-            $table->decimal('monto_giftcard',10,2);
+            $table->decimal('monto_giftcard',10,2)->nullable();
+            $table->string('numero_tarjeta')->nullable();
             $table->decimal('monto_pagar',10,2);
             $table->decimal('importe_iva',10,2);
             $table->decimal('cambio_venta',10,2);

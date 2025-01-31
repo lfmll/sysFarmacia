@@ -50,7 +50,7 @@ class LoteController extends Controller
      */
     public function store(Request $request)
     {
-        try {                      
+        try {                     
             DB::beginTransaction();
             $lote=new Lote($request->all());
             $lote->numero=$request->numero;
@@ -62,7 +62,11 @@ class LoteController extends Controller
             $lote->precio_venta=$request->precio_venta;                      
             $lote->estado='A';
             $lote->laboratorio_id=$request->laboratorios;
-            $lote->medicamento_id=$request->medicamentos;                                 
+            $lote->medicamento_id=$request->medicamentos;   
+
+            $medicamento=Medicamento::find($lote->medicamento_id);             
+            $medicamento->stock = $medicamento->stock + $lote->cantidad;
+            $medicamento->save();                             
             $lote->save();            
             
             DB::commit();
@@ -146,8 +150,9 @@ class LoteController extends Controller
                                
             $lote->save();  
 
-            $medicamento=Medicamento::find($lote->medicamento_id);
-            $medicamento->stock = ($medicamento->stock - $lote_cantidad_anterior) + $lote->cantidad;                
+            $medicamento=Medicamento::find($lote->medicamento_id);            
+            // $medicamento->stock = ($medicamento->stock - $lote_cantidad_anterior) + $lote->cantidad;                
+            $medicamento->stock = $medicamento->stock + $lote->cantidad;
             $medicamento->save();
                             
             DB::commit();

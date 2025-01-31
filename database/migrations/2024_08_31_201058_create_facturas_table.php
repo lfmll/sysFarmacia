@@ -24,7 +24,7 @@ class CreateFacturasTable extends Migration
             $table->string('cufd');
             $table->string('codigoSucursal');
             $table->string('direccion');
-            $table->string('codigoPuntoVenta');
+            $table->string('codigoPuntoVenta')->nullable();
             $table->string('fechaEmision');
             $table->string('nombreRazonSocial');
             $table->string('codigoTipoDocumentoIdentidad');
@@ -38,7 +38,7 @@ class CreateFacturasTable extends Migration
             $table->string('codigoMoneda');
             $table->string('tipoCambio');
             $table->string('montoTotalMoneda');
-            $table->string('montoGiftCard');
+            $table->string('montoGiftCard')->nullable();
             $table->string('descuentoAdicional');
             $table->string('codigoExcepcion')->nullable();
             $table->string('cafc')->nullable();
