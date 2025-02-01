@@ -69,10 +69,10 @@ class Cufd extends Model
             );
             $responseCufd = $clienteCufd->cufd($parametrosCUFD);
             if ($responseCufd->RespuestaCufd->transaccion==true) {
-                $lastCufd = Cufd::orderBy('created_at','desc')->first();
-                if (!is_null($lastCufd)) {
-                    $lastCufd->estado = "N";
-                    $lastCufd->save();
+                $ultimoCufd = Cufd::orderBy('created_at','desc')->first();
+                if (!is_null($ultimoCufd)) {
+                    $ultimoCufd->estado = "N";
+                    $ultimoCufd->save();
                 }
                 $cufd = new Cufd;
                 $fechaUTC = strtotime($responseCufd->RespuestaCufd->fechaVigencia);

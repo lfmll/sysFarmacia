@@ -174,41 +174,49 @@ class AjusteController extends Controller
         $token = $ajuste->token;
         $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";        
         $userId = Auth::id();
-        $empresa = Empresa::where('estado','A')->first();
-        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+        // $empresa = Empresa::where('estado','A')->first();
+        // $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
         $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->where('agencia_id',$sucursal->id)
+                                // ->where('agencia_id',$sucursal->id)
                                 ->first();                
-        $codigoModalidad = $empresa->modalidad;
-        $codigoSistema = $empresa->codigo_sistema;
-        $nit = $empresa->nit;
-        $codigoSucursal = $sucursal->codigo;
-        $codigoPuntoVenta = $puntoVenta->codigo;
+        // $codigoModalidad = $empresa->modalidad;
+        // $codigoSistema = $empresa->codigo_sistema;
+        // $nit = $empresa->nit;
+        // $codigoSucursal = $sucursal->codigo;
+        // $codigoPuntoVenta = $puntoVenta->codigo;
         $clienteCuis = Ajuste::consumoSIAT($token,$wsdlCodigos);
         
-        if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
-        {
-            $parametrosCUIS = array(
-                'SolicitudCuis' => array(
-                    'codigoAmbiente' => 2, 
-                    'codigoModalidad' => $codigoModalidad,
-                    'codigoPuntoVenta' => $codigoPuntoVenta,
-                    'codigoSistema' => $codigoSistema,
-                    'codigoSucursal' => $codigoSucursal,
-                    'nit' => $nit,
-                )            
-            );           
-            $responseCuis = Cuis::soapCuis($clienteCuis, $parametrosCUIS, $puntoVenta->id);
-            if (($responseCuis->RespuestaCuis->transaccion==true) || ($responseCuis->RespuestaCuis->mensajesList->codigo == 980)) 
-            {
-                return redirect('/ajuste')->with('toast_success',"CUIS Actualizado");
-            } else {
-                return redirect('/ajuste')->with('toast_error',$responseCuis->RespuestaCuis->mensajesList->descripcion);
-            }
-            
+        //Sincronizar CUIS
+        $msjError = Cuis::sincroCUIS($clienteCuis, $puntoVenta);
+        if ($msjError == "") {
+            return redirect('/ajuste')->with('toast_success',"CUIS Actualizado");
         } else {
-            return redirect('/ajuste')->with('toast_error', $responseCuis->RespuestaComunicacion->mensajesList->descripcion);
+            return redirect('/ajuste')->with('toast_error',$msjError);
         }
+        
+        // if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
+        // {
+        //     $parametrosCUIS = array(
+        //         'SolicitudCuis' => array(
+        //             'codigoAmbiente' => 2, 
+        //             'codigoModalidad' => $codigoModalidad,
+        //             'codigoPuntoVenta' => $codigoPuntoVenta,
+        //             'codigoSistema' => $codigoSistema,
+        //             'codigoSucursal' => $codigoSucursal,
+        //             'nit' => $nit,
+        //         )            
+        //     );           
+        //     $responseCuis = Cuis::soapCuis($clienteCuis, $parametrosCUIS, $puntoVenta->id);
+        //     if (($responseCuis->RespuestaCuis->transaccion==true) || ($responseCuis->RespuestaCuis->mensajesList->codigo == 980)) 
+        //     {
+        //         return redirect('/ajuste')->with('toast_success',"CUIS Actualizado");
+        //     } else {
+        //         return redirect('/ajuste')->with('toast_error',$responseCuis->RespuestaCuis->mensajesList->descripcion);
+        //     }
+            
+        // } else {
+        //     return redirect('/ajuste')->with('toast_error', $responseCuis->RespuestaComunicacion->mensajesList->descripcion);
+        // }
     }
 
     public function sincronizarCufd()
