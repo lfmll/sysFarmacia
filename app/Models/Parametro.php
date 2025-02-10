@@ -26,7 +26,7 @@ class Parametro extends Model
         return $this->belongsTo(TipoParametro::class);
     }
     
-    public static function soapParametro($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
+    public static function sincronizarParametro($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
     {
         Parametro::where('cuis_id',$cuisId)->delete();
         //Sincronizar Eventos Significativos

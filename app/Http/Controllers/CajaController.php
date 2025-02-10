@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Caja;
 use App\Models\Ajuste;
 use App\Models\PuntoVenta;
+use App\Models\Agencia;
+use App\Models\Empresa;
+use App\Models\Cuis;
 use App\Models\Cufd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +15,12 @@ use Carbon\Carbon;
 use RealRashid\SweetAlert\Facades\Alert;
 use SoapClient;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Parametro;
+use App\Models\TipoParametro;
+use App\Models\Codigo;
+use App\Models\Leyenda;
+use App\Models\Catalogo;
+use App\Models\ActividadDocumento;
 
 class CajaController extends Controller
 {
@@ -55,35 +64,81 @@ class CajaController extends Controller
     {           
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
-        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";        
+        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
+        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
         $userId = Auth::id();
+        $empresa = Empresa::where('estado','A')->first();
+        
+        $sucursal = Agencia::where('empresa_id',$empresa->id)->first(); 
         $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->first();
-        $cuis = Cuis::obtenerCuis();                                       
-        $clienteCufd = Ajuste::consumoSIAT($token,$wsdlCodigos);
+                                ->first();                                   
+        $clienteCodigo = Ajuste::consumoSIAT($token,$wsdlCodigos);
+        $clienteSincro = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
+        //Sincronizar CUIS
+        $msjCuis = Cuis::sincroCUIS($clienteCodigo, $puntoVenta);
+        if ($msjCuis == "") 
+        {
+            //Sincronizar CUFD
+            $msjCufd = Cufd::sincroCUFD($clienteCodigo, $puntoVenta);
+            if ($msjCufd == "") 
+            {
+                $cuis = Cuis::obtenerCuis();
+                // dd($cuis);
+                //Sincronizar Parametro
+                $parametrosSincronizacion = array(
+                    'SolicitudSincronizacion' => array(
+                        'codigoAmbiente' => 2, 
+                        'codigoPuntoVenta' => $puntoVenta->codigo,
+                        'codigoSistema' => $empresa->codigo_sistema,
+                        'codigoSucursal' => $sucursal->codigo,
+                        'cuis' => $cuis->codigo_cuis,
+                        'nit' => $empresa->nit
+                    )
+                );
+                
+                 //PARAMETROS
+                 $responseParametros = Parametro::sincronizarParametro($clienteSincro, $parametrosSincronizacion, $cuis->id);            
+                                        
+                 //SECTOR
+                 //Sincronizar Actividades
+                 $responseActividades = Codigo::soapActividad($clienteSincro, $parametrosSincronizacion, $cuis->id);
+ 
+                 //Sincronizar Leyendas
+                 $responseLeyendas = Leyenda::soapLeyenda($clienteSincro, $parametrosSincronizacion, $cuis->id);            
+                 
+                 //Sincronizar Catalogos (Productos/Servicios)
+                 $responseCatalogos = Catalogo::soapCatalogo($clienteSincro, $parametrosSincronizacion, $cuis->id);
+                 
+                 //Sincronizar Actividad Documento Sector
+                 $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincro, $parametrosSincronizacion, $cuis->id);
+ 
+                // $responseFechaHora = $clienteSincro->sincronizarFechaHora($parametrosSincronizacion);
+                // $fechaHora = $responseFechaHora->RespuestaFechaHora->fechaHora; 
 
-        //Sincronizar CUFD
-        $msjError = Cufd::sincroCUFD($clienteCufd, $puntoVenta);
-        dd($msjError);
-        if ($msjError=="") {
-            $caja = new Caja($request->all());
-            $caja->fecha = $request->fecha;
-            
-            $caja->hora_inicio = $request->hora_inicio;
-            $caja->monto_apertura = $request->monto_apertura;
+                $caja = new Caja($request->all());
+                $caja->fecha = $request->fecha;
+                
+                $caja->hora_inicio = $request->hora_inicio;
+                $caja->monto_apertura = $request->monto_apertura;
 
-            $ultimaApertura = Caja::all()->last();
-            
-            if ($ultimaApertura==null || $ultimaApertura->fecha != $caja->fecha) {
-                Alert::warning('Warning', '¿Desea Continuar? Una vez realizada la apertura no se podrá modificar');
-                $caja->save();
-                return redirect('/caja')->with('toast_success','Apertura de Caja realizado exitosamente');
+                $ultimaApertura = Caja::all()->last();
+                
+                if ($ultimaApertura==null || $ultimaApertura->fecha != $caja->fecha) {
+                    Alert::warning('Warning', '¿Desea Continuar? Una vez realizada la apertura no se podrá modificar');
+                    $caja->save();
+                    return redirect('/caja')->with('toast_success','Apertura de Caja realizado exitosamente');
+                } else {
+                    return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
+                }
             } else {
-                return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
+                return redirect('/caja')->with('errors',$msjError);
             }
         } else {
-            return redirect('/caja')->with('errors',$msjError);
-        }   
+            return redirect('/caja')->with('toast_error',$msjCuis);
+        }
+        
+         
+           
     }
 
     /**

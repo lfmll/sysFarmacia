@@ -21,31 +21,6 @@ class Cufd extends Model
         return $this->belongsTo(Cuis::class);
     }
 
-    public static function soapCufd($clienteSoap, $parametrosCUFD, $cuis_id)
-    {
-        $responseCufd = $clienteSoap->cufd($parametrosCUFD);
-        if ($responseCufd->RespuestaCufd->transaccion==true) {
-            $lastCufd = Cufd::orderBy('created_at','desc')->first();
-            if (!is_null($lastCufd)) {
-                $lastCufd->estado = "N";
-                $lastCufd->save();
-            }
-            $cufd = new Cufd;
-            $fechaUTC = strtotime($responseCufd->RespuestaCufd->fechaVigencia);
-            $fecha = date("Y-m-d H:i:s", $fechaUTC);
-            $cufd->fill([
-                'codigo_cufd' => $responseCufd->RespuestaCufd->codigo,
-                'codigo_control' => $responseCufd->RespuestaCufd->codigoControl,
-                'direccion' => $responseCufd->RespuestaCufd->direccion,
-                'fecha_vigencia' => $fecha,
-                'estado' => 'A',
-                'cuis_id' => $cuis_id
-            ]);
-            $cufd->save();
-        }                
-        return $responseCufd;
-    }
-
     public static function sincroCUFD($clienteCufd, $puntoVenta)
     {
         $agencia = Agencia::where('id',$puntoVenta->agencia_id)->first();

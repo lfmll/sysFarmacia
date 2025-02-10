@@ -174,16 +174,10 @@ class AjusteController extends Controller
         $token = $ajuste->token;
         $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";        
         $userId = Auth::id();
-        // $empresa = Empresa::where('estado','A')->first();
-        // $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+        
         $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                // ->where('agencia_id',$sucursal->id)
                                 ->first();                
-        // $codigoModalidad = $empresa->modalidad;
-        // $codigoSistema = $empresa->codigo_sistema;
-        // $nit = $empresa->nit;
-        // $codigoSucursal = $sucursal->codigo;
-        // $codigoPuntoVenta = $puntoVenta->codigo;
+        
         $clienteCuis = Ajuste::consumoSIAT($token,$wsdlCodigos);
         
         //Sincronizar CUIS
@@ -193,30 +187,6 @@ class AjusteController extends Controller
         } else {
             return redirect('/ajuste')->with('toast_error',$msjError);
         }
-        
-        // if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
-        // {
-        //     $parametrosCUIS = array(
-        //         'SolicitudCuis' => array(
-        //             'codigoAmbiente' => 2, 
-        //             'codigoModalidad' => $codigoModalidad,
-        //             'codigoPuntoVenta' => $codigoPuntoVenta,
-        //             'codigoSistema' => $codigoSistema,
-        //             'codigoSucursal' => $codigoSucursal,
-        //             'nit' => $nit,
-        //         )            
-        //     );           
-        //     $responseCuis = Cuis::soapCuis($clienteCuis, $parametrosCUIS, $puntoVenta->id);
-        //     if (($responseCuis->RespuestaCuis->transaccion==true) || ($responseCuis->RespuestaCuis->mensajesList->codigo == 980)) 
-        //     {
-        //         return redirect('/ajuste')->with('toast_success',"CUIS Actualizado");
-        //     } else {
-        //         return redirect('/ajuste')->with('toast_error',$responseCuis->RespuestaCuis->mensajesList->descripcion);
-        //     }
-            
-        // } else {
-        //     return redirect('/ajuste')->with('toast_error', $responseCuis->RespuestaComunicacion->mensajesList->descripcion);
-        // }
     }
 
     public function sincronizarCufd()
@@ -225,21 +195,12 @@ class AjusteController extends Controller
         $token = $ajuste->token;
         $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
         $userId = Auth::id();
-        // $empresa = Empresa::where('estado','A')->first();
-        // $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
+
         $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                // ->where('agencia_id',$sucursal->id)
                                 ->first();
-        // $cuis = Cuis::where('estado', 'A')
-        //             ->where('punto_venta_id',$puntoVenta->id)
-        //             ->first();
+        
         $cuis = Cuis::obtenerCuis();
-        // $codigoModalidad = $empresa->modalidad;
-        // $codigoSistema = $empresa->codigo_sistema;
-        // $nit = $empresa->nit;
-        // $codigoSucursal = $sucursal->codigo;
-        // $codigoPuntoVenta = $puntoVenta->codigo;
-        // $codigoCuis = $cuis->codigo_cuis;
+        
         $clienteCufd = Ajuste::consumoSIAT($token,$wsdlCodigos);
         
         //Sincronizar CUFD
@@ -249,31 +210,6 @@ class AjusteController extends Controller
         } else {
             return redirect('/ajuste')->with('toast_error', $msjError);    
         }
-        
-        // if ($clienteCufd->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
-        // {
-        //     $parametrosCUFD = array(
-        //         'SolicitudCufd' => array(
-        //             'codigoAmbiente' => 2, 
-        //             'codigoModalidad' => $codigoModalidad,
-        //             'codigoPuntoVenta' => $codigoPuntoVenta,
-        //             'codigoSistema' => $codigoSistema,
-        //             'codigoSucursal' => $codigoSucursal,
-        //             'cuis' => $codigoCuis,
-        //             'nit' => $nit
-        //         )
-        //     );            
-        //     $responseCufd = Cufd::soapCufd($clienteCufd, $parametrosCUFD, $cuis->id);
-        //     if ($responseCufd->RespuestaCufd->transaccion==true) 
-        //     {
-        //         return redirect('/ajuste')->with('toast_success',"CUFD Actualizado");
-        //     } else {
-        //         return redirect('/ajuste')->with('toast_error',$responseCufd->RespuestaCufd->mensajesList->descripcion);
-        //     }
-            
-        // } else {
-        //     return redirect('/ajuste')->with('toast_error', $responseCufd->RespuestaComunicacion->mensajesList->descripcion);
-        // }
     }
 
     public function sincronizar()
@@ -292,13 +228,7 @@ class AjusteController extends Controller
         $cuis = Cuis::where('estado', 'A')
                     ->where('punto_venta_id',$puntoVenta->id)
                     ->first(); 
-        if (!is_null($cuis)) {
-            $codigoModalidad = $empresa->modalidad;
-            $codigoSistema = $empresa->codigo_sistema;
-            $nit = $empresa->nit;
-            $codigoSucursal = $sucursal->codigo;
-            $codigoPuntoVenta = $puntoVenta->codigo;        
-            $codigoCuis = $cuis->codigo_cuis;                           
+        if (!is_null($cuis)) {  
             // PASO 2: Consumir Servicios de Sincronizacion
             $clienteSincronizacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
             
@@ -310,16 +240,16 @@ class AjusteController extends Controller
                 $parametrosSincronizacion = array(
                     'SolicitudSincronizacion' => array(
                         'codigoAmbiente' => 2, 
-                        'codigoPuntoVenta' => $codigoPuntoVenta,
-                        'codigoSistema' => $codigoSistema,
-                        'codigoSucursal' => $codigoSucursal,
-                        'cuis' => $codigoCuis,
-                        'nit' => $nit
+                        'codigoPuntoVenta' => $puntoVenta->codigo,
+                        'codigoSistema' => $empresa->codigo_sistema,
+                        'codigoSucursal' => $sucursal->codigo,
+                        'cuis' => $cuis->codigo_cuis,
+                        'nit' => $empresa->nit
                     )
                 );
 
                 //PARAMETROS
-                $responseParametros = Parametro::soapParametro($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);            
+                $responseParametros = Parametro::sincronizarParametro($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);            
                                         
                 //SECTOR
                 //Sincronizar Actividades
