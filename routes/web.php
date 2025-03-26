@@ -68,6 +68,7 @@ Route::get('sincronizar', [AjusteController::class, 'sincronizar']);
 
 Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
 Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']); //ojo: aperturar?
+Route::get('emitirFactura/{id}',[FacturaController::class,'emitirFactura']);
 
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 

@@ -34,7 +34,8 @@
                                     <td>{{$fact->razonSocialEmisor}}</td>
                                     <td>{{$fact->fechaEmision}}</td>  
                                     <td>{{$fact->montoTotal}}</td>
-                                    <td></td>
+                                    <td>{{$fact->estado}}</td>
+                                    @if ($fact->estado == 'VALIDADA')
                                     <td>
                                         <a href="{{url('firmarFactura/'.$fact->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-laptop"></i> Firmar</a>
                                         <a href="{{url('facturaCarta/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF</a>
@@ -47,6 +48,11 @@
                                           Loading&#8230;     
                                         </div>                                      
                                     </td>
+                                    @else
+                                    <td>
+                                      <a href="{{url('emitirFactura/'.$fact->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-receipt"></i> Emitir</a>
+                                    </td>
+                                    @endif
                                 </tr>
                                 @endforeach
                             </tbody>

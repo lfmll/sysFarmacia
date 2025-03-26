@@ -61,7 +61,7 @@ class Cuis extends Model
                     'codigoPuntoVenta' => $puntoVenta->codigo,
                     'codigoSistema' => $empresa->codigo_sistema,
                     'codigoSucursal' => $agencia->codigo,
-                    'nit' => $empresa->nit,
+                    'nit' => $empresa->nit
                 )            
             ); 
             $responseCuis = $clienteCuis->cuis($parametrosCUIS);

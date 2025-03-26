@@ -39,6 +39,7 @@ class Factura extends Model
             'usuario',
             'codigoDocumentoSector',
             'estado',
+            'codigoRecepcion',
             'venta_id'
     ];
 
@@ -86,9 +87,7 @@ class Factura extends Model
          */
         $baseH = self::base16($cadena);
         
-        return $baseH;
-        // return $cadena;
-
+        return $baseH;        
     }
 
     public static function calculaDigitoMod11(string $cadena, int $numDig, int $limMult, bool $sw_10){
@@ -97,8 +96,8 @@ class Factura extends Model
         for ($n=1; $n <= $numDig; $n++) { 
             $suma = 0;
             $mult = 2;
-            for ($i=strlen($cadena)-1; $i >= 0 ; $i--) { 
-                $suma += ($mult * substr($cadena, $i, $i+1));
+            for ($i=strlen($cadena)-1; $i >= 0; $i--) { 
+                $suma += ($mult * substr($cadena, $i, 1));
                 if (++$mult > $limMult) {
                     $mult = 2;
                 }
@@ -280,18 +279,35 @@ class Factura extends Model
     /**************************************
      * Recepcion Factura SIAT
      **************************************/
-    public static function soapRecepcionFactura($clienteSoap, $parametrosFactura)
+    public static function soapRecepcionFactura($clienteSoap, $parametrosFactura, $idfactura)
     {
         $responseFacturacionSOAP = $clienteSoap->recepcionFactura($parametrosFactura);
-        if ($responseFacturacionSOAP->RespuestaServicioFacturacion->codigoEstado == 903) {
-            //Cambiar Mensaje actualizar factura
-            $mensaje = $responseFacturacionSOAP->RespuestaServicioFacturacion->codigoDescripcion;
+        $respuesta = $responseFacturacionSOAP->RespuestaServicioFacturacion;        
+        if ($respuesta->codigoEstado == 908) 
+        {
+            //Cambiar Estado, actualizar factura
             $factura = Factura::find($idfactura);
-            $factura->estado = $mensaje;
+            $factura->fill([
+                'estado' => $respuesta->codigoDescripcion,
+                'codigoRecepcion' => $respuesta->codigoRecepcion
+            ]);            
             $factura->save();
-            return $mensaje;
+            return "VALIDADA";
         } else {
-            return $mensaje = $responseFacturacionSOAP->RespuestaServicioFacturacion->mensajesList->descripcion;
+            return $mensaje = $respuesta->mensajesList->descripcion;
         }        
     }
+    /**************************************
+     * Utilitarios: De Fecha a Numeros
+     **************************************/
+    public static function deFechaNumero($fecha)
+    {
+        $nro = "";
+        for ($i=0; $i < strlen($fecha); $i++) { 
+            if (is_numeric($fecha[$i])) {
+                $nro = $nro.$fecha[$i];
+            }
+        }
+        return $nro;
+    }    
 }

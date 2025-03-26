@@ -106,5 +106,5 @@ class PuntoVentaController extends Controller
     public function destroy(PuntoVenta $puntoVenta)
     {
         //
-    }
+    }    
 }

@@ -65,15 +65,15 @@ class CajaController extends Controller
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
         $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-        $userId = Auth::id();
-        $empresa = Empresa::where('estado','A')->first();
+        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";
         
+        $userId = Auth::id();
+        $empresa = Empresa::where('estado','A')->first();        
         $sucursal = Agencia::where('empresa_id',$empresa->id)->first(); 
-        $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->first();                                   
+        $puntoVenta = PuntoVenta::where('user_id',$userId)->first();                                                                    
         $clienteCodigo = Ajuste::consumoSIAT($token,$wsdlCodigos);
         $clienteSincro = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
+        
         //Sincronizar CUIS
         $msjCuis = Cuis::sincroCUIS($clienteCodigo, $puntoVenta);
         if ($msjCuis == "") 
@@ -84,7 +84,7 @@ class CajaController extends Controller
             {
                 $cuis = Cuis::obtenerCuis();
                 // dd($cuis);
-                //Sincronizar Parametro
+                //Sincronizar Parametros
                 $parametrosSincronizacion = array(
                     'SolicitudSincronizacion' => array(
                         'codigoAmbiente' => 2, 

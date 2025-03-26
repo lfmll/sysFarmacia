@@ -46,6 +46,7 @@ class CreateFacturasTable extends Migration
             $table->string('usuario');
             $table->string('codigoDocumentoSector');
             $table->string('estado');
+            $table->string('codigoRecepcion')->nullable();
             
             $table->smallInteger('venta_id')->unsigned();
             $table->timestamps();
