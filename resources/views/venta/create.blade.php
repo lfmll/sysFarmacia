@@ -98,6 +98,7 @@
                                             </div>                                            
                                         </div>
                                         {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
+                                        {!! Form::number('maximo', null, ['id'=>'pmaximo','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-xs-12">
@@ -618,7 +619,7 @@
         arr=arreglo.split(',')
         codigo=arr[0];
         cant_max=arr[2];
-               
+        
         concepto = document.getElementById("pproducto").value;               
         cantidad = document.getElementById("pcantidad").value; 
         precio = document.getElementById("pprecio").value;
@@ -641,16 +642,16 @@
                 $('#'+idlote).fadeOut('slow');
             });
             precio=precio - (Math.floor(precio*descuento)/100);
-            console.log(precio);
-            gasto=(cantidad*precio);    
+            
+            calculo=(cantidad*precio);    
                                 
-            subtotal.push(gasto.toFixed(2));
+            subtotal.push(calculo.toFixed(2));
             cont=subtotal.length-1;
             total=parseFloat(total)+parseFloat(subtotal[cont]);            
             document.getElementById('eSubTotal').value = total.toFixed(2);
             document.getElementById('eTotal').value = total.toFixed(2);
             document.getElementById('eTotalIVA').value = total.toFixed(2); //Cambiar al saber el monto que cobrara IVA
-            var fila='<tr class="detalle" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input type="number" class="form-control input-sm" name="dcantidad[]" readonly value="'+cantidad+'"></td><td><input class="form-control input-sm" type="number" name="dprecio[]" readonly value="'+precio+'"></td><td><input class="form-control input-sm" type="number" name="dsubtotal[]" readonly value="'+subtotal[cont]+'"></td></tr>';                   
+            var fila='<tr class="detalle" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input id="dpcantidad'+idlote+'" type="number" min=1 max="'+cant_max+'" onchange="onCambiarCantidad('+idlote+');" class="form-control input-sm" name="dcantidad[]" value="'+cantidad+'"></td><td><input id="dpprecio'+idlote+'"  onchange="onCambiarPrecio('+idlote+');" class="form-control input-sm" type="number" min="0" name="dprecio[]" value="'+precio+'"></td><td><input id="dpsubtotal'+idlote+'" class="form-control input-sm" type="number" name="dpsubtotal" readonly value="'+subtotal[cont]+'"></td></tr>';                   
             $('#detalles').append(fila);                                                              
         }
         limpiar();        
@@ -686,6 +687,38 @@
         $('#'+index).fadeIn('slow');
     }
     
+    function onCambiarCantidad(index){
+        cant = document.getElementById('dpcantidad'+index).value;
+        precio = document.getElementById('dpprecio'+index).value;
+        elementos = document.getElementsByName('dpsubtotal');        
+        calculo=(cant*precio);
+        document.getElementById('dpsubtotal'+index).value = calculo.toFixed(2);
+        total = 0;
+        for (let i = 0; i < elementos.length; i++) {
+            total = total + parseFloat(elementos[i].value);         
+        }                                        
+        total=total.toFixed(2);                  
+        document.getElementById('eSubTotal').value = total;
+        document.getElementById('eTotal').value = total;
+        document.getElementById('eTotalIVA').value = total; //Cambiar al saber el monto que cobrara IVA
+    }
+
+    function onCambiarPrecio(index){
+        cant = document.getElementById('dpcantidad'+index).value;
+        precio = document.getElementById('dpprecio'+index).value;
+        elementos = document.getElementsByName('dpsubtotal');        
+        calculo=(cant*precio);
+        document.getElementById('dpsubtotal'+index).value = calculo.toFixed(2);
+        total = 0;
+        for (let i = 0; i < elementos.length; i++) {
+            total = total + parseFloat(elementos[i].value);         
+        }                                        
+        total=total.toFixed(2);                  
+        document.getElementById('eSubTotal').value = total;
+        document.getElementById('eTotal').value = total;
+        document.getElementById('eTotalIVA').value = total; //Cambiar al saber el monto que cobrara IVA
+    }
+
     function seleccionarCliente(){
         [].forEach.call(document.querySelectorAll('input[name="chkCliente"]:checked'), function(cb) {
             document.getElementById('ccliente').innerText=cb.value;            
@@ -711,11 +744,13 @@
             document.getElementById('pcodigo').innerText=cb.value;            
         });
         arreglo = document.getElementById("pcodigo").innerText;        
-        arr=arreglo.split(',')
-        producto=arr[1];        
-        precio_venta=arr[3];
-        document.getElementById('pprecio').value=precio_venta;
-        document.getElementById('pproducto').value=producto;        
+        arr = arreglo.split(',')
+        producto = arr[1]; 
+        maximo = arr[2];       
+        precio_venta = arr[3];
+        document.getElementById('pprecio').value = precio_venta;
+        document.getElementById('pproducto').value = producto;   
+        document.getElementById('pmaximo').value = maximo;
     }
     //Metodos de Pago
     function onchkefectivo(){
