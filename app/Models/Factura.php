@@ -277,7 +277,7 @@ class Factura extends Model
         return $msj;
     }
     /**************************************
-     * Recepcion Factura SIAT
+     * SOAP: Recepcion Factura SIAT
      **************************************/
     public static function soapRecepcionFactura($clienteSoap, $parametrosFactura, $idfactura)
     {
@@ -296,6 +296,24 @@ class Factura extends Model
         } else {
             return $mensaje = $respuesta->mensajesList->descripcion;
         }        
+    }
+    /**************************************
+     * SOAP: Anular Factura SIAT
+     **************************************/
+    public static function soapAnularFactura($clienteSoap, $parametrosFactura, $idfactura)
+    {
+        $responseFacturacionSOAP = $clienteSoap->anulacionFactura($parametrosFactura);
+        $factura = Factura::find($idfactura);
+        $msjError = "";
+        if ($responseFacturacionSOAP->RespuestaServicioFacturacion->transaccion == "true") {
+            $factura->fill([
+                'estado'=> "ANULADA"
+            ]);            
+            $factura->save();
+            return $msjError;
+        } else {
+            return $msjError = $responseFacturacionSOAP->RespuestaServicioFacturacion->mensajesList->descripcion;
+        }
     }
     /**************************************
      * Utilitarios: De Fecha a Numeros

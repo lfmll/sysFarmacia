@@ -108,13 +108,13 @@
         pventa=parseFloat(pcompra)+parseFloat(porcentaje);
         document.getElementById("precio_venta").value=pventa.toFixed(2);            
     }
+    
     function porcentuarB(pventa)
     {
         pcompra=document.getElementById("precio_compra").value;
         dividendo=100*(parseFloat(pventa)-parseFloat(pcompra));
         ganancia=parseFloat(dividendo).toFixed(2)/parseFloat(pcompra).toFixed(2);
-        document.getElementById("ganancia").value=ganancia.toFixed(2);
-        
-        }
+        document.getElementById("ganancia").value=ganancia.toFixed(2);        
+    }
 </script>    
 @stop

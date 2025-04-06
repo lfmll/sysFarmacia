@@ -65,7 +65,6 @@
 @stop
 
 @section('js')
-    <script> console.log('Hi!'); </script>
     <script>
         $(function () {
             $('#tcliente').DataTable({
@@ -90,8 +89,7 @@
             Swal.fire({
                 title: 'Esta Seguro?',
                 text: "Eliminar Cliente",
-                type: 'warning',
-                icon: 'warning',
+                icon: 'info',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',

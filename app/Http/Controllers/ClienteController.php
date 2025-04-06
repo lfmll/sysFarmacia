@@ -143,7 +143,7 @@ class ClienteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
+    {        
         $cliente = Cliente::find($id);
         $cliente->estado = 'E';
 
