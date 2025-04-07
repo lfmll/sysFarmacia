@@ -275,23 +275,6 @@ class FacturaController extends Controller
         //PASO 2: Validar XML con XSD
         $m = Factura::validarXML($a,'facturaComputarizadaCompraVenta.xsd');
         
-        // if (empty($m)) {
-        //     $zip = new ZipArchive();
-        //     $zipFileName = 'pruebaXML.zip';
-        //     $path = public_path('/siat/facturas');
-        //     if (!file_exists($path)) {
-        //         mkdir($path, 0777, true);
-        //     }
-        //     $path = public_path('/siat/facturas/'.$zipFileName);
-        //     $abrirZip = $zip->open($path, ZipArchive::CREATE);
-        //     if ($abrirZip === TRUE) {
-        //         $zip->addFromString('facturas.xml', $a, ZipArchive::FL_OVERWRITE);
-        //         $zip->close();
-        //     }
-            
-        // }
-        // dd($a);
-
         if (empty($m)) {
             $gzipFileName = 'pruebaXML.txt.gz';
             $path = public_path('/siat/facturas');
@@ -309,21 +292,14 @@ class FacturaController extends Controller
             gzclose($zp);            
         }
         $hashArchivo = hash('sha256', $byteArray);
-        // dd("archivo".$hashArchivo);
-        // $b = pack("C","Tfafaefdyweyqy brown dog");
-        
-        // dd($b); 
         
         $factura=Factura::find($idfactura);
-        // dd($factura->codigoPuntoVenta);
+        
         $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
         
         try {            
             $xml = new \XMLWriter();
             $xml->openMemory();
-            // $xml->openURI('factura.xml');
-            // $xml->openURI($factura->numeroFactura.'.xml');
-            // $xml->setIndent(true);
             $xml->startDocument('1.0','UTF-8');
             $xml->startElement('facturaComputarizadaCompraVenta');
             $xml->writeAttribute('xsi:noNamespaceSchemaLocation','facturaComputarizadaCompraVenta.xsd');
@@ -379,36 +355,6 @@ class FacturaController extends Controller
                 $xml->writeElement('leyenda',$factura->leyenda);
                 $xml->writeElement('usuario',$factura->usuario);
                 $xml->writeElement('codigoDocumentoSector',$factura->codigoDocumentoSector);
-                // if (is_null($factura->montoGiftCard) || empty($factura->montoGiftCard)) {
-                //     $xml->startElement('montoGiftCard');
-                //         $xml->startAttribute('xsi:nil');
-                //         $xml->text('true');
-                //         $xml->endAttribute();
-                //     $xml->endElement();
-                // } else {
-                //     $xml->writeElement('montoGiftCard',$factura->montoGiftCard);                    
-                // }                 
-                // $xml->writeElement('descuentoAdicional',$factura->descuentoAdicional);
-                // if (is_null($factura->codigoExcepcion) || empty($factura->codigoExcepcion)) {
-                //     $xml->startElement('codigoExcepcion');
-                //         $xml->startAttribute('xsi:nil');
-                //         $xml->text('true');
-                //         $xml->endAttribute();
-                //     $xml->endElement();
-                // } else {
-                //     $xml->writeElement('codigoExcepcion',$factura->codigoExcepcion);                    
-                // }                
-                // if (is_null($factura->cafc) || empty($factura->cafc)) {
-                //     $xml->startElement('cafc');
-                //         $xml->startAttribute('xsi:nil');
-                //         $xml->text('true');
-                //         $xml->endAttribute();
-                //     $xml->endElement();
-                // } else {
-                //     $xml->writeElement('cafc',$factura->cafc);                    
-                // }                
-                
-                
                 $xml->endElement();
 
                 $xml->startElement('detalle');
@@ -430,21 +376,18 @@ class FacturaController extends Controller
 
             $xml->endElement();
             $xml->endDocument();
-            // $xml->fullEndElement();
-            // $content = $xml->outputMemory();
             $content = $xml->flush();
               
             return response()->download($factura->numeroFactura.'.xml');
-            // return response()->download('factura.xml');
 
         } catch (\Exception $e) {
             return redirect('/factura')->with('toast_error',$e);            
         }
     }
-    public function imprimirFactura($idfactura)
+    public function verSIAT($idfactura)
     {
-        $perfil_empresarial=Empresa::first();
-        dd($perfil_empresarial);
+        $factura = Factura::find($idfactura);
+        return redirect("https://siat.impuestos.gob.bo/consulta/QR?".'nit='.$factura->nitEmisor.'&cuf='.$factura->cuf.'&numero='.$factura->numeroFactura.'&t=2');
     }
 
     public function generadorQR($texto)

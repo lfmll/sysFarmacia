@@ -29,7 +29,7 @@
                                 @foreach($factura as $fact)
                                 <tr>
                                     <td>{{$fact->numeroFactura}}</td>
-                                    <td>{{$fact->cuf}}</td> <!-- nroAutorizacion -->                                    
+                                    <td>{{$fact->cuf}}</td>                                 
                                     <td>{{$fact->nitEmisor}}</td>
                                     <td>{{$fact->razonSocialEmisor}}</td>
                                     <td>{{$fact->fechaEmision}}</td>  
@@ -37,7 +37,7 @@
                                     <td>{{$fact->estado}}</td>
                                     @if ($fact->estado == 'VALIDADA')
                                     <td>
-                                        <a href="{{url('firmarFactura/'.$fact->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-laptop"></i> Firmar</a>
+                                        <a href="{{url('verSIAT/'.$fact->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-laptop"></i> Ver</a>
                                         <a href="{{url('facturaCarta/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF</a>
                                         <a href="{{url('facturaRollo/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF Rollo</a>
                                         <a href="{{url('generarXML/'.$fact->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
