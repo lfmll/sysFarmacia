@@ -316,6 +316,24 @@ class Factura extends Model
         }
     }
     /**************************************
+     * SOAP: Revertir Anulacion Factura SIAT
+     **************************************/
+    public static function soapRevertirAnulacionFactura($clienteSoap, $parametrosFactura, $idfactura)
+    {
+        $responseFacturacionSOAP = $clienteSoap->reversionAnulacionFactura($parametrosFactura);
+        $factura = Factura::find($idfactura);
+        $msjError = "";
+        if ($responseFacturacionSOAP->RespuestaServicioFacturacion->transaccion == "ture") {
+            $factura->fill([
+                'estado' => "VALIDADA"
+            ]);
+            $factura->save();
+            return $msjError;
+        } else {
+            return $msjError = $responseFacturacionSOAP->RespuestaServicioFacturacion->mensajesList->descripcion;
+        }
+    }
+    /**************************************
      * Utilitarios: De Fecha a Numeros
      **************************************/
     public static function deFechaNumero($fecha)

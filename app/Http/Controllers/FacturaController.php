@@ -453,5 +453,46 @@ class FacturaController extends Controller
         $cadena = $d->getBarcodePNGPath($texto, "QRCODE");
         return $cadena;
     }
+    /**************************************
+     * Revertir Anulacion de Factura
+     **************************************/
+    public function revertirAnulacionFactura($idFactura)
+    {
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wslSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
+        $clienteFacturacion = Ajuste::consumoSIAT($token,$wslSincronizacion);
+        $factura = Factura::find($idFactura);
+        $empresa = Empresa::first();
+        $cuis = Cuis::obtenerCuis();
+        $cufd = Cufd::obtenerCufd();
+        if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") {
+            $parametrosFactura = array(
+                'SolicitudServicioReversionAnulacionFactura' => array(
+                    'codigoAmbiente' => 2,
+                    'codigoDocumentoSector' => $factura->codigoDocumentoSector,
+                    'codigoEmision' => 1,
+                    'codigoModalidad' => 2,
+                    'codigoPuntoVenta' => $factura->codigoPuntoVenta,
+                    'codigoSistema' => $empresa->codigo_sistema,
+                    'codigoSucursal' => $factura->codigoSucursal,
+                    'cufd' => $cufd->codigo_cufd,
+                    'cuis' => $cuis->codigo_cuis,
+                    'nit' => $empresa->nit,
+                    'tipoFacturaDocumento' => 1, //ojo
+                    'cuf' => $factura->cuf
+                )
+            );
+            $msjRevertirAnulacion = Factura::soapRevertirAnulacionFactura($clienteFacturacion, $parametrosFactura, $factura->id);
+            if ($msjRevertirAnulacion == "") {
+                return response()->json(['message'=>'Anulacion Revertir'],200);
+            } else {
+                return redirect('/factura')->with('toast_error',$msjRevertirAnulacion);
+            }            
+        } else {
+            return response()->json(['message'=>'Error en la comunicación del Servicio'],404);
+        }
+        
+    }
     
 }

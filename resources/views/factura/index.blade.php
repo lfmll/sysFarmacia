@@ -42,10 +42,14 @@
                                         <a href="{{url('facturaRollo/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF Rollo</a>
                                         <a href="{{url('generarXML/'.$fact->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
                                         <a href="{{url('enviarCorreo/'.$fact->id)}}" class="btn btn-info btn-sm" onClick="loading()"><i class="fa fa-envelope"></i> Notificacion</a>                                        
-                                        <a><button class="btn btn-danger btn-sm" type="submit" onclick="anularFactura({{$fact->id}})"><i class="fa fa-trash"></i> Anular</button></a>
+                                        <a><button type="submit" class="btn btn-danger btn-sm" onclick="anularFactura({{$fact->id}})"><i class="fa fa-trash"></i> Anular</button></a>
                                         <div id="loading" class="loading" onClick="hideSpinner()">                                          
                                           Loading&#8230;     
                                         </div>                                      
+                                    </td>
+                                    @elseif ($fact->estado == 'ANULADA')
+                                    <td>
+                                      <a><button type="submit" class="btn btn-info btn-sm" onclick="revertirAnulacionFactura({{$fact->id}})"><i class="fa fa-undo"></i> Revertir Anulacion</button></a>                                      
                                     </td>
                                     @else
                                     <td>
@@ -243,7 +247,8 @@
 </script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
-  function anularFactura(id){
+  function anularFactura(id)
+  {
     var csrf_token=$('meta[name="csrf_token"]').attr('content');
     swal.fire({      
       title: '¿Desea Anular esta Factura?',
@@ -266,38 +271,81 @@
       cancelButtonColor: '#d33',  
       confirmButtonColor: '#3085d6'
 
-    }).then((result)=> {
-      console.log(result.value);
-      motivo = result.value;
-      $.ajaxSetup({
-          headers: {
+    }).then(result => {
+      if (result.value) {
+        motivo = result.value;
+        $.ajaxSetup({
+            headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+          url:"{{url('factura')}}"+'/'+id,
+          type: "POST",
+          data: {'_method' : 'DELETE', '_token' :csrf_token, motivo},
+          success: function(data){
+            Swal.fire({
+              title: 'Operación realizada exitosamente',
+              text: data.message,
+              icon: 'success'
+            });
+            setTimeout(function(){
+              window.location.reload();
+            }, 4000);
+          },
+          error: function(data){
+            Swal.fire({
+              title: 'Error en la Operación',
+              text: data.responseJSON.message,
+              icon: 'error'
+            });
           }
-      });
-      $.ajax({
-        url:"{{url('factura')}}"+'/'+id,
-        type: "POST",
-        data: {'_method' : 'DELETE', '_token' :csrf_token, motivo},
-        success: function(data){
-          console.log(data);
-          Swal.fire({
-            title: 'Operación realizada exitosamente',
-            text: data.message,
-            icon: 'success'
-          });
-          setTimeout(function(){
-            window.location.reload();
-          }, 4000);
-        },
-        error: function(data){
-          console.log(data);
-          Swal.fire({
-            title: 'Error en la Operación',
-            text: data.responseJSON.message,
-            icon: 'error'
-          });
-        }
-      });
+        });
+      }
+      
+    });
+  }
+</script>
+<script type="text/javascript">
+  function revertirAnulacionFactura(id)
+  {
+    swal.fire({
+      title: '¿Desea Revertir la Anulación de esta Factura?',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Si, Revertir',
+      cancelButtonColor: '#d33',  
+      confirmButtonColor: '#3085d6'
+    }).then(result => {
+      if (result.value) {
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+        $.ajax({
+          type: "GET",
+          url: "{{url('/revertirAnulacionFactura')}}"+'/'+id,
+          success: function(data){
+            Swal.fire({
+              title: 'Operación realizada exitosamente',
+              text: data.message,
+              icon: 'success'
+            });
+            setTimeout(function(){
+              window.location.reload();
+            }, 4000);
+          },
+          error: function(data){
+            console.log(data);
+            Swal.fire({
+              title: 'Error en la Operación',
+              text: data.responseJSON.message,
+              icon: 'error'
+            });
+          }
+        });       
+      }      
     });
   }
 </script>
