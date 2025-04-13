@@ -225,42 +225,7 @@ class FacturaController extends Controller
             return redirect("/factura")->with('toast_error','Error en Formato XSD: '.implode(" ", $msjError));
         }
         
-    }
-    /**************************************
-     * Firmar Factura
-     **************************************/
-    public function firmarFactura($idfactura)
-    {   
-        
-    }
-    public function existeArchivos($filexml, $xsd): bool {
-        if (!file_exists(public_path('siat/'.$filexml))|| !file_exists(public_path('siat/'.$xsd))) {
-            return false;
-        }        
-        return true;
-    }
-
-    public function validarArchivo($filexml, $xsd)
-    {
-        $xmlReader = new \XMLReader();
-        $xmlReader->open(public_path('siat/'.$filexml));
-        $xmlReader->setParserProperty(\XMLReader::VALIDATE, true);
-        $xmlReader->setSchema(public_path('siat/'.$xsd));
-
-        \libxml_use_internal_errors(true);
-
-        $msj = [];
-
-        while ($xmlReader->read()) {
-            if (!$xmlReader->isValid()) {
-                $err = \libxml_get_last_error();
-                if ($err && $err instanceof \libXMLError) {
-                    $msj[] = \trim($err->message). 'on line '.$err->line;
-                }
-            }
-        }
-        return $msj;
-    }
+    }    
     
     /**************************************
      * Imprimir Factura XML
@@ -384,18 +349,23 @@ class FacturaController extends Controller
             return redirect('/factura')->with('toast_error',$e);            
         }
     }
+
+    /**************************************
+     * Ver Factura en Portal SIAT
+     **************************************/
     public function verSIAT($idfactura)
     {
         $factura = Factura::find($idfactura);
         return redirect("https://siat.impuestos.gob.bo/consulta/QR?".'nit='.$factura->nitEmisor.'&cuf='.$factura->cuf.'&numero='.$factura->numeroFactura.'&t=2');
     }
-
+    
     public function generadorQR($texto)
     {
         $d=new DNS2D();
         $cadena = $d->getBarcodePNGPath($texto, "QRCODE");
         return $cadena;
     }
+
     /**************************************
      * Revertir Anulacion de Factura
      **************************************/

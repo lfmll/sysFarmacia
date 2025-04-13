@@ -29,7 +29,7 @@
                                 <div class="col-lg-8">
                                     <div class="form-group">
                                         {!! Form::label('cliente','Nombre o Razon Social: ') !!}
-                                        {!! Form::text('cid', null, ['id'=>'cid','class'=>'form-control']) !!}
+                                        {!! Form::hidden('cid', null, ['id'=>'cid','class'=>'form-control']) !!}
                                         <div class="input-group mb-3">
                                             {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control']) !!}
                                             <div class="input-group-append">
@@ -37,8 +37,8 @@
                                                     <i class="fa fa-lg fa-search"></i>
                                                 </a>
                                             </div>
-                                        </div>
-                                        {!! Form::label('idcliente', 'idcliente', ['id'=>'ccliente']) !!}
+                                        </div>                                        
+                                        <label hidden for="idcliente" id="ccliente">idcliente</label>
                                     </div>                                    
                                 </div>
                                 <div class="col-lg-1"></div>
@@ -57,36 +57,29 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-3 ">
-                                    <div class="form-group">
-                                        {!! Form::label('tipodoc','Tipo Documento: ') !!}   
-                                        {!! Form::text('tipodoc', null, ['id'=>'ctipodoc','class'=>'form-control', 'readonly'=>true]) !!} 
+                            {!! Form::hidden('tipodoc', null, ['id'=>'ctipodoc','class'=>'form-control', 'readonly'=>true]) !!} 
+                                <div class="col-lg-2">
+                                    <div class="form-group"> 
+                                        {!! Form::label('nrodoc','Nro de Documento: ') !!}   
+                                        {!! Form::text('nrodoc', null, ['id'=>'cnrodoc','class'=>'form-control', 'readonly'=>true]) !!}                                         
                                     </div>
                                 </div>
-                                <div class="col-lg-3 ">
+                                <div class="col-lg-1">
                                     <div class="form-group">
-                                        {!! Form::label('nrodoc','Numero de Documento: ') !!}   
-                                        {!! Form::text('nrodoc', null, ['id'=>'cnrodoc','class'=>'form-control', 'readonly'=>true]) !!} 
+                                        {!! Form::label('cmpl','Cmpl: ') !!}   
+                                        {!! Form::text('cmpl', null, ['id'=>'ccmpl','class'=>'form-control', 'readonly'=>true]) !!}    
                                     </div>
                                 </div>
-                                <div class="col-lg-2 ">
+                                <div class="col-lg-5">
                                     <div class="form-group">
-                                        {!! Form::label('cmpl','Complemento: ') !!}   
-                                        {!! Form::text('cmpl', null, ['id'=>'ccmpl','class'=>'form-control', 'readonly'=>true]) !!} 
+                                    {!! Form::label('correo','Correo: ') !!}   
+                                    {!! Form::text('correo', null, ['id'=>'ccorreo','class'=>'form-control', 'readonly'=>true]) !!}     
                                     </div>
                                 </div> 
-                            </div>                               
-                            <div class="row">
-                                <div class="col-lg-8">
-                                    <div class="form-group">
-                                        {!! Form::label('correo','Correo: ') !!}   
-                                        {!! Form::text('correo', null, ['id'=>'ccorreo','class'=>'form-control', 'readonly'=>true]) !!} 
-                                    </div>
-                                </div>
                             </div>
                             <hr>
                             <div class="row">
-                                <div class="col-lg-3 col-md-3 col-xs-12">
+                                <div class="col-sm-7">
                                     <div class="form-group">                                        
                                         {!! Form::label('Producto', 'Producto') !!}                                          
                                         <div class="input-group mb-3">                                                                                                                                   
@@ -96,30 +89,30 @@
                                                     <i class="fa fa-lg fa-receipt"></i>
                                                 </a>
                                             </div>                                            
-                                        </div>
-                                        {!! Form::label('loteid', 'loteid', ['id'=>'pcodigo']) !!}
-                                        {!! Form::number('maximo', null, ['id'=>'pmaximo','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
+                                        </div>                                        
+                                        <label hidden for="loteid" id="pcodigo">idcliente</label>
+                                        {!! Form::hidden('maximo', null, ['id'=>'pmaximo','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-xs-12">
+                                <div class="col-sm-1">
                                     <div class="form-group">
                                         {!! Form::label('Cantidad', 'Cantidad') !!}
                                         {!! Form::number('cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-xs-12">
+                                <div class="col-sm-1">
                                     <div class="form-group">
                                         {!! Form::label('Precio', 'Precio') !!}
                                         {!! Form::number('precio', null, ['id'=>'pprecio','class'=>'form-control','placeholder'=>'0.00','min'=>'0']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-xs-12">
+                                <div class="col-sm-1">
                                     <div class="form-group">
                                         {!! Form::label('Descuento', 'Descuento') !!}
                                         {!! Form::number('descuento', null, ['id'=>'pdescuento','class'=>'form-control','placeholder'=>'0.00','min'=>'0','max'=>'100']) !!}
                                     </div>
                                 </div>
-                                <div class="col-lg-3 col-sm-3 col-md-2 col-xs-12">
+                                <div class="col-sm-2">
                                     <div class="form-group">  
                                         {!! Form::label('Accion','Accion',['type'=>'hidden']) !!}                                        
                                         <input type="button" value="Agregar" id="btn_add" class="btn btn-success form-control" onclick="agregar()">
@@ -131,12 +124,12 @@
                             <div class="col-lg-12 col-sm-12 col-xs-12">
                                 <table id="detalles" class="table table-bordered table-condensed table-hover">
                                     <thead style="background-color: #2ab27b">
-                                        <th></th>
-                                        <th>Codigo</th>
-                                        <th>Concepto</th>
-                                        <th>Cantidad</th>
-                                        <th>P. Unitario</th>
-                                        <th>SubTotal</th>
+                                        <th class="col-sm-1"></th>
+                                        <th class="col-sm-1">Codigo</th>
+                                        <th class="col-sm-5">Concepto</th>
+                                        <th class="col-sm-1">Cantidad</th>
+                                        <th class="col-sm-2">P. Unitario</th>
+                                        <th class="col-sm-2">SubTotal</th>
                                     </thead>
                                     <tfoot>     
                                         <tr>
@@ -459,19 +452,14 @@
     });   
   
     $("input:checkbox").on('click', function() {
-    // in the handler, 'this' refers to the box clicked on
-    var $box = $(this);
-    if ($box.is(":checked")) {
-        // the name of the box is retrieved using the .attr() method
-        // as it is assumed and expected to be immutable
-        var group = "input:checkbox[name='" + $box.attr("name") + "']";
-        // the checked state of the group/box on the other hand will change
-        // and the current value is retrieved using .prop() method
-        $(group).prop("checked", false);
-        $box.prop("checked", true);
-    } else {
-        $box.prop("checked", false);
-    }
+        var $box = $(this);
+        if ($box.is(":checked")) {
+            var group = "input:checkbox[name='" + $box.attr("name") + "']";
+            $(group).prop("checked", false);
+            $box.prop("checked", true);
+        } else {
+            $box.prop("checked", false);
+        }
     });
 
     let total=0;
