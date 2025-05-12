@@ -23,10 +23,10 @@ class Codigo extends Model
     }
 
     public static function soapActividad($clienteSoap, $parametrosActividad, $cuisId)
-    {
-        Codigo::where('cuis_id',$cuisId)->delete();
+    {        
         $responseActividad = $clienteSoap->sincronizarActividades($parametrosActividad);
         if ($responseActividad->RespuestaListaActividades->transaccion == true) {
+            Codigo::truncate();
             $listaActividad = $responseActividad->RespuestaListaActividades->listaActividades;        
             $actividad = new Codigo;
             $actividad->fill([

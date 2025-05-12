@@ -90,7 +90,7 @@
                                                 </a>
                                             </div>                                            
                                         </div>                                        
-                                        <label hidden for="loteid" id="pcodigo">idcliente</label>
+                                        <label  for="loteid" id="pcodigo">idcliente</label>
                                         {!! Form::hidden('maximo', null, ['id'=>'pmaximo','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
                                 </div>
                                 <div class="col-sm-2">
                                     <div class="form-group">  
-                                        {!! Form::label('Accion','Accion',['type'=>'hidden']) !!}                                        
+                                        {!! Form::label('accion', 'accion',['style'=>'visibility:hidden;']) !!}
                                         <input type="button" value="Agregar" id="btn_add" class="btn btn-success form-control" onclick="agregar()">
                                     </div>
                                 </div>
@@ -275,7 +275,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="seleccionarCliente()">Aceptar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="seleccionarCliente()">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -298,8 +298,7 @@
                                     <div class="form-group">
                                         <label>Nombre o Razon Social (*)</label>
                                         <input type="text" name="ccnombre" id="ccnombre" class="form-control" required>
-                                    </div>
-                                    
+                                    </div>                                    
                                 </div>
                             </div>
                         </div>                        
@@ -350,12 +349,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="crearCliente">Aceptar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="crearCliente">Aceptar</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- *************** Buscar Producto ******************** -->
+    <!-- ***************Modal Buscar Producto ******************** -->
     <div class="modal fade" id="modalLote" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -401,7 +400,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="seleccionar()">Aceptar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="seleccionar()">Aceptar</button>
                 </div>
             </div>
         </div>      
@@ -729,6 +728,7 @@
 
     function seleccionar(){          
         [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
+            console.log(cb);
             document.getElementById('pcodigo').innerText=cb.value;            
         });
         arreglo = document.getElementById("pcodigo").innerText;        

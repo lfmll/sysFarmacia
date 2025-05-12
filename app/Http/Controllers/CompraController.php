@@ -8,6 +8,13 @@ use App\Models\DetalleCompra;
 use App\Models\Medicamento;
 use App\Models\Lote;
 use App\Models\Producto;
+use App\Models\Cuis;
+use App\Models\Codigo;
+use App\Models\Catalogo;
+use App\Models\Parametro;
+use App\Models\Clase;
+use App\Models\Via;
+use App\Models\Laboratorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -35,7 +42,7 @@ class CompraController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
+    {        
         $compra=new Compra();
         $agentes=Agente::orderBy('nombre','ASC')->pluck('nombre','id');
         
@@ -43,18 +50,44 @@ class CompraController extends Controller
         $horai=date('00:00:00');
         $horaf=date('23:59:59');
 
+        $cuis = Cuis::obtenerCuis();
+
+        $codigoInicial = Codigo::where('cuis_id',$cuis->id)->orderBy('descripcion','ASC')->first();
+        $catalogoInicial = Catalogo::join('codigos','catalogos.codigo_actividad','=','codigos.codigo_caeb')
+                                    ->where('codigos.codigo_caeb','=',$codigoInicial->codigo_caeb)                                    
+                                    ->orderBy('catalogos.descripcion_producto','ASC')                                    
+                                    ->pluck('catalogos.descripcion_producto','catalogos.codigo_producto');
+
         $c=DB::table('compras')
-                ->whereBetween('fecha_compra',[$fecha_compra.' '.$horai, $fecha_compra.' '.$horaf])
-                ->count();
-                          
+            ->whereBetween('fecha_compra',[$fecha_compra.' '.$horai, $fecha_compra.' '.$horaf])
+            ->count();
+                    
         $comprobante = str_replace('-','',$fecha_compra).$c;
                         
         $lotesm=Lote::where('estado','A')
                     ->where('medicamento_id','<>',null)                    
-                    ->get();                                    
+                    ->get();
 
+        $actividades = Codigo::where('cuis_id',$cuis->id)
+                    ->orderBy('descripcion','ASC')
+                    ->pluck('descripcion','codigo_caeb');
+        $clases = Clase::orderBy('nombre','ASC')->pluck('nombre','id');
+        $unidad_medida = Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                                ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                                ->orderBy('parametros.descripcion','ASC')
+                                ->pluck('parametros.descripcion','parametros.codigo_clasificador');
+
+        $vias = Via::orderBy('descripcion','ASC')->pluck('descripcion','id');
+
+        $laboratorios = Laboratorio::orderBy('nombre','ASC')->pluck('nombre','id');
         return view('compra.create',['compra'=>$compra, 'comprobante'=>$comprobante])
-                ->with('agentes',$agentes)                
+                ->with('agentes',$agentes)  
+                ->with('actividades',$actividades)
+                ->with('catalogos',$catalogoInicial)
+                ->with('clases',$clases)
+                ->with('unidad_medida',$unidad_medida)
+                ->with('vias',$vias)
+                ->with('laboratorios',$laboratorios)
                 ->with('lotesm',$lotesm);
     }
 
@@ -65,9 +98,7 @@ class CompraController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {     
-        try {
-            DB::beginTransaction();
+    {                   
             $compra = new Compra($request->all());
             
             if (is_null($compra->glosa)) {
@@ -113,11 +144,7 @@ class CompraController extends Controller
                 $compra->glosa=$request->glosa;
                 $compra->forma_pago=$request->forma_pago;
                 $compra->save();                
-            }                        
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-        }
+            }
         if ($compra->save()) {
             return redirect("/compra")->with('toast_success','Pago realizado exitosamente');
         }else {

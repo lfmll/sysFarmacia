@@ -59,7 +59,11 @@ class EmpresaController extends Controller
             $empresa->modalidad = $request->modalidad;
             $empresa->estado = 'A';
             $empresa->save();
+            $path = public_path('/imagen');
             if ($hasFile) {
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
                 $request->cover->move('imagen',"$empresa->id.$extension");
             }                
             $sucursal = new Agencia;

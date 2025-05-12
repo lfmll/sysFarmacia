@@ -31,7 +31,7 @@ class TipoParametroSeeder extends Seeder
         ];
 
         foreach ($tipo_parametros as $tipo_parametro) {
-            TipoParametro::create($tipo_parametro);
+            TipoParametro::firstOrCreate($tipo_parametro);
         }
     }
 }

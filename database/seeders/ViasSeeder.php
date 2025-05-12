@@ -29,7 +29,7 @@ class ViasSeeder extends Seeder
             ['descripcion'=>'Oftalmológica']
         ];
         foreach ($vias as $via) {
-            Via::create($via);
+            Via::firstOrCreate($via);
         }        
     }
 }

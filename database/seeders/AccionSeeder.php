@@ -115,7 +115,7 @@ class AccionSeeder extends Seeder
         ];
 
         foreach ($clases as $clase) {
-            Clase::create($clase);
+            Clase::firstOrCreate($clase);
         }
     }
 }

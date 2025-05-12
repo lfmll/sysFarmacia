@@ -19,10 +19,10 @@ class ActividadDocumento extends Model
     }
 
     public static function soapActividadDocumento($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
-    {
-        ActividadDocumento::where('cuis_id',$cuisId)->delete();
+    {        
         $responseActividadDocumento = $clienteSincronizacion->sincronizarListaActividadesDocumentoSector($parametrosSincronizacion);
         if ($responseActividadDocumento->RespuestaListaActividadesDocumentoSector->transaccion == true) {
+            ActividadDocumento::truncate();
             $listaActividadesDocumentos = $responseActividadDocumento->RespuestaListaActividadesDocumentoSector->listaActividadesDocumentoSector;
             foreach ($listaActividadesDocumentos as $lad) {
                 $lista_actividad_documento = new ActividadDocumento;

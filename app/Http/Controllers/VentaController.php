@@ -66,7 +66,7 @@ class VentaController extends Controller
                                     ->orderBy('catalogos.descripcion_producto','ASC')                                    
                                     ->pluck('catalogos.descripcion_producto','catalogos.codigo_producto');
                                      
-        if ($catalogoInicial->isEMpty()) {
+        if ($catalogoInicial->isEmpty()) {
             $catalogoInicial = [];
             $lotesm = [];
         } else {
@@ -76,7 +76,7 @@ class VentaController extends Controller
                                     
             $lotesm = DB::table('lotes')
                         ->join('medicamentos','medicamentos.id','=','lotes.medicamento_id')
-                        ->join('laboratorios','lotes.laboratorio_id','=','laboratorios.id')
+                        ->leftjoin('laboratorios','lotes.laboratorio_id','=','laboratorios.id')
                         ->where('medicamentos.codigo_actividad','=',$codigoInicial->codigo_caeb)
                         ->where('medicamentos.codigo_producto_sin','=',$productoInicial->codigo_producto)
                         ->where('medicamentos.stock','>',0)

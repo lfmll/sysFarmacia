@@ -21,7 +21,7 @@ class DosisSeeder extends Seeder
         ];
 
         foreach ($medidas as $medida) {
-            Medida::create($medida);
+            Medida::firstOrCreate($medida);
         } 
     }
 }

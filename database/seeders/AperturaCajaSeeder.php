@@ -17,7 +17,7 @@ class AperturaCajaSeeder extends Seeder
     {
         $fecha=Carbon::now('America/La_Paz')->toDateString();
         $hora_inicio = Carbon::now('America/La_Paz')->format('H:i');
-        Caja::create([
+        Caja::firstOrCreate([
             'monto_apertura' => 0,
             'fecha' => $fecha,
             'hora_inicio' => $hora_inicio

@@ -28,7 +28,7 @@ class Parametro extends Model
     
     public static function sincronizarParametro($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
     {
-        Parametro::where('cuis_id',$cuisId)->delete();
+        Parametro::truncate();
         //Sincronizar Eventos Significativos
         $responseEventos = $clienteSincronizacion->sincronizarParametricaEventosSignificativos($parametrosSincronizacion);
         $listaEventos = $responseEventos->RespuestaListaParametricas->listaCodigos;

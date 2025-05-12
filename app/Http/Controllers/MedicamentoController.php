@@ -10,6 +10,7 @@ use App\Models\Clase;
 use App\Models\Medida;
 use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
+use App\Models\Lote;
 use App\Models\Cuis;
 use App\Models\Catalogo;
 use App\Models\Parametro;
@@ -84,7 +85,51 @@ class MedicamentoController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {             
+    {    
+        if ($request->ajax()) {
+            try {
+                DB::beginTransaction();
+                $medicamento = new Medicamento($request->all());
+                $medicamento->codigo_actividad = $request->codigo_caeb;
+                $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento($request->clase);
+                $medicamento->codigo_producto_sin = $request->codigo_producto;
+                $medicamento->nombre_comercial = $request->nombre_comercial;
+                $medicamento->nombre_generico = $request->nombre_generico;
+                $medicamento->stock = 0;
+                $medicamento->stock_minimo = 0;
+                $medicamento->codigo_clasificador = $request->unidad_medida;
+                $medicamento->via_id = $request->via;
+                $medicamento->save();
+
+                $clasemedicamento = new ClaseMedicamento($request->all());
+                $clasemedicamento->medicamento_id = $medicamento->id;
+                $clasemedicamento->clase_id = $request->clase;
+                $clasemedicamento->estado = 'A';
+                $clasemedicamento->save();
+
+                $lote = new Lote($request->all());
+                $lote->numero = $request->nro_lote;
+                $lote->cantidad = 0;
+                $lote->fecha_vencimiento = $request->fecha_vencimiento;                            
+                $lote->laboratorio_id = $request->laboratorio;
+                $lote->medicamento_id = $medicamento->id;
+                $lote->estado = 'A';
+                $lote->save();
+
+                DB::commit();
+
+                $lotem = DB::table('lotes')
+                        ->join('medicamentos','medicamentos.id','=','lotes.medicamento_id')
+                        ->where('lotes.id',$lote->id)
+                        ->select('lotes.id','medicamentos.nombre_comercial')
+                        ->get();
+
+                return \Response::json($lotem);
+            } catch (\Throwable $th) {
+                return response()->json(['message'=>$th],500);
+            }
+            
+        }         
         try {
             DB::beginTransaction();
             $medicamento=new Medicamento($request->all());
@@ -158,7 +203,10 @@ class MedicamentoController extends Controller
     public function show($id)
     {
         $medicamento=Medicamento::findOrFail($id);
-        $unidad_medida=Parametro::where('codigo_clasificador',$medicamento->codigo_clasificador)->first();
+        $unidad_medida=Parametro::join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
+                            ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                            ->where('parametros.codigo_clasificador',$medicamento->codigo_clasificador)
+                            ->first();
         $vias=Via::where('id',$medicamento->via_id)->first();
         
         $clases = DB::table('clases')

@@ -65,7 +65,7 @@ class Cuis extends Model
                 )            
             ); 
             $responseCuis = $clienteCuis->cuis($parametrosCUIS);
-            $ultimoCuis = Cuis::orderby('created_at','desc')->first();
+            $ultimoCuis = Cuis::orderby('created_at','desc')->first();            
             if ($responseCuis->RespuestaCuis->transaccion == true) {
                 if (!is_null($ultimoCuis)) {
                     $ultimoCuis->estado = "N";
@@ -82,26 +82,40 @@ class Cuis extends Model
                 ]);
                 $cuis->save();
                 return $msjError;
-            } else {
-                if (!is_null($ultimoCuis) && ($responseCuis->RespuestaCuis->codigo != $ultimoCuis->codigo_cuis)) {
-                    if (!is_null($ultimoCuis)) {
+            } else {  
+                if ($responseCuis->RespuestaCuis->mensajesList->codigo == "980") {
+                    if (is_null($ultimoCuis)) {
+                        $cuis = new Cuis;
+                        $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
+                        $fecha = date("Y-m-d H:i:s", $fechaUTC);
+                        $cuis->fill([
+                            'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
+                            'fecha_vigencia' => $fecha,
+                            'estado' => 'A',
+                            'punto_venta_id' => $puntoVenta->id
+                        ]);
+                        $cuis->save();
+                        return $msjError;
+                    } elseif ($responseCuis->RespuestaCuis->codigo != $ultimoCuis->codigo_cuis) {
                         $ultimoCuis->estado = "N";
                         $ultimoCuis->save();
+                        $cuis = new Cuis;
+                        $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
+                        $fecha = date("Y-m-d H:i:s", $fechaUTC);
+                        $cuis->fill([
+                            'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
+                            'fecha_vigencia' => $fecha,
+                            'estado' => 'A',
+                            'punto_venta_id' => $puntoVenta->id
+                        ]);
+                        $cuis->save();
+                        return $msjError;
                     }
-                    $cuis = new Cuis;
-                    $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
-                    $fecha = date("Y-m-d H:i:s", $fechaUTC);
-                    $cuis->fill([
-                        'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
-                        'fecha_vigencia' => $fecha,
-                        'estado' => 'A',
-                        'punto_venta_id' => $puntoVenta->id
-                    ]);
-                    $cuis->save();
+                } else {
+                    $msjError = $responseCuis->RespuestaCuis->mensajesList->descripcion;
                     return $msjError;
-                }
-            }
-            
+                }                                             
+            }            
         } else {
             return $msjError = "Error en la comunicación con el Servicio SIAT";
         }

@@ -18,9 +18,9 @@ class Leyenda extends Model
     }
 
     public static function soapLeyenda($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
-    {
-        Leyenda::where('cuis_id',$cuisId)->delete();
+    {        
         $responseLeyenda = $clienteSincronizacion->sincronizarListaLeyendasFactura($parametrosSincronizacion);
+        Leyenda::truncate();
         if ($responseLeyenda->RespuestaListaParametricasLeyendas->transaccion == true) {
             $listaLeyendas = $responseLeyenda->RespuestaListaParametricasLeyendas->listaLeyendas;
             

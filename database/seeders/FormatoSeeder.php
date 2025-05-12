@@ -39,7 +39,7 @@ class FormatoSeeder extends Seeder
         ];
 
         foreach ($formatos as $formato) {
-            Formato::create($formato);
+            Formato::firstOrCreate($formato);
         }                        
     }
 }

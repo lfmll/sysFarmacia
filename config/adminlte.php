@@ -336,8 +336,8 @@ return [
             'url'        => '/lote',
         ],
         [
-            'text'       => 'Egresos',
-            'icon'       => 'fas fa-sign-out-alt',
+            'text'       => 'Ingresos',
+            'icon'       => 'fas fa-sign-in-alt',
             'icon_color' => 'red',
             'url'        => '#',
             'submenu'    => [
@@ -360,8 +360,8 @@ return [
             ],
         ],
         [
-            'text'       => 'Ingresos',
-            'icon'       => 'fas fa-sign-in-alt',
+            'text'       => 'Egresos',
+            'icon'       => 'fas fa-sign-out-alt',
             'icon_color' => 'blue',
             'url'        => '#',
             'submenu'    => [

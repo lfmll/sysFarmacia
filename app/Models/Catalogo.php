@@ -26,10 +26,10 @@ class Catalogo extends Model
     }
 
     public static function soapCatalogo($clienteSincronizacion, $parametrosSincronizacion, $cuisId)
-    {
-        Catalogo::where('cuis_id',$cuisId)->delete();
+    {        
         $responseCatalogo = $clienteSincronizacion->sincronizarListaProductosServicios($parametrosSincronizacion);
         if ($responseCatalogo->RespuestaListaProductos->transaccion == true) {
+            Catalogo::truncate();
             $listaCatalogos = $responseCatalogo->RespuestaListaProductos->listaCodigos;
             foreach ($listaCatalogos as $lcat) {
                 $catalogo = new Catalogo;
