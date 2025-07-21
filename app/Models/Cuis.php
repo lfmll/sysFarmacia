@@ -53,6 +53,7 @@ class Cuis extends Model
         $agencia = Agencia::where('id', $puntoVenta->agencia_id)->first();
         $empresa = Empresa::where('id', $agencia->empresa_id)->first();
         $msjError = "";
+        
         if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") {
             $parametrosCUIS = array(
                 'SolicitudCuis' => array(

@@ -19,7 +19,7 @@ class CreateAgenciasTable extends Migration
             $table->string('nombre',50);
             $table->string('departamento',50);            
             $table->string('municipio',50);
-            $table->string('direccion',50);
+            $table->string('direccion');
             $table->string('telefono',10);            
             $table->char('estado',1);
             $table->smallinteger('empresa_id')->unsigned();

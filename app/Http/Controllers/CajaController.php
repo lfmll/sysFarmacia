@@ -131,7 +131,7 @@ class CajaController extends Controller
                     return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
                 }
             } else {
-                return redirect('/caja')->with('errors',$msjError);
+                return redirect('/caja')->with('errors',$msjCufd);
             }
         } else {
             return redirect('/caja')->with('toast_error',$msjCuis);

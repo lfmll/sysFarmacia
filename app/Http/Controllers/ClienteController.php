@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
-use Response;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\Parametro;
 
@@ -50,11 +50,11 @@ class ClienteController extends Controller
                                     ->get();
 
             if ($existeCliente->isNotEmpty()) {
-                return \Response::json(["mensaje"=>"El Cliente se encuentra registrado con el Documento: ".$existeCliente[0]["numero_documento"]."."],409);
+                return Response::json(["mensaje"=>"El Cliente se encuentra registrado con el Documento: ".$existeCliente[0]["numero_documento"]."."],409);
             }
             
             $cliente = Cliente::create($request->all());
-            return \Response::json($cliente);
+            return Response::json($cliente);
         }
 
         $cliente=Cliente::where('numero_documento','=',$request->numero_documento)

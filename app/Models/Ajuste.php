@@ -41,7 +41,7 @@ class Ajuste extends Model
             
             return $response;
         } catch (\Exception $e) {
-            return null;
+            return $e->getMessage();
         }
     }
 }

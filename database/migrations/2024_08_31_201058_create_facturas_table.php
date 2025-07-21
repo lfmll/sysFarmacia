@@ -49,6 +49,7 @@ class CreateFacturasTable extends Migration
             $table->string('codigoRecepcion')->nullable();
             
             $table->smallInteger('venta_id')->unsigned();
+            $table->smallInteger('evento_id')->unsigned()->nullable();
             $table->timestamps();
         });
     }

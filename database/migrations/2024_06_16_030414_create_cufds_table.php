@@ -17,7 +17,7 @@ class CreateCufdsTable extends Migration
             $table->smallIncrements('id');
             $table->string('codigo_cufd',100);  
             $table->string('codigo_control',25);
-            $table->string('direccion',100);    
+            $table->string('direccion');    
             $table->datetime('fecha_vigencia');
             $table->char('estado',1);
             $table->smallInteger('cuis_id')->unsigned();

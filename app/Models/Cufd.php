@@ -63,7 +63,7 @@ class Cufd extends Model
                 $cufd->save();
                 return $msjError;
             } else {
-                return $msjError = $responseCufd->$RespuestaCufd->$mensajesList->$descripcion;
+                return $msjError = $responseCufd->RespuestaCufd->mensajesList->descripcion;
             }
         } else {
             return $msjError = "Error en la comunicación con el Servicio SIAT";

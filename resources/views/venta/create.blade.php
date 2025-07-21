@@ -9,12 +9,17 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3>FACTURA COMPRA-VENTA</h3>                        
+                    <h3>Factura Compra-Venta</h3>                        
                 </div>   
                 <div class="card-body">                                                                                                                                                                                                     
                     <div class="card">
                         <div class="card-header">                            
                             <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <a href="#" class="btn btn-success btn-sm"><i class="fa fa-sm fa-circle"></i> En Linea</a>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         {{ Form::select('actividades',$actividades, null, ['class'=>'form-control','id'=>'codigo_caeb', 'onchange'=>'catalogarActividad()'])  }}

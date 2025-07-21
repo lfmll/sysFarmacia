@@ -16,7 +16,7 @@ class CreateCodigosTable extends Migration
         Schema::create('codigos', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('codigo_caeb',10);
-            $table->string('descripcion',250);
+            $table->string('descripcion');
             $table->char('tipo_actividad',1);
             $table->smallInteger('cuis_id')->unsigned();
             $table->timestamps();

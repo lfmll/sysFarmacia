@@ -25,6 +25,7 @@ use App\Http\Controllers\AgenciaController;
 use App\Http\Controllers\PuntoVentaController;
 use App\Http\Controllers\MensajeController;
 use App\Http\Controllers\AjusteController;
+use App\Http\Controllers\EventoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,7 @@ Route::resource('cliente', ClienteController::class);
 Route::resource('agencia', AgenciaController::class);
 Route::resource('puntoventa', PuntoVentaController::class);
 Route::resource('ajuste', AjusteController::class);
+Route::resource('evento', EventoController::class);
 Route::get('sincronizarCuis', [AjusteController::class, 'sincronizarCuis']);
 Route::get('sincronizarCufd', [AjusteController::class, 'sincronizarCufd']);
 Route::get('sincronizar', [AjusteController::class, 'sincronizar']);

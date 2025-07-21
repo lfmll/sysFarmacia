@@ -191,8 +191,8 @@ class FacturaController extends Controller
             //TODO: 4 Enviar Factura SIAT                               
             $ajuste = Ajuste::first();
             $token = $ajuste->token;
-            $wslSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
-            $clienteFacturacion = Ajuste::consumoSIAT($token,$wslSincronizacion);
+            $wsdlSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
+            $clienteFacturacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
             if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") 
             {
                 $parametrosFactura = array(
@@ -407,5 +407,4 @@ class FacturaController extends Controller
         }
         
     }
-    
 }

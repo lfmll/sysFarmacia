@@ -71,7 +71,7 @@ class LoteController extends Controller
             
             DB::commit();
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
         }
         
@@ -157,7 +157,7 @@ class LoteController extends Controller
                             
             DB::commit();
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
         }
         

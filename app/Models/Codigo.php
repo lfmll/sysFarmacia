@@ -27,16 +27,17 @@ class Codigo extends Model
         $responseActividad = $clienteSoap->sincronizarActividades($parametrosActividad);
         if ($responseActividad->RespuestaListaActividades->transaccion == true) {
             Codigo::truncate();
-            $listaActividad = $responseActividad->RespuestaListaActividades->listaActividades;        
-            $actividad = new Codigo;
-            $actividad->fill([
-                'codigo_caeb' => $listaActividad->codigoCaeb,
-                'descripcion' => $listaActividad->descripcion,
-                'tipo_actividad' => $listaActividad->tipoActividad,
-                'cuis_id' => $cuisId
-            ]);
-            $actividad->save();
-            
+            $listaActividad = $responseActividad->RespuestaListaActividades->listaActividades; 
+            foreach ($listaActividad as $listaA) {
+                $actividad = new Codigo;
+                $actividad->fill([
+                    'codigo_caeb' => $listaA->codigoCaeb,
+                    'descripcion' => $listaA->descripcion,
+                    'tipo_actividad' => $listaA->tipoActividad,
+                    'cuis_id' => $cuisId
+                ]);
+                $actividad->save();
+            }                            
             return true;
         } else {
             return false;

@@ -16,7 +16,7 @@ class CreateParametrosTable extends Migration
         Schema::create('parametros', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->smallInteger('codigo_clasificador');
-            $table->string('descripcion',250);
+            $table->string('descripcion');
             $table->smallInteger('tipo_parametro_id')->unsigned();
             $table->smallInteger('cuis_id')->unsigned();
             $table->timestamps();

@@ -52,13 +52,7 @@ class PDFController extends Controller
         return $pdf->setPaper('letter','portrait')
                     ->stream('lista_medicamentos.pdf',array('Attachment'=>0));
     }
-    public function listaInsumos()
-    {
-        $fecha=Carbon::now('America/La_Paz')->format('d/m/y h:i A');
-        $insumos=Insumo::orderBy('nombre')->get();
-        $pdf=PDF::loadView('insumo.reporte',['insumos'=>$insumos,'fecha'=>$fecha]);
-        return $pdf->download('insumos.pdf');
-    }
+    
     public function listaAcciones()
     {
         $fecha=Carbon::now('America/La_Paz')->format('d/m/y h:i A');
@@ -73,14 +67,7 @@ class PDFController extends Controller
         $pdf=PDF::loadView('lote.reporte',['lotes'=>$lotes,'fecha'=>$fecha]);
         return $pdf->download('lote.pdf');
     }
-    public function listaProductos()
-    {
-        $fecha=Carbon::now('America/La_Paz')->format('d/m/Y h:i A');
-        $productos=Producto::where('estado','A')->get();
-        $pdf=PDF::loadView('producto.reporte',['productos'=>$productos,'fecha'=>$fecha]);
-        return $pdf->download('Productos.pdf');
-    }
-
+    
     public function listaClientes()
     {
         $fecha=Carbon::now('America/La_Paz')->format('d/m/y h:i A');

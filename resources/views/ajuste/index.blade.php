@@ -23,7 +23,7 @@
                     <div class="card-body">
                         {!! Form::open(['url' => '/ajuste/'.$ajuste->id, 'method' => 'PATCH']) !!} 
                             <div class="col-sm-12">
-                                <textarea name="token" id="token" class="form-control">{{$ajuste->token}}</textarea>
+                                <textarea name="token" id="token" class="form-control" required>{{$ajuste->token}}</textarea>
                             </div>
                             <br>
                             <div class="row">
@@ -54,8 +54,7 @@
                                 @if (!is_null($cufd))
                                     {{Form::text('cufd',$cufd->codigo_cufd,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
                                 @endif
-                            </div>
-                            
+                            </div>                            
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
@@ -193,8 +192,7 @@
                         </table>
                         @endif
                     </div>
-                </div>                        
-                                    
+                </div>                                                            
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Sectores</h4>
@@ -222,7 +220,6 @@
                         @endif                                                        
                     </div>                        
                 </div>
-
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Catalogo</h4>
@@ -250,7 +247,6 @@
                         @endif                        
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Leyendas</h4>

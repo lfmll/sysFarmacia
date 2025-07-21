@@ -16,7 +16,7 @@ class CreateLaboratoriosTable extends Migration
         Schema::create('laboratorios', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('nombre',50);
-            $table->string('direccion',100)->nullable();
+            $table->string('direccion')->nullable();
             $table->string('telefono',20)->nullable();
             $table->string('procedencia',15)->nullable();
             $table->string('anotacion')->nullable();

@@ -402,9 +402,20 @@ return [
 
         [
             'text'      =>  'Facturas',
-            'icon'      =>  'fas fa-inbox',
+            'icon'      =>  'fas fa-archive',
             'icon_color'=>  'white',
-            'url'       =>  '/factura'
+            'submenu'   =>  [
+                [
+                    'text'  =>  'Facturas',
+                    'url'   =>  '/factura',
+                    'icon'  =>  'fas fa-inbox'
+                ],
+                [
+                    'text'  =>  'Eventos',
+                    'url'   =>  '/evento',
+                    'icon'  =>  'fas fa-cubes'
+                ]
+            ],
         ],
         
         [
