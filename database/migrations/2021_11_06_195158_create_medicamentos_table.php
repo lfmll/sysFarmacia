@@ -27,7 +27,7 @@ class CreateMedicamentosTable extends Migration
             $table->integer('stock')->unsigned();
             $table->integer('stock_minimo')->unsigned();
             $table->smallInteger('codigo_clasificador');
-            $table->smallInteger('via_id')->unsigned();
+            $table->smallInteger('via_id')->unsigned()->nullable();
             
             $table->timestamps();
         });

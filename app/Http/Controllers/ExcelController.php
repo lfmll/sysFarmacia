@@ -17,6 +17,7 @@ use App\Models\Lote;
 use App\Models\Laboratorio;
 use App\Models\Formato;
 use App\Models\Via;
+use App\Models\Parametro;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Session;
@@ -54,6 +55,33 @@ class ExcelController extends Controller
                 $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader("Xlsx");
                  
                 $spreadsheet = $reader->load($excelFile);
+                //***Eliminar celdas vacías al final***//
+                $sheet = $spreadsheet->getActiveSheet();
+                $highestColumn = $sheet->getHighestColumn(); // e.g., 'J'
+                $highestRow = $sheet->getHighestRow();       // e.g., 100
+
+                // Recorrer y eliminar columnas vacías al final
+                $lastUsedColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+
+                for ($col = $lastUsedColumnIndex; $col > 0; $col--) {
+                    $colLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                    $empty = true;
+
+                    for ($row = 1; $row <= $highestRow; $row++) {
+                        $value = trim($sheet->getCell($colLetter . $row)->getValue());
+                        if ($value !== '') {
+                            $empty = false;
+                            break;
+                        }
+                    }
+
+                    if ($empty) {
+                        $sheet->removeColumn($colLetter);
+                    } else {
+                        break; // Detener al encontrar una columna con datos
+                    }
+                }
+                //***Fin de eliminar celdas vacías al final***//
                 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
                 $writer->setDelimiter(',');
                 $writer->setEnclosure('"');
@@ -62,30 +90,36 @@ class ExcelController extends Controller
                            
                 $fila=1;                      
                 $cabecera=array();
-                $cabecera_modelo=array("medicamento","presentacion","via","cantidad","precio_compra","laboratorio","lote","fecha_vencimiento");
-                
+                $cabecera_modelo=array("MEDICAMENTO","PRESENTACION","CANTIDAD","LABORATORIO","LOTE","FECHA_VENCIMIENTO","PRECIO_COMPRA","PRECIO_VENTA","VALOR_TOTAL");                
                 if (($gestor=fopen(public_path('importeMedicamentos/'.$cantArchivos.'.csv'),"r"))!==FALSE) {                    
-                    while (($datos=fgetcsv($gestor,1000,","))==TRUE) {
+                    while (($datos=fgetcsv($gestor,1000,","))!== false) {
+                        if (empty(array_filter($datos))) {
+                            continue; // Ignorar filas vacías
+                        }                     
                         $columnas=count($datos);                        
                         if ($fila==1) {                            
                             for ($i=0; $i < $columnas; $i++) {
-                                $col=explode(',',$datos[$i]);
-                                $cabecera[$i]=strtolower($col[0]);
+                                $valor = trim($datos[$i]);
+                                if ($valor === '') {
+                                    continue; // Ignorar columnas vacías
+                                }
+                                $cabecera[] = strtoupper($valor);
                             }                   
                                    
-                            if ($cabecera != $cabecera_modelo) {
+                            if ($cabecera != $cabecera_modelo) {                                    
                                 $mensaje="El archivo no coincide con el modelo requerido";
                                 goto mensaje;
                             }
                         } else {
-                            $medicamento_data   = $datos[0];                            
-                            $presentacion_data  = $datos[1];
-                            $via_data           = $datos[2];
-                            $cantidad_data      = $datos[3];
-                            $precio_compra_data = $datos[4];
-                            $laboratorio_data   = $datos[5];
-                            $lote_data          = $datos[6];
-                            $fecha_vencimiento  = $datos[7];
+                            $medicamento_data   = strtoupper($datos[0]);                            
+                            $presentacion_data  = strtoupper($datos[1]);
+                            $cantidad_data      = strtoupper($datos[2]);
+                            $laboratorio_data   = strtoupper($datos[3]);
+                            $lote_data          = strtoupper($datos[4]);
+                            $fecha_vencimiento  = strtoupper($datos[5]);                            
+                            $precio_compra_data = strtoupper($datos[6]);
+                            $precio_venta_data  = strtoupper($datos[7]);
+                            $valor_total_data   = strtoupper($datos[8]);                                                  
 
                             $fecha_vencimiento=str_replace('/','-',$fecha_vencimiento);                            
                             $fecha_vencimiento_data = date("Y-m-d", strtotime($fecha_vencimiento));                            
@@ -95,8 +129,11 @@ class ExcelController extends Controller
                                 
                                 $medicamento=Medicamento::where('nombre_comercial',$medicamento_data)->first();                            
                                 $laboratorio=Laboratorio::where('nombre',$laboratorio_data)->first();
-                                $presentacion=Formato::where('descripcion',$presentacion_data)->first();
-                                $via=Via::where('descripcion',$via_data)->first();
+                                $presentacion=Parametro::join('tipo_parametros','tipo_parametros.id','=','parametros.tipo_parametro_id')
+                                    ->where('tipo_parametros.nombre','=','UNIDAD MEDIDA')
+                                    ->where('parametros.descripcion','=',$presentacion_data)
+                                    ->first();
+                                // $via=Via::where('descripcion',$via_data)->first();
 
                                 if(is_null($laboratorio)) {
                                     $laboratorio=new Laboratorio();
@@ -105,12 +142,15 @@ class ExcelController extends Controller
                                 }
                                 if (is_null($medicamento)) {
                                     $medi=new Medicamento();
+                                    $stock = Medicamento::count();
+                                    $medi->codigo_actividad = '477310';
+                                    $medi->codigo_producto = Medicamento::generarCodigoMedicamento($stock+1);
+                                    $medi->codigo_producto_sin = '99100';
                                     $medi->nombre_comercial = $medicamento_data;
-                                    $medi->nombre_generico = $medicamento_data;
                                     $medi->stock = $cantidad_data;
                                     $medi->stock_minimo = $cantidad_data;
-                                    $medi->formato_id = $presentacion->id;
-                                    $medi->via_id = $via->id;
+                                    $medi->codigo_clasificador = $presentacion->codigo_clasificador;
+                                    // $medi->via_id = $via->id;
                                     $medi->save();
 
                                     $lote=new Lote();
@@ -121,7 +161,7 @@ class ExcelController extends Controller
                                     $lote->medicamento_id = $medi->id;
                                     $lote->precio_compra = $precio_compra_data;
                                     $lote->ganancia = 0;
-                                    $lote->precio_venta = 0;
+                                    $lote->precio_venta = $precio_venta_data;
                                     $lote->estado = 'A';
                                     $lote->save();
                                 } else {
@@ -142,7 +182,7 @@ class ExcelController extends Controller
                                 DB::commit();
                             } catch (\Exception $e) {
                                 DB::rollback();
-                                $mensaje="Hubo un error de escritura, fila=".$fila;
+                                $mensaje="Hubo un error de escritura, fila=".$fila." ".$e->getMessage();
                                 goto mensaje;
                             }
                                                                                                             
@@ -171,18 +211,18 @@ class ExcelController extends Controller
     public function formatoMedicamentos()
     {
         $cabecera = [
-                        [
-                            'medicamento' => "",
-                            'presentacion' => "",
-                            'via' => "",
-                            'cantidad' => "",
-                            'precio_compra' => "",
-                            'laboratorio' => "",
-                            'lote' => "",
-                            'fecha_vencimiento' => ""
-                        ]
+                        'MEDICAMENTO',
+                        'PRESENTACION',                        
+                        'CANTIDAD',                            
+                        'LABORATORIO',
+                        'LOTE',
+                        'FECHA_VENCIMIENTO',
+                        'PRECIO_COMPRA',
+                        'PRECIO_VENTA',
+                        'VALOR_TOTAL'                        
                     ];
-        return Excel::download(new MedicamentoExport($cabecera),'medicamentos.xlsx');
+        $filename = 'medicamentos_'.date('Ymd_His').'.xlsx';
+        return Excel::download(new MedicamentoExport($cabecera), $filename);
         
     }
     public function formatoClientes()

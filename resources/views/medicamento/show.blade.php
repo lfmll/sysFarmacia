@@ -58,7 +58,9 @@
                     <div class="col-md-3">
                         <ul class="list-group">
                             <li class="list-group-item list-group-item-primary">Vía Administración:</li>
+                            @if (!is_null($vias))
                             <li class="list-group-item disabled">{{$vias->descripcion}}</li>
+                            @endif
                         </ul>                        
                     </div>
                     <div class="col-md-6">

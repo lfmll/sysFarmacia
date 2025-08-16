@@ -18,7 +18,7 @@
                         <script>
                             Swal.fire(
                                 'Importacion de Medicamentos',
-                                '{{session('success_message')}}',
+                                "{{ session('success_message') }}",
                                 'success')
                         </script>
                     @stop
@@ -29,7 +29,7 @@
                         <script>
                             Swal.fire(
                                 'Importacion de Medicamentos',
-                                '{{session('error_message')}}',
+                                "{{ session('error_message') }}",
                                 'error')
                         </script>
                     @stop
@@ -43,14 +43,15 @@
                                     <table class="table">
                                         <thead>
                                           <tr>
-                                            <th scope="col">Medicamento</th>
-                                            <th scope="col">Presentación</th>
-                                            <th scope="col">Vía</th>
-                                            <th scope="col">Cantidad</th>
-                                            <th scope="col">Precio Compra</th>
-                                            <th scope="col">Laboratorio</th>
-                                            <th scope="col">Lote</th>
-                                            <th scope="col">Fecha Vencimiento</th>
+                                            <th scope="col">MEDICAMENTO</th>
+                                            <th scope="col">PRESENTACION</th>
+                                            <th scope="col">CANTIDAD</th>
+                                            <th scope="col">LABORATORIO</th>
+                                            <th scope="col">LOTE</th>
+                                            <th scope="col">FECHA_VENCIMIENTO</th>
+                                            <th scope="col">PRECIO_COMPRA</th>
+                                            <th scope="col">PRECIO_VENTA</th>
+                                            <th scope="col">VALOR_TOTAL</th>                                            
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -61,8 +62,7 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div class="custom-file">
-                                        {{Form::file('cover')}}
-                                        {{-- <label class="custom-file-label" for="imedicamento">Seleccionaar Archivo</label> --}}
+                                        {{Form::file('cover')}}                                        
                                     </div>
                                     <div class="mt-3">
                                         <button type="submit" class="btn btn-primary">Importar</button>

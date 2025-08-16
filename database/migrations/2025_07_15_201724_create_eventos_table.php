@@ -30,6 +30,7 @@ class CreateEventosTable extends Migration
             $table->string('cufdEvento');
             $table->integer('cantidadFacturas')->default(0);
             $table->string('codigoDocumentoSector')->nullable();
+            $table->string('codigoRecepcion')->nullable();
             $table->string('cafc')->nullable();
             $table->timestamps();
         });

@@ -8,10 +8,21 @@
             <h3 class="card-title">Crear Evento</h3>
         </div>
         <div class="card-body">
-            <div class="form-group">
-                {!! Form::label('tipo', 'Tipo del Evento') !!}
-                {!! Form::select('tipos', $eventos, null, ['class' => 'form-control', 'placeholder' => 'Seleccione un motivo']) !!}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('tipo', 'Tipo del Evento') !!}
+                        {!! Form::select('tipos', $eventos, null, ['class' => 'form-control', 'placeholder' => 'Seleccione un motivo']) !!}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('cafc', 'CAFC') !!}
+                        {!! Form::text('cafc', null, ['class' => 'form-control', 'placeholder' => 'Ingrese el cafc del evento']) !!}    
+                    </div>
+                </div>
             </div>
+            
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">

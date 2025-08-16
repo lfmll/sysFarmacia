@@ -87,7 +87,7 @@
             var form = $(this).parents('form');
             
             Swal.fire({
-                title: 'Esta Seguro?',
+                title: '¿Está Seguro?',
                 text: "Eliminar Cliente",
                 icon: 'info',
                 showCancelButton: true,

@@ -65,12 +65,14 @@ class Medicamento extends Model
         return $this->belongsTo(Catalogo::class);
     }
 
-    public static function generarCodigoMedicamento($claseId)
+    public static function generarCodigoMedicamento($i)
     {
-        $atc = Clase::where('id',$claseId[0])->first();
-        $prefijo = substr($atc->nombre,1,3);
-        $c = ClaseMedicamento::where('clase_id',$claseId[0])->count();
-        $codigoMedicamento = $prefijo.str_pad(++$c, 6, '0', STR_PAD_LEFT);
-        return $codigoMedicamento;
+        // $atc = Clase::where('id',$claseId[0])->first();
+        // $prefijo = substr($atc->nombre,1,3);
+        // $c = ClaseMedicamento::where('clase_id',$claseId[0])->count();
+        // $codigoMedicamento = $prefijo.str_pad(++$c, 6, '0', STR_PAD_LEFT);
+// dd($i);
+        $codigoMedicamento = str_pad($i, 5, '0', STR_PAD_LEFT);
+        return 'P'.$codigoMedicamento;
     }
 }

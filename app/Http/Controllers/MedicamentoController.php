@@ -16,6 +16,8 @@ use App\Models\Catalogo;
 use App\Models\Parametro;
 use App\Models\Codigo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Exception;
 
 class MedicamentoController extends Controller
 {
@@ -91,7 +93,9 @@ class MedicamentoController extends Controller
                 DB::beginTransaction();
                 $medicamento = new Medicamento($request->all());
                 $medicamento->codigo_actividad = $request->codigo_caeb;
-                $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento($request->clase);
+                // $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento($request->clase);                
+                $medicamento->codigo_producto = Medicamento::generarCodigoMedicamento(Medicamento::count()+1);
+                
                 $medicamento->codigo_producto_sin = $request->codigo_producto;
                 $medicamento->nombre_comercial = $request->nombre_comercial;
                 $medicamento->nombre_generico = $request->nombre_generico;
@@ -124,7 +128,7 @@ class MedicamentoController extends Controller
                         ->select('lotes.id','medicamentos.nombre_comercial')
                         ->get();
 
-                return \Response::json($lotem);
+                return Response::json($lotem);
             } catch (\Throwable $th) {
                 return response()->json(['message'=>$th],500);
             }
@@ -134,7 +138,9 @@ class MedicamentoController extends Controller
             DB::beginTransaction();
             $medicamento=new Medicamento($request->all());
             $medicamento->codigo_actividad=$request->actividad;
-            $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento($request->clases);
+            
+            // $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento($request->clases);
+            $medicamento->codigo_producto=Medicamento::generarCodigoMedicamento(Medicamento::count()+1);
             $medicamento->codigo_producto_sin=$request->catalogos;
             $medicamento->nombre_comercial=$request->nombre_comercial;
             $medicamento->nombre_generico=$request->nombre_generico;

@@ -54,10 +54,6 @@ class Factura extends Model
     public function metodoPago(){
         return $this->belongsTo(MetodoPago::class);
     }
-
-    public function tipoDocumento(){
-        return $this->belongsTo(TipoDocumento::class);
-    }
     
     /**************************************
      * Generar CUF
@@ -141,6 +137,8 @@ class Factura extends Model
         try {            
             $writer = new \XMLWriter();
             $writer->openMemory();
+            $writer->setIndent(true);   // Indentación para el XML
+            $writer->setIndentString('    ');   // Espacio de indentación
             $writer->startDocument('1.0','UTF-8');
             $writer->startElement('facturaComputarizadaCompraVenta');
             $writer->writeAttribute('xsi:noNamespaceSchemaLocation','facturaComputarizadaCompraVenta.xsd');

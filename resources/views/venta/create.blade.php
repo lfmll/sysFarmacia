@@ -16,9 +16,15 @@
                         <div class="card-header">                            
                             <div class="form-group">
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa fa-sm fa-circle"></i> En Linea</a>
-                                    </div>
+                                    @if (is_null($evento))
+                                        <div class="col-sm-6">
+                                            <a href="#" class="btn btn-success btn-sm"><i class="fa fa-sm fa-circle"></i> En Linea</a>                                            
+                                        </div>
+                                    @else
+                                        <div class="col-sm-6">                                            
+                                            <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-sm fa-minus-circle"></i> Fuera de Linea</a>
+                                        </div>
+                                    @endif                                                                            
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
@@ -36,7 +42,7 @@
                                         {!! Form::label('cliente','Nombre o Razon Social: ') !!}
                                         {!! Form::hidden('cid', null, ['id'=>'cid','class'=>'form-control']) !!}
                                         <div class="input-group mb-3">
-                                            {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control']) !!}
+                                            {!! Form::text('cliente', null, ['id'=>'cnombre','class'=>'form-control', 'required']) !!}
                                             <div class="input-group-append">
                                                 <a href="#modalBuscarCliente" class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalBuscarCliente">
                                                     <i class="fa fa-lg fa-search"></i>
@@ -588,6 +594,7 @@
                 var fila="";
                 for (let i = 0; i < n; i++) {
                     fila += "<tr id="+data[i].id+"><td><div class='chk'><input type='radio' name='chk' class='chk' id="+data[i].id+" value="+data[i].id+","+data[i].nombre_comercial+","+data[i].cantidad+","+data[i].precio_venta+"></div></td><td>"+data[i].numero+"</td><td>"+data[i].nombre_comercial+"</td><td>"+data[i].fecha_vencimiento+"</td><td>"+data[i].cantidad+"</td><td>"+data[i].precio_venta+"</td><td>"+data[i].nombre+"</td></tr>";                    
+                    console.log(data);
                 }
                 // $('#tlotem').append(fila);
                 $('#tlotem').DataTable().destroy();
@@ -643,7 +650,7 @@
             document.getElementById('eSubTotal').value = total.toFixed(2);
             document.getElementById('eTotal').value = total.toFixed(2);
             document.getElementById('eTotalIVA').value = total.toFixed(2); //Cambiar al saber el monto que cobrara IVA
-            var fila='<tr class="detalle" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input id="dpcantidad'+idlote+'" type="number" min=1 max="'+cant_max+'" onchange="onCambiarCantidad('+idlote+');" class="form-control input-sm" name="dcantidad[]" value="'+cantidad+'"></td><td><input id="dpprecio'+idlote+'"  onchange="onCambiarPrecio('+idlote+');" class="form-control input-sm" type="number" min="0" name="dprecio[]" value="'+precio+'"></td><td><input id="dpsubtotal'+idlote+'" class="form-control input-sm" type="number" name="dpsubtotal" readonly value="'+subtotal[cont]+'"></td></tr>';                   
+            var fila='<tr class="detalle" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input id="dpcantidad'+idlote+'" type="number" min=1 max="'+cant_max+'" onchange="onCambiarCantidad('+idlote+');" class="form-control input-sm" name="dcantidad[]" value="'+cantidad+'"></td><td><input id="dpprecio'+idlote+'"  onchange="onCambiarPrecio('+idlote+');" class="form-control input-sm" type="number" step="any" min="0" name="dprecio[]" value="'+precio+'"></td><td><input id="dsubtotal'+idlote+'" class="form-control input-sm" type="number" step="any" name="dsubtotal" readonly value="'+subtotal[cont]+'"></td></tr>';                   
             $('#detalles').append(fila);                                                              
         }
         limpiar();        
@@ -733,9 +740,10 @@
 
     function seleccionar(){          
         [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
-            console.log(cb);
-            document.getElementById('pcodigo').innerText=cb.value;            
+            console.log(cb.value);
+            document.getElementById('pcodigo').innerText=cb.value;                        
         });
+        
         arreglo = document.getElementById("pcodigo").innerText;        
         arr = arreglo.split(',')
         producto = arr[1]; 

@@ -2,42 +2,48 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class MedicamentoExport implements FromCollection, WithHeadings
+class MedicamentoExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize
 {
-    protected $data;
+    protected $headings;
   
     /**
      * Write code on Method
      *
      * @return response()
      */
-    public function __construct($data)
+    public function __construct(array $headings)
     {
-        $this->data = $data;
+        $this->headings = $headings;
     }
 
+    public function array(): array
+    {
+        return [];
+    }
     /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
-    {
-        return collect($this->data);
-    }
-
+     * @return array
+     */  
     public function headings(): array
     {
-        return[
-                'medicamento',
-                'presentacion',
-                'via',
-                'cantidad',
-                'precio_compra',
-                'laboratorio',
-                'lote',
-                'fecha_vencimiento'
-            ];
-    }   
+        return $this->headings;
+    } 
+
+    public function styles(Worksheet $sheet)
+    {
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:I1')->getAlignment()->setHorizontal('center');
+    }
+    public function columnFormats(): array
+    {
+        return [
+            'F' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+        ];
+    }
 }

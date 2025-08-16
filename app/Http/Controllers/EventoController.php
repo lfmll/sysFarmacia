@@ -13,7 +13,9 @@ use App\Models\TipoParametro;
 use App\Models\Cuis;
 use App\Models\Cufd;
 use App\Models\Ajuste;
+use App\Models\Factura;
 use Illuminate\Support\Facades\DB;
+use ZipArchive;
 
 class EventoController extends Controller
 {
@@ -94,6 +96,8 @@ class EventoController extends Controller
         $evento->fechaFinEvento = null;
         $evento->cufdEvento = $ultimocufd->codigo_cufd; // Asignar el CUFD del último CUFD registrado
         $evento->cafc = null; // Asignar CAFc si es necesario
+        $evento->codigoRecepcion = null; // Asignar código de recepción al cerrar el evento
+        $evento->cantidadFacturas = 0; // Inicializar cantidad de facturas a 0
         $evento->save();
 
         if ($evento->save()) {
@@ -109,51 +113,150 @@ class EventoController extends Controller
         return view('evento.show', ['evento' => $evento]);
     }
 
-    public function cerrarEvento($id)
-    {
+    public function update($id)
+    {    
         $evento = Evento::findOrFail($id);
+        $cufd = Cufd::obtenerCufd();
         $fecha = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
         $fecha = $fecha.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
-        $puntoVenta = PuntoVenta::where('user_id', auth()->id())->first();    
-        $sucursal = Agencia::where('id','=',$puntoVenta->agencia_id)->first();
+        $fechaEmision = Factura::deFechaNumero($fecha);
         $empresa = Empresa::first();
-        $evento->estado = 'Cerrado';
-        $evento->fechaFinEvento = $fecha;
-        // Registrar el evento significativo en el servicio SOAP
-        $parametro = DB::table('parametros')
-            ->join('tipo_parametros','parametros.tipo_parametro_id','=','tipo_parametros.id')
-            ->where('tipo_parametros.nombre','=','EVENTOS SIGNIFICATIVOS')
-            ->where('parametros.codigo_clasificador', $evento->codigoEvento)
-            ->get();
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlOperaciones = $ajuste->wsdl."/ServicioOperaciones?wsdl";
-        $clienteOperaciones = Ajuste::consumoSIAT($token, $wsdlOperaciones);    
-        if ($clienteOperaciones->verificarComunicacion()->return->transaccion == "true") {
-            $parametroEvento = array(
-                'SolicitudEventoSignificativo' => array(
-                    'codigoAmbiente' => 2, // Ambiente de Prueba
-                    'codigoMotivoEvento' => $parametro[0]->codigo_clasificador,
-                    'codigoPuntoVenta' => $puntoVenta->codigo,
-                    'codigoSistema' => $empresa->codigo_sistema,
-                    'codigoSucursal' => $sucursal->codigo,
-                    'cufd' => $evento->cufd,
-                    'cufdEvento' => $evento->cufdEvento,
-                    'cuis' => $evento->cuis,
-                    'descripcion' => $parametro[0]->descripcion,
-                    'fechaHoraFinEvento' => $fecha,
-                    'fechaHoraInicioEvento' => $evento->fechaInicioEvento,
-                    'nit' => $empresa->nit,
-                )
-            );
-            $responseEventoSignificativo = Evento::soapRegistrarEvento($clienteOperaciones, $parametroEvento);
-        }
-        
-        if ($evento->save()) {
-            return redirect('/evento')->with('success', 'Evento significativo cerrado exitosamente.');
+        //Obtener Facturas del Evento
+        $facturas = Factura::where('evento_id', $id)->get();
+        if (!is_null($cufd)) {
+            //Actualizar Facturas
+            foreach ($facturas as $factura) {
+                $cuf = Factura::generarCUF(
+                    $factura->nitEmisor,
+                    $factura->codigoSucursal,
+                    $fechaEmision,
+                    $empresa->modalidad,
+                    1, // Tipo de Emisión: 1 Online
+                    1, // Tipo de Factura: 1 Documento Credito Fiscal
+                    $factura->codigoDocumentoSector,
+                    $factura->numeroFactura,
+                    0 //POS                
+                );            
+                $factura->cuf = $cuf.$cufd->codigo_control;     
+                $factura->fechaEmision = $fecha;  
+                $factura->cufd = $cufd->codigo_cufd;
+                $factura->save();
+            }
+            //Empaquetar las facturas (ZIP)
+            // foreach ($facturas as $factura) {
+            //     $xml = Factura::generarXML($factura->id);                
+            //     $msjError = Factura::validarXML($xml, 'facturaComputarizadaCompraVenta.xsd');                
+            //     if (empty($msjError)) {
+            //         // Comprimir el XML
+            //         $zipNombreArchivo = 'evento'.$evento->id.'.zip';
+            //         $xmlNombreArchivo = $factura->id.'.xml';
+            //         $dir = public_path('/siat/facturas');
+            //         if (!file_exists($dir)) {
+            //             mkdir($dir, 0777, true);
+            //         }
+            //         $zipPath = $dir.'/'.$zipNombreArchivo;
+            //         // Crear el archivo ZIP        
+            //         $zip = new ZipArchive();
+            //         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            //             $zip->addFromString($xmlNombreArchivo, $xml); //Anadir el XML al ZIP
+            //             $zip->close();  // Cerrar el ZIP
+            //         } else {
+            //             return redirect('/evento')->with('toast_error', 'Error al crear el archivo ZIP.');
+            //         }                    
+            //     } else {
+            //         return redirect('/evento')->with('toast_error', 'Error al validar el XML de la factura: '.implode(" ", $msjError));
+            //     }
+            // }
+            // Comprimir GZIP
+            // $dir = public_path('/siat/facturas/evento'.$evento->id);
+            // $tarPath = $dir.'/paquete.tar';
+            // $gzPath = $tarPath.'.gz';
+            // if (!file_exists($dir)) {
+            //     mkdir($dir, 0777, true);
+            // }
+            // $tar = new \PharData($tarPath);
+            // foreach ($facturas as $factura) {
+            //     $xml = Factura::generarXML($factura->id);
+            //     $msjError = Factura::validarXML($xml, 'facturaComputarizadaCompraVenta.xsd');                
+            //     if (!empty($msjError)) {
+            //         return redirect('/evento')->with('toast_error', 'Error al validar el XML de la factura: '.implode(" ", $msjError));
+            //     }
+            //     $xmlNombreArchivo = $factura->id.'.xml';                    
+            //     $xmlPath = $dir.'/'.$xmlNombreArchivo;
+            //     file_put_contents($xmlPath, $xml); // Guardar el XML en un archivo
+            //     $tar->addFile($xmlPath, $xmlNombreArchivo); // Añadir el XML al archivo TAR                                
+            // }
+            // $tar->compress(\Phar::GZ); // Comprimir el TAR a GZIP            
+            /////////////////////////////////////////////////////////
+            $dir = public_path('/siat/facturas/evento'.$evento->id);
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $xmlFiles = [];
+            foreach ($facturas as $factura) {
+                $xmlFileName = $factura->id.'.xml';
+                $xmlFilePath = $dir.'/'.$xmlFileName;
+                file_put_contents($xmlFilePath, Factura::generarXML($factura->id));
+                $xmlFiles[] = $xmlFilePath; // Guardar la ruta del archivo XML
+            }
+            // Crear un archivo TAR
+            $tarFileName = 'paquete_evento_'.$evento->id.'.tar';
+            $tarFilePath = $dir.'/'.$tarFileName;
+            $tar = new \PharData($tarFilePath);
+            foreach ($xmlFiles as $xmlFile) {
+                $tar->addFile($xmlFile, basename($xmlFile)); // Añadir el XML al archivo TAR
+            }
+            // Comprimir el TAR a GZIP
+            $tar->compress(\Phar::GZ); // Comprimir el TAR a GZIP
+            // Eliminar el archivo TAR original
+            unlink($tarFilePath);
+            //Registrar el evento significativo
+            $ajuste = Ajuste::first();
+            $token = $ajuste->token;
+            $wsdlOperaciones = $ajuste->wsdl."/FacturacionOperaciones?wsdl";
+            $wsdlRecepcion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
+            $clienteOperaciones = Ajuste::consumoSIAT($token, $wsdlOperaciones);
+            $clienteCompraVenta = Ajuste::consumoSIAT($token, $wsdlRecepcion);
+            $cantidadFacturas = $evento->cantidadFacturas;         
+            if ($clienteOperaciones->verificarComunicacion()->return->mensajesList->codigo == "926") {            
+                $msjError = Evento::soapRegistrarEvento($clienteOperaciones, $id);            
+                if ($msjError == "") {
+                    if ($cantidadFacturas > 0) {
+                        //Enviar Paquete de Facturas
+                        if ($clienteCompraVenta->verificarComunicacion()->return->transaccion == "true") {
+                            $msjError = Evento::soapRececpcionPaqueteFactura($clienteCompraVenta, $id); 
+                            if ($msjError != "") {
+                                return redirect('/evento')->with('toast_error', 'Error al enviar el paquete de facturas: ' . $msjError);
+                            }
+                        } else{
+                            return redirect('/evento')->with('toast_error', 'Error de comunicación para enviar el paquete de facturas.');
+                        }                        
+                    }
+                    return redirect('/evento')->with('toast_success', 'Evento significativo cerrado exitosamente.');
+                } else {
+                    return redirect('/evento')->with('toast_error', 'Error al cerrar el evento significativo: ' . $msjError);
+                }                                        
+            } else {
+                return redirect('/evento')->with('toast_error', 'Error de comunicación para registrar el evento significativo.');
+            }                                                      
         } else {
-            return redirect('/evento')->with('error', 'Error al cerrar el evento significativo.');
-        }
+            return redirect('/evento')->with('toast_error', 'No se encontró un CUFD activo.');
+        }        
+    }
+
+    public function destroy($id)
+    {
+        dd("hola");
+        // $evento = Evento::findOrFail($id);
+        // if ($evento->estado == 'Abierto') {
+        //     return redirect('/evento')->with('toast_error', 'No se puede eliminar un evento abierto.');
+        // }
+        
+        // if ($evento->delete()) {
+        //     return redirect('/evento')->with('toast_success', 'Evento significativo eliminado exitosamente.');
+        // } else {
+        //     return redirect('/evento')->with('toast_error', 'Error al eliminar el evento significativo.');
+        // }
     }
 
 }

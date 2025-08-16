@@ -20,8 +20,8 @@ class CreateFacturasTable extends Migration
             $table->string('municipio');
             $table->string('telefono');
             $table->string('numeroFactura');
-            $table->string('cuf');
-            $table->string('cufd');
+            $table->string('cuf')->nullable();
+            $table->string('cufd')->nullable();
             $table->string('codigoSucursal');
             $table->string('direccion');
             $table->string('codigoPuntoVenta')->nullable();
