@@ -4,7 +4,7 @@
 
 @section('content')
 @include('sweetalert::alert')
-    {!! Form::open(['url' => '/caja', 'method' => 'POST']) !!}       
+    {!! Form::open(['url' => '/caja', 'method' => 'POST', 'id'=>'FApertura']) !!}       
         {{Form::token()}}  
         <div class="col-md-6">   
             <div class="card card-info">
@@ -28,8 +28,7 @@
                                     {!! Form::label('Monto de Apertura', 'Monto de Apertura') !!}
                                     <div class="col-sm-6">
                                         {!! Form::number('monto_apertura', null, ['class'=>'form-control', 'placeholder'=>'0.00', 'step'=>'any', 'required']) !!}
-                                    </div>
-                                    
+                                    </div>                                    
                                 </div>
                             </div>                         
                         </div>                    
@@ -48,6 +47,13 @@
             </div>            
         </div>
     {!! Form::close() !!}
+    <div id="spinner" style="display: none;" class="text-center mt-3">
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+        <p>Cargando, por favor espera...</p>
+    </div>
+
 @stop
 @section('css')
     <link rel="stylesheet" href="/css/admin_custom.css">
@@ -56,5 +62,10 @@
 @section('js')
     <script> console.log('Hi!'); </script>
     <script src="js/sweetalert.min.js"></script>
-    
+    <script>
+        document.getElementById('FApertura').addEventListener('submit', function () {
+            document.getElementById('spinner').style.display = 'block';
+        });
+    </script>
+
 @stop

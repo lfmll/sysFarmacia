@@ -21,7 +21,7 @@
                         <h5>Token</h5>
                     </div>
                     <div class="card-body">
-                        {!! Form::open(['url' => '/ajuste/'.$ajuste->id, 'method' => 'PATCH']) !!} 
+                        {!! Form::open(['url' => '/ajuste/'.$ajuste->id, 'method' => 'PATCH', 'id'=>'FAjuste']) !!} 
                             <div class="col-sm-12">
                                 <textarea name="token" id="token" class="form-control" required>{{$ajuste->token}}</textarea>
                             </div>
@@ -35,7 +35,13 @@
                                 </div>
                             </div> 
                         {!! Form::close() !!}                                               
-                    </div>                    
+                    </div>                                     
+                </div>
+                <div id="spinner" style="display: none;" class="text-center mt-3">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Cargando...</span>
+                    </div>
+                    <p>Cargando, por favor espera...</p>
                 </div>
                 <div class="card">
                     <div class="card-header">
@@ -108,7 +114,7 @@
                     </div>
                     <div class="card-footer">    
                         <div class="float-right">
-                            <a href="{{url('/sincronizar')}}" class="btn btn-primary btn-fab"><i class="material-icons fas fa-sync-alt"></i></a>
+                            <a href="{{url('/sincronizar')}}" id="aSincronizar" class="btn btn-primary btn-fab"><i class="material-icons fas fa-sync-alt"></i></a>
                         </div>                                                                
                     </div>                            
                 </div>                    
@@ -131,8 +137,7 @@
                                                     @endforeach                                                                                                                                        
                                                 </div>
                                             @endif                                    
-                                        </tbody>
-                                        
+                                        </tbody>                                        
                                     </table>
                                 </div>                                                
                             </div>
@@ -166,8 +171,7 @@
                     </div>
                 </div>                                                                   
             </div>
-            <div class="tab-pane fade" id="nav-sector" role="tabpanel" aria-labelledby="nav-sector-tab">
-                
+            <div class="tab-pane fade" id="nav-sector" role="tabpanel" aria-labelledby="nav-sector-tab">                
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Actividades</h4>
@@ -267,8 +271,7 @@
                         </table>
                     @endif
                     </div>
-                </div>
-                    
+                </div>                    
             </div>
             <div class="tab-pane fade" id="nav-otro" role="tabpanel" aria-labelledby="nav-otro-tab">
                 <div class="col-md-12">
@@ -420,5 +423,9 @@
             document.getElementById("pass").value = "";                        
         }
     </script>
-    
+    <script>
+        document.getElementById('aSincronizar').addEventListener('click', function () {
+            document.getElementById('spinner').style.display = 'block';
+        });
+    </script>
 @stop

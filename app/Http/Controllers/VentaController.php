@@ -149,11 +149,12 @@ class VentaController extends Controller
             $venta->literal = $literal->toMoney($request->eTotalIVA,2);
             
             $venta->estado='A';
-            $venta->metodo_pago_id = $request->forma_pago;
+            // $venta->metodo_pago_id = $request->forma_pago;
             $venta->monto_pagar = $request->ppago_efectivo;
             $venta->cambio_venta = $request->cambio;
             $venta->monto_giftcard = $request->ppago_giftcard;
-            
+            $venta->user_id = $usuario->id; // Asignar el usuario que realiza la venta
+            $venta->cliente_id = $request->cid; // Asignar el cliente de la venta
             $venta->save();
 
             $dcantidad = $request->get('dcantidad');
@@ -275,11 +276,12 @@ class VentaController extends Controller
                     $venta->literal = $literal->toMoney($request->eTotalIVA,2);
                     
                     $venta->estado='A';
-                    $venta->metodo_pago_id = $request->forma_pago;
+                    // $venta->metodo_pago_id = $request->forma_pago;
                     $venta->monto_pagar = $request->ppago_efectivo;
                     $venta->cambio_venta = $request->cambio;
                     $venta->monto_giftcard = $request->ppago_giftcard;
-                    
+                    $venta->user_id = $usuario->id; // Asignar el usuario que realiza la venta
+                    $venta->cliente_id = $request->cid; // Asignar el cliente de la venta
                     $venta->save();
 
                     $dcantidad = $request->get('dcantidad');

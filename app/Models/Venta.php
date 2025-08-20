@@ -19,15 +19,21 @@ class Venta extends Model
         'literal',
         'estado'
     ];
+    
     public function detalle_ventas(){
         return $this->hasMany(DetalleVenta::class);
     }
     
     public function factura(){
-        return $this->belongsTo(Factura::class);
+        return $this->hasOne(Factura::class);
+    }
+    
+    public function cliente(){
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
-    public function metodo_pago(){
-        return $this->belongsTo(MetodoPago::class);
+    public function user(){
+        return $this->belongsTo(User::class);
     }
+
 }

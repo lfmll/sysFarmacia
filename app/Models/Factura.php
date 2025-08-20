@@ -44,17 +44,13 @@ class Factura extends Model
     ];
 
     public function venta(){
-        return $this->hasOne(Venta::class);
+        return $this->belongsTo(Venta::class);
     }
 
     public function detalles(){
         return $this->hasMany(DetalleFactura::class);
     }
 
-    public function metodoPago(){
-        return $this->belongsTo(MetodoPago::class);
-    }
-    
     /**************************************
      * Generar CUF
      **************************************/

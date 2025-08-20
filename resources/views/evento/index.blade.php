@@ -29,7 +29,7 @@
     </div>
     <!-- Modal Paquete Facturas -->
     <div class="modal fade" id="paqueteModal{{ $evento->id }}" tabindex="-1" role="dialog" aria-labelledby="paqueteModalLabel{{ $evento->id }}" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="paqueteModalLabel{{ $evento->id }}">Paquete de Facturas</h5>
@@ -41,8 +41,9 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Factura</th>
-                                <th>NIT/CI Cliente PRUEBA</th>
+                                <th>Nro Factura</th>
+                                <th>NIT/CI</th>
+                                <th>Cliente</th>
                                 <th>Fecha</th>
                                 <th>Monto</th>
                                 <th>Estado</th>
@@ -53,9 +54,10 @@
                                 <tr>
                                     <td>{{ $factura->numeroFactura }}</td>
                                     <td>{{ $factura->numeroDocumento }}</td>
-                                    <td>{{ date('d-m-Y', strtotime($factura->fechaEmision)) }}</td>
+                                    <td>{{ $factura->venta->cliente->nombre }}</td>
+                                    <td>{{ date('d-m-Y h:i A', strtotime($factura->fechaEmision)) }}</td>
                                     <td>{{ $factura->montoTotal }}</td>
-                                    <td>{{ $factura->estado }}</td>
+                                    <td><span class="badge badge-pill badge-primary">{{ $factura->estado }}</span></td>
                                 </tr>
                             @endforeach
                         </tbody>

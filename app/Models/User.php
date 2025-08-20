@@ -26,6 +26,9 @@ class User extends Authenticatable
         return $this->hasMany(PuntoVenta::class);
     }
     
+    public function ventas(){
+        return $this->hasMany(Venta::class);
+    }
     /**
      * The attributes that should be hidden for arrays.
      *

@@ -68,7 +68,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                            {!! Form::hidden('tipodoc', null, ['id'=>'ctipodoc','class'=>'form-control', 'readonly'=>true]) !!} 
+                            {!! Form::hidden('tipodoc', null, ['id'=>'ctipodoc','class'=>'form-control']) !!} 
                                 <div class="col-lg-2">
                                     <div class="form-group"> 
                                         {!! Form::label('nrodoc','Nro de Documento: ') !!}   

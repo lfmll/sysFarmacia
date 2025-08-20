@@ -26,7 +26,8 @@ class CreateVentasTable extends Migration
             $table->decimal('cambio_venta',10,2);
             $table->string('literal');
             $table->char('estado');
-            $table->smallInteger('metodo_pago_id')->unsigned();            
+            $table->smallInteger('cliente_id')->unsigned();
+            $table->smallInteger('user_id')->unsigned();        
             $table->timestamps();
         });
     }
