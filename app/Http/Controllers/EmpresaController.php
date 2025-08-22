@@ -9,10 +9,15 @@ use App\Models\Ajuste;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-Use Alert;
+use RealRashid\SweetAlert\Facades\Alert;
+use App\Helpers\BitacoraHelper;
 
 class EmpresaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -101,6 +106,8 @@ class EmpresaController extends Controller
         }   
 
         if ($ajuste->save() && $puntoventa->save() && $sucursal->save() && $empresa->save()) {
+            //Registrar Bitacora
+            BitacoraHelper::registrar('Registro Empresa', 'Empresa creada por el usuario: ' . Auth::user()->name, 'Empresa');
             return redirect('/')->with('toast_success','Datos de Empresa registrados');
         } else {
             return view('empresa.create')->with('toast_error',"Error al registrar");
@@ -158,6 +165,8 @@ class EmpresaController extends Controller
         Alert::warning('Actualizar Datos Empresa', 'Desea guardar los cambios?');
 
         if ($empresa->save()) {
+            //Registrar Bitacora
+            BitacoraHelper::registrar('Actualización Empresa', 'Empresa modificada por el usuario: ' . Auth::user()->name, 'Empresa');
             return view('empresa.edit',['empresa'=>$empresa])->with('toast_success','Datos de Empresa actualizado');
         } else {
             return view('empresa.edit',['empresa'=>$empresa])->with('toast_error',"Error al registrar");        

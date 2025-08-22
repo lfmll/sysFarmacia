@@ -21,6 +21,7 @@ use App\Models\Codigo;
 use App\Models\Leyenda;
 use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
+use App\Helpers\BitacoraHelper;
 
 class CajaController extends Controller
 {
@@ -83,7 +84,7 @@ class CajaController extends Controller
             if ($msjCufd == "") 
             {
                 $cuis = Cuis::obtenerCuis();
-                // dd($cuis);
+                
                 //Sincronizar Parametros
                 $parametrosSincronizacion = array(
                     'SolicitudSincronizacion' => array(
@@ -126,6 +127,8 @@ class CajaController extends Controller
                 if ($ultimaApertura==null || $ultimaApertura->fecha != $caja->fecha) {
                     Alert::warning('Warning', '¿Desea Continuar? Una vez realizada la apertura no se podrá modificar');
                     $caja->save();
+                    // Registrar en Bitacora
+                    BitacoraHelper::registrar('Apertura de Caja', 'Apertura de Caja realizada por el usuario: ' . Auth::user()->name, 'Caja');
                     return redirect('/caja')->with('toast_success','Apertura de Caja realizado exitosamente');
                 } else {
                     return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
@@ -219,6 +222,8 @@ class CajaController extends Controller
             return redirect('/caja')->with('errors','Ya se realizó el Arqueo de Caja');    
         } elseif ($caja -> save()) {
             Alert::warning('Warning','Una vez completado el cierre no se podrá modificar');
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Arqueo de Caja', 'Arqueo de Caja realizado por el usuario: ' . Auth::user()->name, 'Caja');
             return redirect('/caja')->with('toast_success','Arqueo de Caja realizado exitosamente');
         } else {
             return view('caja.edit',['caja'=>$caja])->with('toast_error','Error al realizar el arqueo de caja');

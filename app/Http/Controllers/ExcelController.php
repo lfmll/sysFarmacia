@@ -13,6 +13,7 @@ use App\Models\Medicamento;
 use App\Models\Cliente;
 use App\Exports\MedicamentoExport;
 use App\Exports\ClienteExport;
+use App\Helpers\BitacoraHelper;
 use App\Models\Lote;
 use App\Models\Laboratorio;
 use App\Models\Formato;
@@ -22,6 +23,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ExcelController extends Controller
 {        
@@ -178,15 +180,13 @@ class ExcelController extends Controller
                                     $lote->precio_venta = 0;
                                     $lote->estado = 'A';
                                     $lote->save();
-                                }
+                                }                                
                                 DB::commit();
                             } catch (\Exception $e) {
                                 DB::rollback();
                                 $mensaje="Hubo un error de escritura, fila=".$fila." ".$e->getMessage();
                                 goto mensaje;
-                            }
-                                                                                                            
-                            
+                            }                                                                                                                                        
                         }                        
                         $fila++;                          
                     }                    
@@ -201,6 +201,7 @@ class ExcelController extends Controller
         mensaje:
        
         if ($mensaje=="Importación realizada con exito") {
+            BitacoraHelper::registrar('Importación Medicamentos', 'Medicamentos importado por '.Auth::user()->usuario, 'Medicamento');
             return redirect('/importMedicamento')->with('success_message',$mensaje);
         } else {
             return redirect('/importMedicamento')->with('error_message',$mensaje);
@@ -339,6 +340,7 @@ class ExcelController extends Controller
         }
         mensaje:            
             if ($mensaje=="Importación realizada con exito") {
+                BitacoraHelper::registrar('Importación Clientes', 'Clientes importado por '.Auth::user()->usuario, 'Cliente');
                 return redirect('/cliente')->with('success_message',$mensaje);
             } else {
                 return redirect('/importCliente')->with('error_message',$mensaje);

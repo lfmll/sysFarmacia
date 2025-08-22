@@ -17,7 +17,10 @@ use App\Models\Parametro;
 use App\Models\Codigo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Auth;
 use Exception;
+use App\Helpers\BitacoraHelper;
+use App\Models\Bitacora;
 
 class MedicamentoController extends Controller
 {
@@ -194,6 +197,7 @@ class MedicamentoController extends Controller
         }
         
         if ($medicamento->save()) {
+            BitacoraHelper::registrar('Registro Medicamento', 'Medicamento creado por el usuario: ' . Auth::user()->name, 'Medicamento');
             return redirect('/medicamento')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('medicamento.create',['medicamento'=>$medicamento])->with('toast_error','Error al registrar');
@@ -458,6 +462,7 @@ class MedicamentoController extends Controller
         }
         
         if ($medicamento->save()) {
+            BitacoraHelper::registrar('Actualización Medicamento', 'Medicamento modificado por el usuario: ' . Auth::user()->name, 'Medicamento');
             return redirect('/medicamento')->with('toast_success','Medicamento modificado exitosamente');
         } else {
             return view('medicamento.create',['medicamento'=>$medicamento])->with('toast_error','Error al registrar');

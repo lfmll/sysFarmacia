@@ -23,6 +23,7 @@ use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
 use Illuminate\Support\Facades\Auth;
 use SoapClient;
+use App\Helpers\BitacoraHelper;
 
 class AjusteController extends Controller
 {
@@ -150,7 +151,8 @@ class AjusteController extends Controller
                 $ajuste->from = $request->username;
             }
         }
-        
+        //Registrar Bitacora
+        BitacoraHelper::registrar('Registro Correo', 'Ajuste modificado por el usuario: ' . Auth::user()->name, 'Ajuste');
         if ($ajuste->save()) {
             return redirect('/ajuste')->with('toast_success','Registro realizado exitosamente');
         } else {
@@ -183,6 +185,8 @@ class AjusteController extends Controller
         //Sincronizar CUIS
         $msjError = Cuis::sincroCUIS($clienteCuis, $puntoVenta);
         if ($msjError == "") {
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Sincronizacion CUIS', 'CUIS sincronizado por el usuario: ' . Auth::user()->name, 'Cuis');
             return redirect('/ajuste')->with('toast_success',"CUIS Actualizado");
         } else {
             return redirect('/ajuste')->with('toast_error',$msjError);
@@ -206,6 +210,8 @@ class AjusteController extends Controller
         //Sincronizar CUFD
         $msjError = Cufd::sincroCUFD($clienteCufd, $puntoVenta);
         if ($msjError == "") {
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Sincronizacion CUFD', 'CUFD sincronizado por el usuario: ' . Auth::user()->name, 'Cufd');            
             return redirect('/ajuste')->with('toast_success',"CUFD Actualizado");
         } else {
             return redirect('/ajuste')->with('toast_error', $msjError);    
@@ -267,7 +273,8 @@ class AjusteController extends Controller
                 // $responseFechaHora = $clienteSincronizacion->sincronizarFechaHora($parametrosSincronizacion);
                 // $fechaHora = $responseFechaHora->RespuestaFechaHora->fechaHora;
                             
-
+                // Registrar en Bitacora
+                BitacoraHelper::registrar('Sincronizacion Parametros', 'Sincronizacion realizada por el usuario: ' . Auth::user()->name, 'Parametro');
                 return redirect('/ajuste')->with('toast_success', 'Sincronizacion Completada');
                 
             } else {
@@ -349,7 +356,8 @@ class AjusteController extends Controller
             //Guardar archivo sql        
             $zip->addFromString('backup_archivo.sql', $script, ZipArchive::FL_OVERWRITE);
             $zip->close();
-            
+            //Registrar en Bitacora
+            BitacoraHelper::registrar('Respaldo Base de Datos', 'Respaldo realizado por el usuario: ' . Auth::user()->name, 'Ajuste');
             return redirect('/ajuste')->with('toast_success','Respaldo guardado en: '.$path);
         } else {
             return redirect('/ajuste')->with('toast_error','Error al abrir Zip');                           

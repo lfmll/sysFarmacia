@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\BitacoraHelper;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
 use App\Models\Lote;
@@ -27,6 +28,7 @@ use Luecano\NumeroALetras\NumeroALetras;
 use GuzzleHttp\Client;
 use SoapClient;
 use ZipArchive;
+use Illuminate\Support\Facades\Auth;
 
 class VentaController extends Controller
 {
@@ -254,6 +256,7 @@ class VentaController extends Controller
                 $detalle_factura->factura_id = $factura->id;
                 $detalle_factura->save();
             }
+            BitacoraHelper::registrar('Registro Venta', 'Venta realizada bajo el Evento: '. $evento->id.' por el usuario: '. Auth::user()->name, 'Venta');
             return redirect('/venta')->with('toast_success', 'Venta realizada y Factura a espera de ser Validada.');
         } 
         else    //Sin Evento Significativo
@@ -461,6 +464,7 @@ class VentaController extends Controller
                             );
                             $responseRecepcionFactura = Factura::soapRecepcionFactura($clienteFacturacion, $parametrosFactura, $factura->id);
                             if (($responseRecepcionFactura == "VALIDADA")) {
+                                BitacoraHelper::registrar('Registro Venta', 'Venta realizada por el usuario: ' . Auth::user()->name, 'Venta');
                                 return redirect('/venta')->with('toast_success','Factura Recepcionada');
                             } else {
                                 return redirect('/venta')->with('toast_error', $responseRecepcionFactura);

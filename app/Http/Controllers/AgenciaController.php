@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\BitacoraHelper;
 use App\Models\Agencia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AgenciaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -48,9 +54,11 @@ class AgenciaController extends Controller
         
         
         if ($agencia->save()) {
-            return redirect('/agencia');
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Registro Sucursal', 'Sucursal creada por el usuario: ' . Auth::user()->name, 'Agencia');
+            return redirect('/agencia')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('agencia.create',['agencia'=>$agencia]);
+            return view('agencia.create',['agencia'=>$agencia])->with('toast_error','Error al registrar');
         }
     }
 
@@ -97,9 +105,11 @@ class AgenciaController extends Controller
         
         
         if ($agencia->save()) {
-            return redirect('/agencia');
+            //Registrar en Bitocora
+            BitacoraHelper::registrar('Actualizar Sucursal', 'Sucursal actualizada por el usuario: ' . Auth::user()->name, 'Agencia');
+            return redirect('/agencia')->with('toast_success','Registro Actualizado correctamente');
         } else {
-            return view('agencia.create',['agencia'=>$agencia]);
+            return view('agencia.create',['agencia'=>$agencia])->with('toast_error','Error al actualizar');
         }
     }
 

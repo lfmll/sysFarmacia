@@ -6,9 +6,15 @@ use App\Models\Cliente;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\Parametro;
+use App\Helpers\BitacoraHelper;
+use Illuminate\Support\Facades\Auth;
 
 class ClienteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -76,6 +82,8 @@ class ClienteController extends Controller
         $cliente->estado            = 'A';
         
         if ($cliente->save()) {
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Registro Cliente', 'Cliente creado por el usuario: ' . Auth::user()->name, 'Cliente');
             return redirect('/cliente')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('cliente.create',['cliente'=>$cliente])->with('toast_error','Error al registrar');
@@ -130,6 +138,8 @@ class ClienteController extends Controller
         $cliente->estado            = 'A';
 
         if ($cliente->save()) {
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Actualización Cliente', 'Cliente modificado por el usuario: ' . Auth::user()->name, 'Cliente');
             return redirect('/cliente')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('cliente.edit',['cliente'=>$cliente])->with('toast_error','Error al registrar');
@@ -148,7 +158,11 @@ class ClienteController extends Controller
         $cliente->estado = 'E';
 
         if ($cliente->save()) {
-            return redirect('/cliente');
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Eliminación Cliente', 'Cliente eliminado por el usuario: ' . Auth::user()->name, 'Cliente');
+            return redirect('/cliente')->with('toast_success','Cliente eliminado exitosamente');
+        } else {
+            return redirect('/cliente')->with('toast_error','Error al eliminar el Cliente');
         }
     }
 }

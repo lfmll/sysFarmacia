@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\BitacoraHelper;
 use App\Models\Factura;
 use App\Models\DetalleFactura;
 use App\Models\Empresa;
@@ -11,14 +12,20 @@ use App\Models\Cuis;
 use App\Models\Cufd;
 use App\Models\TipoDocumento;
 use App\Models\Ajuste;
+use App\Models\Bitacora;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use \Milon\Barcode\DNS2D;
 use Response;
 use ZipArchive;
+use Illuminate\Support\Facades\Auth;
 
 class FacturaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -123,6 +130,7 @@ class FacturaController extends Controller
                 );
                 $msjAnularFactura = Factura::soapAnularFactura($clienteFacturacion,$parametrosFactura,$factura->id);
                 if ($msjAnularFactura == "") {
+                    BitacoraHelper::registrar('Anulacion de Factura', 'Factura anulada por '.Auth::user()->usuario.' con motivo: '.$motivo, 'Factura');
                     return response()->json(['message'=>'Factura anulada'],200);
                 } else {
                     return response()->json(['message'=>$msjAnularFactura],404);
@@ -216,6 +224,7 @@ class FacturaController extends Controller
                 $responseRecepcionFactura = Factura::soapRecepcionFactura($clienteFacturacion, $parametrosFactura, $idFactura);
                 if ($responseRecepcionFactura == "VALIDADA") 
                 {
+                    BitacoraHelper::registrar('Emision de Factura', 'Factura emitida por '.Auth::user()->usuario.' con CUF: '.$factura->cuf, 'Factura');
                     return redirect('/factura')->with('toast_success','Factura Recepcionada');
                 } else {
                     return redirect('/factura')->with('toast_error', $responseRecepcionFactura);
@@ -398,6 +407,7 @@ class FacturaController extends Controller
             );
             $msjRevertirAnulacion = Factura::soapRevertirAnulacionFactura($clienteFacturacion, $parametrosFactura, $factura->id);
             if ($msjRevertirAnulacion == "") {
+                BitacoraHelper::registrar('Revertir Anulacion de Factura', 'Anulacion revertida por '.Auth::user()->usuario.' de la factura con CUF: '.$factura->cuf, 'Factura');
                 return response()->json(['message'=>'Anulacion Revertir'],200);
             } else {
                 return redirect('/factura')->with('toast_error',$msjRevertirAnulacion);

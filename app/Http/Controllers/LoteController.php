@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\BitacoraHelper;
+use App\Models\Bitacora;
 use App\Models\Lote;
 use App\Models\Laboratorio;
 use App\Models\Medicamento;
-use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class LoteController extends Controller
 {
@@ -76,6 +78,7 @@ class LoteController extends Controller
         }
         
         if ($lote->save()) {
+            BitacoraHelper::registrar('Registro Lote', 'Lote creado por el usuario: ' . Auth::user()->name, 'Lote');
             return redirect('/lote')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('lote.create',['lote'=>$lote])->with('toast_error','Error al registrar');
@@ -162,6 +165,7 @@ class LoteController extends Controller
         }
         
         if ($lote->save()) {
+            BitacoraHelper::registrar('Actualización Lote', 'Lote modificado por el usuario: ' . Auth::user()->name, 'Lote');
             return redirect('/lote')->with('toast_success','Modificación realizada exitosamente');
         } else {
             return view('lote.edit',['lote'=>$lote])->with('toast_error','Error al actualizar');

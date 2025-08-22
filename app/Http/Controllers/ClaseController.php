@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Clase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Helpers\BitacoraHelper;
 
 class ClaseController extends Controller
 {
@@ -46,9 +48,11 @@ class ClaseController extends Controller
         $clase->clase = $request->clase;        
         
         if ($clase->save()) {
-            return redirect('/clase');
+            //Registrar Bitacora
+            BitacoraHelper::registrar('Registro Clase', 'Clase creada por el usuario: ' . Auth::user()->name, 'Clase');
+            return redirect('/clase')->with('toast_success','Registro realizado exitosamente');
         } else {
-            return view('clase.create',['clase'=>$clase]);
+            return view('clase.create',['clase'=>$clase])->with('toast_error','Error al registrar');
         }
     }
 
@@ -89,9 +93,11 @@ class ClaseController extends Controller
         $clase->clase = $request->clase;
 
         if ($clase -> save()) {
-            return redirect('/clase');
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Actualización Clase', 'Clase modificada por el usuario: ' . Auth::user()->name, 'Clase');
+            return redirect('/clase')->with('toast_success','Clase modificado exitosamente');
         } else {
-            return view('clase.edit',['clase'=>$clase]);
+            return view('clase.edit',['clase'=>$clase])->with('toast_error','Error al registrar');
         }
 
     }

@@ -26,7 +26,7 @@ class DocumentoController extends Controller
                 ->count();
 
         $cantLotes=DB::table('lotes')
-                ->whereBetween('fecha_vencimiento',[$fechai,$fechaf])
+                ->whereDate('fecha_vencimiento','<=',$fechaf)
                 ->count();    
         
         $cantCierres=DB::table('cajas')

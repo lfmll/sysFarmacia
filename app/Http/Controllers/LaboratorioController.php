@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\BitacoraHelper;
+use App\Models\Bitacora;
 use App\Models\Laboratorio;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PDF;
 
 class LaboratorioController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -45,6 +52,7 @@ class LaboratorioController extends Controller
         $laboratorio->procedencia = $request->procedencia;
         $laboratorio->anotacion = $request->anotacion;
         if ($laboratorio->save()) {
+            BitacoraHelper::registrar('Registro Laboratorio', 'Laboratorio creado por el usuario: ' . Auth::user()->name, 'Laboratorio');
             return redirect('/laboratorio')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('laboratorio.create',['laboratorio'=>$laboratorio])->with('toast_error','Error al registrar');
@@ -90,6 +98,7 @@ class LaboratorioController extends Controller
         $laboratorio->procedencia = $request->procedencia;
         $laboratorio->anotacion = $request->anotacion;
         if ($laboratorio->save()) {
+            BitacoraHelper::registrar('Actualización Laboratorio', 'Laboratorio modificado por el usuario: ' . Auth::user()->name, 'Laboratorio');
             return redirect('/laboratorio')->with('toast_success','Laboratorio modificado realizado exitosamente');
         } else {
             return view('laboratorio.edit',['laboratorio'=>$laboratorio])->with('toast_error','Error al registrar');

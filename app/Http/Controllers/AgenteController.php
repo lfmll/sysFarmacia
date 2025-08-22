@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Agente;
 use App\Models\Laboratorio;
 use Illuminate\Http\Request;
+use App\Helpers\BitacoraHelper;
+use App\Models\Bitacora;
+use Illuminate\Support\Facades\Auth;
 
 class AgenteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -46,6 +53,8 @@ class AgenteController extends Controller
         $agente->anotacion = $request->anotacion;
         $agente->laboratorio_id=$request->laboratorios;
         if ($agente->save()) {
+            //Registrar Bitacora
+            BitacoraHelper::registrar('Registro Agente', 'Agente creada por el usuario: ' . Auth::user()->name, 'Agente');
             return redirect('/agente')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('agente.create',['agente'=>$agente])->with('toast_error','Error al registrar');
@@ -92,6 +101,8 @@ class AgenteController extends Controller
         $agente->anotacion = $request->anotacion;
         $agente->laboratorio_id=$request->laboratorios;
         if ($agente->save()) {
+            // Registrar en Bitacora
+            BitacoraHelper::registrar('Actualización Agente', 'Agente modificada por el usuario: ' . Auth::user()->name, 'Agente');
             return redirect('/agente')->with('toast_success','Proveedor modificado exitosamente');
         } else {
             return view('agente.create',['agente'=>$agente])->with('toast_error','Error al registrar');

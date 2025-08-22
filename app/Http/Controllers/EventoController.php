@@ -16,6 +16,9 @@ use App\Models\Ajuste;
 use App\Models\Factura;
 use Illuminate\Support\Facades\DB;
 use ZipArchive;
+use App\Helpers\BitacoraHelper;
+use App\Models\Bitacora;
+use Illuminate\Support\Facades\Auth;
 
 class EventoController extends Controller
 {
@@ -100,7 +103,8 @@ class EventoController extends Controller
         $evento->cantidadFacturas = 0; // Inicializar cantidad de facturas a 0
         $evento->save();
 
-        if ($evento->save()) {
+        if ($evento->save()) {            
+            BitacoraHelper::registrar('Registro Evento Significativo', 'Evento significativo iniciado por el usuario: ' . Auth::user()->name, 'Evento');            
             return redirect('/evento')->with('success', 'Evento significativo creado exitosamente.');
         } else {
             return view('evento.create')->with('error', 'Error al crear el evento significativo.');
@@ -232,6 +236,7 @@ class EventoController extends Controller
                             return redirect('/evento')->with('toast_error', 'Error de comunicación para enviar el paquete de facturas.');
                         }                        
                     }
+                    BitacoraHelper::registrar('Cierre Evento Significativo', 'Evento significativo cerrado por el usuario: ' . Auth::user()->name, 'Evento');
                     return redirect('/evento')->with('toast_success', 'Evento significativo cerrado exitosamente.');
                 } else {
                     return redirect('/evento')->with('toast_error', 'Error al cerrar el evento significativo: ' . $msjError);
@@ -246,17 +251,7 @@ class EventoController extends Controller
 
     public function destroy($id)
     {
-        dd("hola");
-        // $evento = Evento::findOrFail($id);
-        // if ($evento->estado == 'Abierto') {
-        //     return redirect('/evento')->with('toast_error', 'No se puede eliminar un evento abierto.');
-        // }
-        
-        // if ($evento->delete()) {
-        //     return redirect('/evento')->with('toast_success', 'Evento significativo eliminado exitosamente.');
-        // } else {
-        //     return redirect('/evento')->with('toast_error', 'Error al eliminar el evento significativo.');
-        // }
+
     }
 
 }

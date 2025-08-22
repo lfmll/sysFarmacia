@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\BitacoraHelper;
 use App\Models\PuntoVenta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,6 +58,7 @@ class PuntoVentaController extends Controller
         $puntoventa->estado      = 'A';
 
         if ($puntoventa->save()) {
+            BitacoraHelper::registrar('Registro Punto de Venta', 'Punto de Venta creado por el usuario: ' . Auth::user()->name, 'PuntoVenta');
             return redirect('/puntoventa')->with('toast_success','Registro realizado exitosamente');
         } else {
             return view('puntoventa.create',['puntoventa'=>$puntoventa])->with('toast_error','Error al registrar');

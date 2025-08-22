@@ -261,11 +261,10 @@ class PDFController extends Controller
         $fecha = $dias[date('w')]." ".date('d')." de ".$meses[date('n')-1]. " del ".date('Y');
         $fechai=Carbon::now('America/La_Paz')->toDateString();
         $fechaf=Carbon::now('America/La_Paz')->addMonths(5)->toDateString();
-        $lotes=Lote::whereBetween('fecha_vencimiento',[$fechai,$fechaf])
-                ->get();
-        
-        $pdf = PDF::loadView('lote.reporteLotesVencimiento',['lotes' => $lotes,'fecha'=>$fecha]);
-        return $pdf->download('Lotes_en_Vencimiento.pdf');
+        $lotesVencidos=Lote::whereDate('fecha_vencimiento','<=',$fechaf)->get();
+        $lotesPorVencer=Lote::whereBetween('fecha_vencimiento',[$fechai, $fechaf])->get();
+        $pdf = PDF::loadView('lote.reporteLotesVencimiento',['lotesVencidos' => $lotesVencidos,'lotesPorVencer'=>$lotesPorVencer,'fecha'=>$fecha]);
+        return $pdf->download('Lotes_Vencimiento.pdf');
     }
 
     public function reporteCierreAnterior()
