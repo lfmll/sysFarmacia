@@ -15,10 +15,11 @@
                     <table id="tagente" class="table table-bordered">
                         <thead>
                             <tr>                            
-                                <td>ID</td>    
-                                <td>Nombre</td>            
-                                <td>Sucursal</td>
-                                <td>Empleado</td>
+                                <th>ID</th>    
+                                <th>Nombre</th>            
+                                <th>Sucursal</th>
+                                <th>Empleado</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,6 +29,9 @@
                                 <td>{{$puntoventa->nombre}}</td>
                                 <td>{{$puntoventa->agencia->nombre}}</td>
                                 <td>{{$puntoventa->user->name}}</td>
+                                <td>
+                                    @include('puntoventa.delete',['puntoventa'=>$puntoventa])
+                                </td>                                
                             </tr>
                             @endforeach
                         </tbody>
@@ -40,4 +44,30 @@
         </div>    
     </div>    
 </div>
+@stop
+@section('css')
+    <link rel="stylesheet" href="/css/admin_custom.css">
+@stop
+@section('js')
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+        $(".eliminar").on('click', function(e){
+            e.preventDefault();
+            var form = $(this).parents('form');
+            Swal.fire({
+                title: '¿Está seguro de cerrar el Punto de Venta?',
+                text: "Punto de Venta: "+$(this).data('nombre'),
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+                    form.submit();            
+                }
+            })
+        });
+    </script>
 @stop

@@ -7,6 +7,10 @@ use App\Models\PuntoVenta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Agencia;
+use App\Models\Ajuste;
+use App\Models\Cuis;
+use App\Models\Parametro;
+use PhpParser\Builder\Param;
 
 class PuntoVentaController extends Controller
 {
@@ -35,11 +39,20 @@ class PuntoVentaController extends Controller
      */
     public function create()
     {
+        $tipoPuntoVenta = [
+            '1' => 'Comisionista',
+            '2' => 'Ventanilla de Cobranza',
+            '3' => 'Venta Móviles',
+            '4' => 'Venta YPFB',
+            '5' => 'Cajero',
+            '6' => 'Conjunta'
+        ];
         $puntoventa=new PuntoVenta();
         $agencias=Agencia::orderBy('nombre','ASC')->pluck('nombre','id');
 
         return view('puntoventa.create',['puntoventa' => $puntoventa])
-                ->with('agencias',$agencias);
+                ->with('agencias',$agencias)
+                ->with('tipoPuntoVenta',$tipoPuntoVenta);
     }
 
     /**
@@ -49,19 +62,18 @@ class PuntoVentaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $userid = Auth::id();
-        $puntoventa = new PuntoVenta($request->all());
-        $puntoventa->descripcion = $request->descripcion;
-        $puntoventa->agencia_id  = $request->agencia_id; 
-        $puntoventa->user_id     = $userid;
-        $puntoventa->estado      = 'A';
-
-        if ($puntoventa->save()) {
+    {        
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wsdlOperaciones = $ajuste->wsdl."/FacturacionOperaciones?wsdl";
+        $clienteSoap = Ajuste::consumoSIAT($token, $wsdlOperaciones);
+        
+        $msjError = PuntoVenta::registrarPuntoVenta($clienteSoap, $request);
+        if ($msjError == "") {
             BitacoraHelper::registrar('Registro Punto de Venta', 'Punto de Venta creado por el usuario: ' . Auth::user()->name, 'PuntoVenta');
             return redirect('/puntoventa')->with('toast_success','Registro realizado exitosamente');
-        } else {
-            return view('puntoventa.create',['puntoventa'=>$puntoventa])->with('toast_error','Error al registrar');
+        } else { 
+            return view('puntoventa.create',['puntoventa'=>$request])->with('toast_error', $msjError);
         }
     }
 
@@ -105,8 +117,19 @@ class PuntoVentaController extends Controller
      * @param  \App\Models\PuntoVenta  $puntoVenta
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PuntoVenta $puntoVenta)
-    {
-        //
+    public function destroy($id)
+    {        
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wsdlOperaciones = $ajuste->wsdl."/FacturacionOperaciones?wsdl";
+        $clienteSoap = Ajuste::consumoSIAT($token, $wsdlOperaciones);
+        $msjError = PuntoVenta::cerrarPuntoVenta($clienteSoap, $id);
+        if ($msjError == "") {
+            BitacoraHelper::registrar('Cierre Punto de Venta', 'Punto de Venta cerrado por el usuario: ' . Auth::user()->name, 'PuntoVenta');
+            return redirect('/puntoventa')->with('toast_success','Punto de Venta cerrado exitosamente');
+        } else {
+            return redirect('/puntoventa')->with('toast_error', $msjError);
+        }
+        
     }    
 }
