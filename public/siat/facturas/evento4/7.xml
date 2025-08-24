@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facturaComputarizadaCompraVenta xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <cabecera>
+        <nitEmisor>8928903012</nitEmisor>
+        <razonSocialEmisor>Laufer</razonSocialEmisor>
+        <municipio>Santa Cruz de la Sierra</municipio>
+        <telefono>70877412</telefono>
+        <numeroFactura>7</numeroFactura>
+        <cuf>262F0B9DA6709E9B53BB4A45B4FE39DAF6EB38F2E605106FFDF2402F74</cuf>
+        <cufd>FBQVVCRF/Dk0lBFDOUU4RDJDNUM2Q3xVM2lPWUlaVUMjEzMjI2Q0QwME</cufd>
+        <codigoSucursal>0</codigoSucursal>
+        <direccion>B/Hérores del Chaco C/Carmelo Perez 19</direccion>
+        <codigoPuntoVenta>0</codigoPuntoVenta>
+        <fechaEmision>2025-08-23T20:49:11.926</fechaEmision>
+        <nombreRazonSocial>prueba2</nombreRazonSocial>
+        <codigoTipoDocumentoIdentidad>1</codigoTipoDocumentoIdentidad>
+        <numeroDocumento>12345</numeroDocumento>
+        <complemento>789</complemento>
+        <codigoCliente>2</codigoCliente>
+        <codigoMetodoPago>1</codigoMetodoPago>
+        <numeroTarjeta xsi:nil="true"/>
+        <montoTotal>1.50</montoTotal>
+        <montoTotalSujetoIva>1.50</montoTotalSujetoIva>
+        <codigoMoneda>1</codigoMoneda>
+        <tipoCambio>1</tipoCambio>
+        <montoTotalMoneda>1.50</montoTotalMoneda>
+        <montoGiftCard xsi:nil="true"/>
+        <descuentoAdicional>0</descuentoAdicional>
+        <codigoExcepcion xsi:nil="true"/>
+        <cafc xsi:nil="true"/>
+        <leyenda>Ley N° 453: Está prohibido importar, distribuir o comercializar productos expirados o prontos a expirar.</leyenda>
+        <usuario>luisfernandomedinallorenti@gmail.com</usuario>
+        <codigoDocumentoSector>1</codigoDocumentoSector>
+    </cabecera>
+    <detalle>
+        <actividadEconomica>477310</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>P00003</codigoProducto>
+        <descripcion>TAPSIN</descripcion>
+        <cantidad>1</cantidad>
+        <unidadMedida>76</unidadMedida>
+        <precioUnitario>1.5</precioUnitario>
+        <montoDescuento>0</montoDescuento>
+        <subTotal>1.50</subTotal>
+        <numeroSerie/>
+        <numeroImei/>
+    </detalle>
+</facturaComputarizadaCompraVenta>

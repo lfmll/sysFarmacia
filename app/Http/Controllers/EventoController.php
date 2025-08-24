@@ -119,7 +119,10 @@ class EventoController extends Controller
 
     public function update($id)
     {    
-        $evento = Evento::findOrFail($id);
+        $empresa = Empresa::first();
+        $fechaEnvio = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
+        $fechaEnvio = $fechaEnvio.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
+        $cuis = Cuis::obtenerCuis();
         $cufd = Cufd::obtenerCufd();
         $fecha = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
         $fecha = $fecha.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
@@ -146,89 +149,71 @@ class EventoController extends Controller
                 $factura->cufd = $cufd->codigo_cufd;
                 $factura->save();
             }
-            //Empaquetar las facturas (ZIP)
-            // foreach ($facturas as $factura) {
-            //     $xml = Factura::generarXML($factura->id);                
-            //     $msjError = Factura::validarXML($xml, 'facturaComputarizadaCompraVenta.xsd');                
-            //     if (empty($msjError)) {
-            //         // Comprimir el XML
-            //         $zipNombreArchivo = 'evento'.$evento->id.'.zip';
-            //         $xmlNombreArchivo = $factura->id.'.xml';
-            //         $dir = public_path('/siat/facturas');
-            //         if (!file_exists($dir)) {
-            //             mkdir($dir, 0777, true);
-            //         }
-            //         $zipPath = $dir.'/'.$zipNombreArchivo;
-            //         // Crear el archivo ZIP        
-            //         $zip = new ZipArchive();
-            //         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-            //             $zip->addFromString($xmlNombreArchivo, $xml); //Anadir el XML al ZIP
-            //             $zip->close();  // Cerrar el ZIP
-            //         } else {
-            //             return redirect('/evento')->with('toast_error', 'Error al crear el archivo ZIP.');
-            //         }                    
-            //     } else {
-            //         return redirect('/evento')->with('toast_error', 'Error al validar el XML de la factura: '.implode(" ", $msjError));
-            //     }
-            // }
-            // Comprimir GZIP
-            // $dir = public_path('/siat/facturas/evento'.$evento->id);
-            // $tarPath = $dir.'/paquete.tar';
-            // $gzPath = $tarPath.'.gz';
-            // if (!file_exists($dir)) {
-            //     mkdir($dir, 0777, true);
-            // }
-            // $tar = new \PharData($tarPath);
-            // foreach ($facturas as $factura) {
-            //     $xml = Factura::generarXML($factura->id);
-            //     $msjError = Factura::validarXML($xml, 'facturaComputarizadaCompraVenta.xsd');                
-            //     if (!empty($msjError)) {
-            //         return redirect('/evento')->with('toast_error', 'Error al validar el XML de la factura: '.implode(" ", $msjError));
-            //     }
-            //     $xmlNombreArchivo = $factura->id.'.xml';                    
-            //     $xmlPath = $dir.'/'.$xmlNombreArchivo;
-            //     file_put_contents($xmlPath, $xml); // Guardar el XML en un archivo
-            //     $tar->addFile($xmlPath, $xmlNombreArchivo); // Añadir el XML al archivo TAR                                
-            // }
-            // $tar->compress(\Phar::GZ); // Comprimir el TAR a GZIP            
-            /////////////////////////////////////////////////////////
-            $dir = public_path('/siat/facturas/evento'.$evento->id);
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-            $xmlFiles = [];
-            foreach ($facturas as $factura) {
-                $xmlFileName = $factura->id.'.xml';
-                $xmlFilePath = $dir.'/'.$xmlFileName;
-                file_put_contents($xmlFilePath, Factura::generarXML($factura->id));
-                $xmlFiles[] = $xmlFilePath; // Guardar la ruta del archivo XML
-            }
-            // Crear un archivo TAR
-            $tarFileName = 'paquete_evento_'.$evento->id.'.tar';
-            $tarFilePath = $dir.'/'.$tarFileName;
-            $tar = new \PharData($tarFilePath);
-            foreach ($xmlFiles as $xmlFile) {
-                $tar->addFile($xmlFile, basename($xmlFile)); // Añadir el XML al archivo TAR
-            }
-            // Comprimir el TAR a GZIP
-            $tar->compress(\Phar::GZ); // Comprimir el TAR a GZIP
-            // Eliminar el archivo TAR original
-            unlink($tarFilePath);
+            
             //Registrar el evento significativo
             $ajuste = Ajuste::first();
-            $token = $ajuste->token;
+            $token = $ajuste->token;            
             $wsdlOperaciones = $ajuste->wsdl."/FacturacionOperaciones?wsdl";
             $wsdlRecepcion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
             $clienteOperaciones = Ajuste::consumoSIAT($token, $wsdlOperaciones);
             $clienteCompraVenta = Ajuste::consumoSIAT($token, $wsdlRecepcion);
-            $cantidadFacturas = $evento->cantidadFacturas;         
-            if ($clienteOperaciones->verificarComunicacion()->return->mensajesList->codigo == "926") {            
+                               
+            if ($clienteOperaciones->verificarComunicacion()->return->mensajesList->codigo == "926") {    
+                //Registrar Evento Significativo   
                 $msjError = Evento::soapRegistrarEvento($clienteOperaciones, $id);            
                 if ($msjError == "") {
+                    $evento = Evento::findOrFail($id);
+                    
+                    $cantidadFacturas = $evento->cantidadFacturas;
                     if ($cantidadFacturas > 0) {
+                        $dir = public_path('/siat/facturas/evento'.$evento->id);
+                        if (!file_exists($dir)) {
+                            mkdir($dir, 0777, true);
+                        }
+                        $xmlFiles = [];
+                        foreach ($facturas as $factura) {
+                            $xmlFileName = $factura->id.'.xml';
+                            $xmlFilePath = $dir.'/'.$xmlFileName;
+                            file_put_contents($xmlFilePath, Factura::generarXML($factura->id));
+                            $xmlFiles[] = $xmlFilePath; // Guardar la ruta del archivo XML
+                        }
+                        // Crear un archivo TAR
+                        $tarFileName = 'paquete_evento_'.$evento->id.'.tar';
+                        $tarFilePath = $dir.'/'.$tarFileName;
+                        $tar = new \PharData($tarFilePath);
+                        foreach ($xmlFiles as $xmlFile) {
+                            $tar->addFile($xmlFile, basename($xmlFile)); // Añadir el XML al archivo TAR
+                        }
+                        // Comprimir el TAR a GZIP
+                        $tar->compress(\Phar::GZ); // Comprimir el TAR a GZIP
+                        
+                        $gzPath = $tarFilePath.'.gz';
+                        $byteArray = file_get_contents($gzPath);
+                        $hashArchivo = hash('sha256', $byteArray);
                         //Enviar Paquete de Facturas
                         if ($clienteCompraVenta->verificarComunicacion()->return->transaccion == "true") {
-                            $msjError = Evento::soapRececpcionPaqueteFactura($clienteCompraVenta, $id); 
+                            $parametrosPaquetes = array(
+                                'SolicitudServicioRecepcionPaquete' => array(
+                                    'codigoAmbiente' => $evento->codigoAmbiente,
+                                    'codigoDocumentoSector' => $evento->codigoDocumentoSector,
+                                    'codigoEmision' => 2, // Tipo de Emisión: 1 Online 2 Offline  
+                                    'codigoModalidad' => 2,
+                                    'codigoPuntoVenta' => $evento->codigoPuntoVenta,
+                                    'codigoSistema' => $empresa->codigo_sistema,
+                                    'codigoSucursal' => $evento->codigoSucursal,
+                                    'cufd' => $cufd->codigo_cufd,
+                                    'cuis' => $cuis->codigo_cuis,
+                                    'nit' => $empresa->nit,
+                                    'tipoFacturaDocumento' => 1, // Tipo de Documento: 1 Factura
+                                    'archivo' => $byteArray,
+                                    'fechaEnvio' => $fechaEnvio,
+                                    'hashArchivo' => $hashArchivo,
+                                    'cafc' => $evento->cafc,
+                                    'cantidadFacturas' => $evento->cantidadFacturas,
+                                    'codigoEvento' => $evento->codigoRecepcion
+                                )
+                            );
+                            $msjError = Evento::soapRececpcionPaqueteFactura($clienteCompraVenta, $parametrosPaquetes); 
                             if ($msjError != "") {
                                 return redirect('/evento')->with('toast_error', 'Error al enviar el paquete de facturas: ' . $msjError);
                             }
