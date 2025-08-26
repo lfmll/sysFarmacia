@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<facturaComputarizadaCompraVenta xsi:noNamespaceSchemaLocation="facturaComputarizadaCompraVenta.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <cabecera>
+        <nitEmisor>8928903012</nitEmisor>
+        <razonSocialEmisor>Laufer</razonSocialEmisor>
+        <municipio>Santa Cruz de la Sierra</municipio>
+        <telefono>70877412</telefono>
+        <numeroFactura>9</numeroFactura>
+        <cuf/>
+        <cufd/>
+        <codigoSucursal>0</codigoSucursal>
+        <direccion>B/Hérores del Chaco C/Carmelo Perez 19</direccion>
+        <codigoPuntoVenta>0</codigoPuntoVenta>
+        <fechaEmision>2025-08-25T10:18:44.958</fechaEmision>
+        <nombreRazonSocial>prueba2</nombreRazonSocial>
+        <codigoTipoDocumentoIdentidad>1</codigoTipoDocumentoIdentidad>
+        <numeroDocumento>12345</numeroDocumento>
+        <complemento>789</complemento>
+        <codigoCliente>2</codigoCliente>
+        <codigoMetodoPago>1</codigoMetodoPago>
+        <numeroTarjeta xsi:nil="true"/>
+        <montoTotal>3.50</montoTotal>
+        <montoTotalSujetoIva>3.50</montoTotalSujetoIva>
+        <codigoMoneda>1</codigoMoneda>
+        <tipoCambio>1</tipoCambio>
+        <montoTotalMoneda>3.50</montoTotalMoneda>
+        <montoGiftCard xsi:nil="true"/>
+        <descuentoAdicional>0</descuentoAdicional>
+        <codigoExcepcion xsi:nil="true"/>
+        <cafc xsi:nil="true"/>
+        <leyenda>Ley N° 453: En caso de incumplimiento a lo ofertado o convenido, el proveedor debe reparar o sustituir el producto..</leyenda>
+        <usuario>luisfernandomedinallorenti@gmail.com</usuario>
+        <codigoDocumentoSector>1</codigoDocumentoSector>
+    </cabecera>
+    <detalle>
+        <actividadEconomica>477310</actividadEconomica>
+        <codigoProductoSin>99100</codigoProductoSin>
+        <codigoProducto>P00004</codigoProducto>
+        <descripcion>DIOXADOL</descripcion>
+        <cantidad>1</cantidad>
+        <unidadMedida>78</unidadMedida>
+        <precioUnitario>3.5</precioUnitario>
+        <montoDescuento>0</montoDescuento>
+        <subTotal>3.50</subTotal>
+        <numeroSerie/>
+        <numeroImei/>
+    </detalle>
+</facturaComputarizadaCompraVenta>

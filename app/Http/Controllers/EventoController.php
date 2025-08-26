@@ -118,38 +118,9 @@ class EventoController extends Controller
     }
 
     public function update($id)
-    {    
-        $empresa = Empresa::first();
-        $fechaEnvio = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
-        $fechaEnvio = $fechaEnvio.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
-        $cuis = Cuis::obtenerCuis();
-        $cufd = Cufd::obtenerCufd();
-        $fecha = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
-        $fecha = $fecha.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
-        $fechaEmision = Factura::deFechaNumero($fecha);
-        $empresa = Empresa::first();
-        //Obtener Facturas del Evento
-        $facturas = Factura::where('evento_id', $id)->get();
-        if (!is_null($cufd)) {
-            //Actualizar Facturas
-            foreach ($facturas as $factura) {
-                $cuf = Factura::generarCUF(
-                    $factura->nitEmisor,
-                    $factura->codigoSucursal,
-                    $fechaEmision,
-                    $empresa->modalidad,
-                    1, // Tipo de Emisión: 1 Online
-                    1, // Tipo de Factura: 1 Documento Credito Fiscal
-                    $factura->codigoDocumentoSector,
-                    $factura->numeroFactura,
-                    0 //POS                
-                );            
-                $factura->cuf = $cuf.$cufd->codigo_control;     
-                $factura->fechaEmision = $fecha;  
-                $factura->cufd = $cufd->codigo_cufd;
-                $factura->save();
-            }
-            
+    {        
+        $cufd = Cufd::obtenerCufd();                
+        if (!is_null($cufd)) {                        
             //Registrar el evento significativo
             $ajuste = Ajuste::first();
             $token = $ajuste->token;            
@@ -166,54 +137,11 @@ class EventoController extends Controller
                     
                     $cantidadFacturas = $evento->cantidadFacturas;
                     if ($cantidadFacturas > 0) {
-                        $dir = public_path('/siat/facturas/evento'.$evento->id);
-                        if (!file_exists($dir)) {
-                            mkdir($dir, 0777, true);
-                        }
-                        $xmlFiles = [];
-                        foreach ($facturas as $factura) {
-                            $xmlFileName = $factura->id.'.xml';
-                            $xmlFilePath = $dir.'/'.$xmlFileName;
-                            file_put_contents($xmlFilePath, Factura::generarXML($factura->id));
-                            $xmlFiles[] = $xmlFilePath; // Guardar la ruta del archivo XML
-                        }
-                        // Crear un archivo TAR
-                        $tarFileName = 'paquete_evento_'.$evento->id.'.tar';
-                        $tarFilePath = $dir.'/'.$tarFileName;
-                        $tar = new \PharData($tarFilePath);
-                        foreach ($xmlFiles as $xmlFile) {
-                            $tar->addFile($xmlFile, basename($xmlFile)); // Añadir el XML al archivo TAR
-                        }
-                        // Comprimir el TAR a GZIP
-                        $tar->compress(\Phar::GZ); // Comprimir el TAR a GZIP
-                        
-                        $gzPath = $tarFilePath.'.gz';
-                        $byteArray = file_get_contents($gzPath);
-                        $hashArchivo = hash('sha256', $byteArray);
+                       
                         //Enviar Paquete de Facturas
                         if ($clienteCompraVenta->verificarComunicacion()->return->transaccion == "true") {
-                            $parametrosPaquetes = array(
-                                'SolicitudServicioRecepcionPaquete' => array(
-                                    'codigoAmbiente' => $evento->codigoAmbiente,
-                                    'codigoDocumentoSector' => $evento->codigoDocumentoSector,
-                                    'codigoEmision' => 2, // Tipo de Emisión: 1 Online 2 Offline  
-                                    'codigoModalidad' => 2,
-                                    'codigoPuntoVenta' => $evento->codigoPuntoVenta,
-                                    'codigoSistema' => $empresa->codigo_sistema,
-                                    'codigoSucursal' => $evento->codigoSucursal,
-                                    'cufd' => $cufd->codigo_cufd,
-                                    'cuis' => $cuis->codigo_cuis,
-                                    'nit' => $empresa->nit,
-                                    'tipoFacturaDocumento' => 1, // Tipo de Documento: 1 Factura
-                                    'archivo' => $byteArray,
-                                    'fechaEnvio' => $fechaEnvio,
-                                    'hashArchivo' => $hashArchivo,
-                                    'cafc' => $evento->cafc,
-                                    'cantidadFacturas' => $evento->cantidadFacturas,
-                                    'codigoEvento' => $evento->codigoRecepcion
-                                )
-                            );
-                            $msjError = Evento::soapRececpcionPaqueteFactura($clienteCompraVenta, $parametrosPaquetes); 
+                            
+                            $msjError = Evento::soapRececpcionPaqueteFactura($clienteCompraVenta, $evento->id); 
                             if ($msjError != "") {
                                 return redirect('/evento')->with('toast_error', 'Error al enviar el paquete de facturas: ' . $msjError);
                             }

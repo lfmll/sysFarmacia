@@ -43,10 +43,7 @@
                                         <a href="{{url('facturaRollo/'.$fact->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF Rollo</a>
                                         <a href="{{url('generarXML/'.$fact->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
                                         <a href="{{url('enviarCorreo/'.$fact->id)}}" class="btn btn-info btn-sm" onClick="loading()"><i class="fa fa-envelope"></i> Notificacion</a>                                        
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="anularFactura('{{$fact->id}}')"><i class="fa fa-trash"></i> Anular</button>
-                                        <div id="loading" class="loading" onClick="hideSpinner()">                                          
-                                          Loading&#8230;     
-                                        </div>                                      
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="anularFactura('{{$fact->id}}')"><i class="fa fa-trash"></i> Anular</button>                                                                             
                                     </td>
                                     @elseif ($fact->estado == 'ANULADA')
                                     <td><span class="badge badge-pill badge-danger">{{$fact->estado}}</span></td>
@@ -74,7 +71,6 @@
 @stop
 
 @section('css')
-    <!-- <link rel="stylesheet" href="/css/admin_custom.css"> -->
     <style>
         div.card-body{            
             overflow: auto;
@@ -86,8 +82,7 @@
 <script type="text/javascript">
   
     $("#postForm").submit(function(e){
-        e.preventDefault();
-  
+        e.preventDefault();  
         $.ajax({
             url: "https://jsonplaceholder.typicode.com/posts",
             type: "POST",
@@ -102,22 +97,6 @@
         });
     });
       
-</script>
-<script type="text/javascript">
-    var loadingDiv = document.getElementById('loading');
-
-    function loading(){
-      myVar = setTimeout(showSpinner, 3000);
-      myVar = setTimeout(hideSpinner, 7000);
-    }
-
-    function showSpinner() {
-      loadingDiv.style.visibility = 'visible';    
-    }
-
-    function hideSpinner() {
-    loadingDiv.style.visibility = 'hidden';
-    }     
 </script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
