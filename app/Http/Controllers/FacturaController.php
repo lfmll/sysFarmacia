@@ -107,7 +107,7 @@ class FacturaController extends Controller
             $wslSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
             $clienteFacturacion = Ajuste::consumoSIAT($token,$wslSincronizacion);
             $factura = Factura::find($idFactura);
-            $empresa = Empresa::first();
+            $empresa = Empresa::where('estado','A')->first();
             $cuis = Cuis::obtenerCuis();
             $cufd = Cufd::obtenerCufd(); 
             if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") {
@@ -148,7 +148,6 @@ class FacturaController extends Controller
     {
         $factura = Factura::find($idFactura);
         $empresa = Empresa::first();
-        $agencia = Agencia::where('empresa_id',$empresa->id)->first();   //ojo
         
         $cuis = Cuis::obtenerCuis();
         $cufd = Cufd::obtenerCufd();
@@ -385,7 +384,7 @@ class FacturaController extends Controller
         $wslSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
         $clienteFacturacion = Ajuste::consumoSIAT($token,$wslSincronizacion);
         $factura = Factura::find($idFactura);
-        $empresa = Empresa::first();
+        $empresa = Empresa::where('estado','A')->first();
         $cuis = Cuis::obtenerCuis();
         $cufd = Cufd::obtenerCufd();
         if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") {

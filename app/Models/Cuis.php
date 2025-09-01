@@ -12,8 +12,13 @@ class Cuis extends Model
         'codigo_cuis',
         'fecha_vigencia',
         'estado',
+        'agencia_id',
         'punto_venta_id'
     ];
+
+    public function agencia(){
+        return $this->belongsTo(Agencia::class);
+    }
 
     public function punto_venta(){
         return $this->belongsTo(PuntoVenta::class);
@@ -43,15 +48,19 @@ class Cuis extends Model
     {
         $fechaActual = Carbon::now('America/La_Paz')->toDatetimeString();
         $cuis =  Cuis::where('estado','A')
+                    ->where('agencia_id',session('agencia_id'))
+                    ->where('punto_venta_id',session('punto_venta_id'))
                     ->where('fecha_vigencia','>',$fechaActual)
                     ->first();
         return $cuis;
     }
     
-    public static function sincroCUIS($clienteCuis, $puntoVenta)
+    public static function sincroCUIS($clienteCuis)
     {
-        $agencia = Agencia::where('id', $puntoVenta->agencia_id)->first();
-        $empresa = Empresa::where('id', $agencia->empresa_id)->first();
+        $empresa = Empresa::first();
+        $agencia = Agencia::where('id', session('agencia_id'))->first();
+        $puntoVenta = PuntoVenta::where('id', session('punto_venta_id'))->first();
+        
         $msjError = "";
         
         if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") {
@@ -76,9 +85,10 @@ class Cuis extends Model
                 $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
                 $fecha = date("Y-m-d H:i:s", $fechaUTC);
                 $cuis->fill([
-                    'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
+                    'codigo_cuis'    => $responseCuis->RespuestaCuis->codigo,
                     'fecha_vigencia' => $fecha,
-                    'estado' => 'A',
+                            'estado' => 'A',
+                        'agencia_id' => $agencia->id,
                     'punto_venta_id' => $puntoVenta->id
                 ]);
                 $cuis->save();
@@ -90,9 +100,10 @@ class Cuis extends Model
                         $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
                         $fecha = date("Y-m-d H:i:s", $fechaUTC);
                         $cuis->fill([
-                            'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
+                               'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
                             'fecha_vigencia' => $fecha,
-                            'estado' => 'A',
+                                    'estado' => 'A',
+                                'agencia_id' => $agencia->id,
                             'punto_venta_id' => $puntoVenta->id
                         ]);
                         $cuis->save();
@@ -104,9 +115,10 @@ class Cuis extends Model
                         $fechaUTC = strtotime($responseCuis->RespuestaCuis->fechaVigencia);
                         $fecha = date("Y-m-d H:i:s", $fechaUTC);
                         $cuis->fill([
-                            'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
+                               'codigo_cuis' => $responseCuis->RespuestaCuis->codigo,
                             'fecha_vigencia' => $fecha,
-                            'estado' => 'A',
+                                    'estado' => 'A',
+                                'agencia_id' => $agencia->id,
                             'punto_venta_id' => $puntoVenta->id
                         ]);
                         $cuis->save();

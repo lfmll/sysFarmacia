@@ -7,9 +7,9 @@ use App\Models\TipoDocumento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use ZipArchive;
 use PDO;
-use App\Models\Medida;
 use App\Models\Empresa;
 use App\Models\Agencia;
 use App\Models\PuntoVenta;
@@ -22,7 +22,6 @@ use App\Models\Leyenda;
 use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
 use Illuminate\Support\Facades\Auth;
-use SoapClient;
 use App\Helpers\BitacoraHelper;
 
 class AjusteController extends Controller
@@ -38,16 +37,8 @@ class AjusteController extends Controller
      */
     public function index()
     {
-        $ajustes = Ajuste::first();
-        $userId = Auth::id();
-        $empresa = Empresa::where('estado','A')->first();
-        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
-        $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->where('agencia_id',$sucursal->id)
-                                ->first();
-        $cuis = Cuis::where('estado', 'A')
-                    ->where('punto_venta_id',$puntoVenta->id)
-                    ->first();
+        $ajustes = Ajuste::first();        
+        $cuis = Cuis::obtenerCuis();
         $tipo_parametro = TipoParametro::all();                         
         if (is_null($cuis)) {
             $cufd = null;
@@ -174,16 +165,12 @@ class AjusteController extends Controller
     {
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
-        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";        
-        $userId = Auth::id();
-        
-        $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->first();                
+        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";           
         
         $clienteCuis = Ajuste::consumoSIAT($token,$wsdlCodigos);
         
         //Sincronizar CUIS
-        $msjError = Cuis::sincroCUIS($clienteCuis, $puntoVenta);
+        $msjError = Cuis::sincroCUIS($clienteCuis);
         if ($msjError == "") {
             // Registrar en Bitacora
             BitacoraHelper::registrar('Sincronizacion CUIS', 'CUIS sincronizado por el usuario: ' . Auth::user()->name, 'Cuis');
@@ -198,17 +185,11 @@ class AjusteController extends Controller
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
         $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
-        $userId = Auth::id();
-
-        $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->first();
-        
-        $cuis = Cuis::obtenerCuis();
         
         $clienteCufd = Ajuste::consumoSIAT($token,$wsdlCodigos);
         
         //Sincronizar CUFD
-        $msjError = Cufd::sincroCUFD($clienteCufd, $puntoVenta);
+        $msjError = Cufd::sincroCUFD($clienteCufd);
         if ($msjError == "") {
             // Registrar en Bitacora
             BitacoraHelper::registrar('Sincronizacion CUFD', 'CUFD sincronizado por el usuario: ' . Auth::user()->name, 'Cufd');            
@@ -225,15 +206,10 @@ class AjusteController extends Controller
         //PASO 1: Consumir servicios SIAT Sincronizacion
         $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
         
-        $userId = Auth::id();
         $empresa = Empresa::where('estado','A')->first();
-        $sucursal = Agencia::where('empresa_id',$empresa->id)->first();        
-        $puntoVenta = PuntoVenta::where('user_id',$userId)
-                                ->where('agencia_id',$sucursal->id)
-                                ->first();
-        $cuis = Cuis::where('estado', 'A')
-                    ->where('punto_venta_id',$puntoVenta->id)
-                    ->first(); 
+        $sucursal = Agencia::where('id', session('agencia_id'))->where('estado','A')->first();
+        $puntoVenta = PuntoVenta::where('id', session('punto_venta_id'))->where('estado','A')->first();
+        $cuis = Cuis::obtenerCuis(); 
         if (!is_null($cuis)) {  
             // PASO 2: Consumir Servicios de Sincronizacion
             $clienteSincronizacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);

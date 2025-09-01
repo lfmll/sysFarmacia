@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Helpers\BitacoraHelper;
+use App\Models\UserPuntoVenta;
+use Carbon\Carbon;
 
 class EmpresaController extends Controller
 {
@@ -88,9 +90,15 @@ class EmpresaController extends Controller
             $puntoventa->codigo = 0;
             $puntoventa->nombre = "Por defecto";            
             $puntoventa->agencia_id = $sucursal->id;
-            $puntoventa->user_id = $idUsuario;
             $puntoventa->estado = "A";
             $puntoventa->save();                
+
+            $userPuntoVenta = new UserPuntoVenta;
+            $userPuntoVenta->user_id = $idUsuario;
+            $userPuntoVenta->punto_venta_id = $puntoventa->id;
+            $userPuntoVenta->estado = 'A';
+            $userPuntoVenta->fecha_asignacion = Carbon::now('America/La_Paz');
+            $userPuntoVenta->save();
 
             $ajuste = new Ajuste;
             $ajuste->username = $request->correo;

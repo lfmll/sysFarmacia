@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -22,8 +24,12 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function puntoventas(){
-        return $this->hasMany(PuntoVenta::class);
+    public function puntosVenta():BelongsToMany
+    {
+        return $this->belongsToMany(PuntoVenta::class, 'user_punto_venta')
+                    ->using(UserPuntoVenta::class)
+                    ->withPivot('estado', 'fecha_asignacion')
+                    ->withTimestamps();
     }
     
     public function ventas(){

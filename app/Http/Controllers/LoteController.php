@@ -214,9 +214,11 @@ class LoteController extends Controller
         if ($request->ajax()) {
             $data=DB::table('lotes')
                     ->join('medicamentos','lotes.medicamento_id','=','medicamentos.id')
-                    ->join('laboratorios','lotes.laboratorio_id','=','laboratorios.id')
-                    ->where('medicamentos.codigo_producto_sin','=',$request->codProducto)
+                    ->leftjoin('laboratorios','lotes.laboratorio_id','=','laboratorios.id')
+                    ->where('medicamentos.codigo_producto_sin','=',$request->codProducto)                                    
                     ->select('lotes.id','lotes.numero','medicamentos.nombre_comercial','lotes.fecha_vencimiento','lotes.cantidad','lotes.precio_venta','laboratorios.nombre')
+                    ->orderBy('medicamentos.nombre_comercial','ASC')
+                    ->orderBy('lotes.fecha_vencimiento','ASC')
                     ->get();
             if ($data->isEmpty()) {
                 return response()->json(["mensaje"=>"No existe lotes con este catalogo"],409);

@@ -12,7 +12,7 @@
 @endif
 
 @section('auth_header', __('adminlte::adminlte.register_message'))
-
+@include('sweetalert::alert')
 @section('auth_body')
     <form action="{{ $register_url }}" method="post">
         {{ csrf_field() }}
@@ -82,7 +82,42 @@
                 </div>
             @endif
         </div>
-
+        {{--Asginar Agencia --}}
+        <div class="input-group mb-3">
+            <select name="agencia" id="agencia" onchange="cargarPuntosVentaP()" required class="form-control {{ $errors->has('agencia') ? 'is-invalid' : '' }}">
+                <option value="" disabled selected>Seleccione una Sucursal</option>
+                @foreach($sucursales as $sucursal)
+                    <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                @endforeach
+            </select>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-building {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('agencia'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('agencia') }}</strong>
+                </div>
+            @endif
+        </div>
+        {{--Asignar Punto de Venta--}}
+        <div class="input-group mb-3">
+            <select name="punto_venta" id="puntosVentas" class="form-control {{ $errors->has('punto_venta') ? 'is-invalid' : '' }}">
+                <option value="" disabled selected>Seleccione un Punto de Venta</option>                
+                {-- Los puntos de venta se cargarán dinámicamente mediante JavaScript basado en la agencia seleccionada --}
+            </select>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-store {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('punto_venta'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('punto_venta') }}</strong>
+                </div>
+            @endif
+        </div>
         {{-- Register button --}}
         <button type="submit" class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
             <span class="fas fa-user-plus"></span>
@@ -98,4 +133,41 @@
             {{ __('adminlte::adminlte.i_already_have_a_membership') }}
         </a>
     </p>
+@stop
+@section('js')
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+</script>
+<script>
+    function cargarPuntosVentaP()
+    {
+        var formData = { agencia: $('#agencia').val() };   
+        console.log(formData);     
+        $.ajax({
+            url: "{{ url('/cargarPuntosVentaP') }}",
+            type: "GET",
+            data: formData,
+            dataType: 'json',
+            success: function(data) {
+                $('#puntosVentas').empty();
+                $('#puntosVentas').append('<option value="">Seleccione un Punto de Venta</option>');
+                $.each(data, function(key, value) {
+                    $('#puntosVentas').append('<option value="'+ value.id +'">'+ value.nombre +'</option>');
+                });
+            },
+            error: function(data) {
+                console.log(data);
+                if (data.status == 409) {
+                    swal.fire('Error', JSON.parse(data.responseText).mensaje, 'error');                                        
+                } else {
+                    swal.fire('Error', 'Ocurrió un error al cargar los puntos de venta.', 'error');
+                }                
+            }
+        });
+    }
+</script>
 @stop

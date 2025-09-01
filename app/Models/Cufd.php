@@ -14,20 +14,40 @@ class Cufd extends Model
         'direccion',
         'fecha_vigencia',
         'estado',
-        'cuis_id'
+        'cuis_id',
+        'punto_venta_id'
     ];
 
     public function cuis(){
         return $this->belongsTo(Cuis::class);
     }
 
-    public static function sincroCUFD($clienteCufd, $puntoVenta)
+    public function punto_venta(){
+        return $this->belongsTo(PuntoVenta::class);
+    }
+
+    public static function obtenerCufd()
     {
-        $agencia = Agencia::where('id',$puntoVenta->agencia_id)->first();
-        $empresa = Empresa::where('id',$agencia->empresa_id)->first();
-        $cuis = Cuis::where('estado', 'A')
-                    ->where('punto_venta_id',$puntoVenta->id)
+        $fechaActual = Carbon::now('America/La_Paz')->toDatetimeString();
+        $cuis = Cuis::obtenerCuis();
+        $cufd = null;
+        if (!is_null($cuis)) {
+            $cufd =  Cufd::where('estado','A')
+                    ->where('cuis_id',$cuis->id)
+                    ->where('punto_venta_id',session('punto_venta_id')) 
+                    ->where('fecha_vigencia','>',$fechaActual)
                     ->first();
+        }
+        
+        return $cufd;
+    }
+
+    public static function sincroCUFD($clienteCufd)
+    {
+        $empresa = Empresa::first();
+        $agencia = Agencia::where('id',session('agencia_id'))->first();
+        $puntoVenta = PuntoVenta::where('id',session('punto_venta_id'))->first();
+        $cuis = Cuis::obtenerCuis();
         $msjError = "";
         if ($clienteCufd->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
         {
@@ -58,6 +78,7 @@ class Cufd extends Model
                     'direccion' => $responseCufd->RespuestaCufd->direccion,
                     'fecha_vigencia' => $fecha,
                     'estado' => 'A',
+                    'punto_venta_id' => $puntoVenta->id,
                     'cuis_id' => $cuis->id
                 ]);
                 $cufd->save();
@@ -68,14 +89,5 @@ class Cufd extends Model
         } else {
             return $msjError = "Error en la comunicación con el Servicio SIAT";
         }
-    }
-
-    public static function obtenerCufd()
-    {
-        $fechaActual = Carbon::now('America/La_Paz')->toDatetimeString();
-        $cufd =  Cufd::where('estado','A')
-                    ->where('fecha_vigencia','>',$fechaActual)
-                    ->first();
-        return $cufd;
-    }
+    }    
 }

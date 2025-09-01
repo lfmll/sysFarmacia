@@ -65,10 +65,10 @@ class EventoController extends Controller
     public function store(Request $request)
     {
         $fecha = Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');
-        $fecha = $fecha.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);
-        $puntoVenta = PuntoVenta::where('user_id', auth()->id())->first();    
-        $sucursal = Agencia::where('id','=',$puntoVenta->agencia_id)->first();
-        $empresa = Empresa::first();
+        $fecha = $fecha.'.'.str_pad(now('America/La_Paz')->milli, 3, '0', STR_PAD_LEFT);                           
+        $empresa = Empresa::where('estado','A')->first();
+        $sucursal = Agencia::where('id', session('agencia_id'))->where('estado','A')->first();
+        $puntoVenta = PuntoVenta::where('id', session('punto_venta_id'))->where('estado','A')->first();
         $ultimocuis = Cuis::where('punto_venta_id', $puntoVenta->id)->orderBy('id','DESC')->first();
         $ultimocufd = Cufd::where('cuis_id', $ultimocuis->id)->orderBy('id', 'DESC')->first();        
         $parametro = DB::table('parametros')

@@ -13,19 +13,18 @@
             {{Form::number('telefono',$agencia->telefono,['class'=>'form-control','placeholder'=>0, 'min'=>'0'])}}
     </div>
     <div class="form-group">        
-            {{ Form::label('ciudad', 'Ciudad'); }}
-            {!! Form::select('ciudad', ['Santa Cruz'=>'Santa Cruz',
+            {{ Form::label('departamento', 'Departamento'); }}
+            {!! Form::select('departamento', ['Santa Cruz'=>'Santa Cruz',
                                         'La Paz'=>'La Paz',
                                         'Cochabamba'=>'Cochabamba',
-                                        'El Alto'=>'El Alto',
-                                        'Sucre'=>'Sucre',
+                                        'Chuquisaca'=>'Chuquisaca',
                                         'Tarija'=>'Tarija',
                                         'Oruro'=>'Oruro',
                                         'Potosi'=>'Potosi',
-                                        'Trinidad'=>'Trinidad',
-                                        'Cobija'=>'Cobija'], 
-                                        $agencia->ciudad,                                            
-            ['class'=>'form-control','placeholder'=>'Ciudad','required']) !!}
+                                        'Beni'=>'Beni',
+                                        'Pando'=>'Pando'], 
+                                        $agencia->departamento,                                            
+            ['class'=>'form-control','placeholder'=>'Departamento','required']) !!}
     </div>
     <div class="form-group">
         {{Form::label('municipio', 'Municipio'); }}

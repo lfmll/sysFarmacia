@@ -245,7 +245,7 @@
 
     <!-- ********Modal Buscar Cliente*********** -->
     <div class="modal fade" id="modalBuscarCliente" role="dialog">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: fit-content;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Buscar Clientes</h4>
@@ -391,7 +391,14 @@
                                 </tr>
                             </thead>
                             <tbody id="tbodyLotem">
+                                <!-- @php $grupoActual = null; @endphp -->
                                 @foreach ($lotesm as $lotem)
+                                    <!-- @if ($grupoActual !== $lotem->nombre_comercial)
+                                        @php $grupoActual = $lotem->nombre_comercial; @endphp
+                                        <tr class="table-primary grupo-toggle" data-grupo ="{{Str::slug($grupoActual)}}">
+                                            <td colspan="7"><strong>{{ $grupoActual }}</strong></td>
+                                        </tr>
+                                    @endif -->
                                     <tr id="{{$lotem->id}}">
                                         <td>
                                             <div class="chk">
@@ -400,7 +407,7 @@
                                         </td>
                                         <td>{{$lotem->numero}}</td>
                                         <td>{{$lotem->nombre_comercial}}</td>
-                                        <td>{{$lotem->fecha_vencimiento}}</td>
+                                        <td>{{date('d-m-Y', strtotime($lotem->fecha_vencimiento))}}</td>
                                         <td>{{$lotem->cantidad}}</td>
                                         <td>{{$lotem->precio_venta}}</td>
                                         <td>{{$lotem->nombre}}</td>
@@ -443,21 +450,21 @@
             "searching": true,
             "ordering": false,
             "info": false,
-            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
+            "language" : "{{ asset('js/es-ES.json') }}",
             "autoWidth": true
         });
     });
 
     $(function () {
-        $('#tlotem').DataTable({
+        $('#tlotem').DataTable({            
             "responsive" : false,
             "paging": true,
             "lengthMenu": [4, 8, "All"],
             "searching": true,
             "ordering": false,
             "info": false,
-            "language" : {"url": "//cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"},
-            "autoWidth": false
+            "language" : "{{ asset('js/es-ES.json') }}",
+            "autoWidth": true
         });
     });   
   
@@ -589,17 +596,68 @@
             data: formData,
             dataType: 'json',
             success: function(data) {
-                let n = data.length;
+                const grupos = {};
+                data.forEach(lote => {
+                    const key = lote.nombre_comercial;
+                    if (!grupos[key]) grupos[key] = [];
+                    grupos[key].push(lote);
+                });
+                
                 $("#tbodyLotem tr").empty();
-                var fila="";
-                for (let i = 0; i < n; i++) {
-                    fila += "<tr id="+data[i].id+"><td><div class='chk'><input type='radio' name='chk' class='chk' id="+data[i].id+" value="+data[i].id+","+data[i].nombre_comercial+","+data[i].cantidad+","+data[i].precio_venta+"></div></td><td>"+data[i].numero+"</td><td>"+data[i].nombre_comercial+"</td><td>"+data[i].fecha_vencimiento+"</td><td>"+data[i].cantidad+"</td><td>"+data[i].precio_venta+"</td><td>"+data[i].nombre+"</td></tr>";                    
-                    console.log(data);
-                }
-                // $('#tlotem').append(fila);
+                let tablaHTML="";
+                
+                Object.keys(grupos).forEach(nombre => {
+                    const grupoId = nombre.replace(/\s+/g, '_');
+
+                    // Fila principal del grupo
+                    tablaHTML += `
+                        <tr class="table-success grupo-toggle" data-grupo="${grupoId}">
+                            <td colspan="7"><strong>${nombre}</strong></td>
+                        </tr>
+                    `;
+
+                    // Subfilas ocultas
+                    grupos[nombre].forEach(lote => {
+                        const fecha = new Date(lote.fecha_vencimiento);
+                        const fechaFormateada = isNaN(fecha) ? 'Fecha inválida' :
+                            `${String(fecha.getDate()).padStart(2, '0')}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${fecha.getFullYear()}`;
+
+                        tablaHTML += `
+                            <tr class="subfila ${grupoId}" style="display: none;" id="${lote.id}">
+                                <td>
+                                    <div class='chk'>
+                                        <input type='radio' name='chk' class='chk' id="${lote.id}"
+                                            value="${lote.id},${lote.nombre_comercial},${lote.cantidad},${lote.precio_venta}">
+                                    </div>
+                                </td>
+                                <td>${lote.numero}</td>
+                                <td>${lote.nombre_comercial}</td>
+                                <td>${fechaFormateada}</td>
+                                <td>${lote.cantidad}</td>
+                                <td>${lote.precio_venta}</td>
+                                <td>${lote.nombre}</td>
+                            </tr>
+                        `;
+                    });
+                });
+
                 $('#tlotem').DataTable().destroy();
-                $('#tlotem').find('tbody').append(fila);
-                $('#tlotem').DataTable().search().draw();                
+                $('#tcliente').DataTable().destroy();
+                $('#tlotem').find('tbody').append(tablaHTML);
+                let tablal = $('#tlotem').DataTable({
+                    paging: true,
+                    ordering: false,
+                    info: false,
+                    searching: true,
+                    language: { url: "{{ asset('js/es-ES.json') }}" }
+                });
+                let tablac = $('#tcliente').DataTable({
+                    language: { url: "{{ asset('js/es-ES.json') }}" }
+                });
+
+                // Aplicar búsqueda y redibujar
+                tablal.search('').draw();               
+                tablac.search('').draw();
             },
             error: function (data) {
                 if (data.status==409) {
@@ -612,6 +670,15 @@
             }
         });
     }
+    document.addEventListener('click', function (e) {
+        const fila = e.target.closest('.grupo-toggle');
+        if (fila) {
+            const grupoId = fila.getAttribute('data-grupo');
+            document.querySelectorAll(`.${grupoId}`).forEach(subfila => {
+                subfila.style.display = (subfila.style.display === 'none') ? 'table-row' : 'none';
+            });
+        }
+    });
 
     function agregar(){
         arreglo = document.getElementById("pcodigo").innerText;

@@ -21,6 +21,7 @@ class CreateCufdsTable extends Migration
             $table->datetime('fecha_vigencia');
             $table->char('estado',1);
             $table->smallInteger('cuis_id')->unsigned();
+            $table->smallInteger('punto_venta_id')->unsigned();
             $table->timestamps();
         });
     }

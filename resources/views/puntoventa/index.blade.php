@@ -28,7 +28,7 @@
                                 <td>{{$puntoventa->id}}</td>
                                 <td>{{$puntoventa->nombre}}</td>
                                 <td>{{$puntoventa->agencia->nombre}}</td>
-                                <td>{{$puntoventa->user->name}}</td>
+                                <td>{{$puntoventa->name}}</td>
                                 <td>
                                     @include('puntoventa.delete',['puntoventa'=>$puntoventa])
                                 </td>                                

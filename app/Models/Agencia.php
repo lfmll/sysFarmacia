@@ -19,8 +19,12 @@ class Agencia extends Model
         'estado',
         'empresa_id'
     ];
-
-    public function puntoventas(){
+    
+    public function cuis(){
+        return $this->hasMany(Cuis::class);
+    }
+    
+    public function puntosVenta(){
         return $this->hasMany(PuntoVenta::class);
     }
 

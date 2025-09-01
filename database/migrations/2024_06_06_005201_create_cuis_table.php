@@ -18,6 +18,7 @@ class CreateCuisTable extends Migration
             $table->string('codigo_cuis',60);         
             $table->datetime('fecha_vigencia');
             $table->char('estado',1);
+            $table->smallInteger('agencia_id')->unsigned();
             $table->smallInteger('punto_venta_id')->unsigned();
             $table->timestamps();
         });

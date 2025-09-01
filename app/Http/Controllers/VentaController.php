@@ -83,14 +83,14 @@ class VentaController extends Controller
                         ->where('medicamentos.codigo_actividad','=',$codigoInicial->codigo_caeb)
                         ->where('medicamentos.codigo_producto_sin','=',$productoInicial->codigo_producto)
                         ->where('medicamentos.stock','>',0)
-                        ->where('lotes.estado','A')     
+                        ->where('lotes.estado','A')                             
                         ->select('lotes.*','medicamentos.nombre_comercial','laboratorios.nombre')             
-                        ->get();
+                        ->get();                                               
         } 
-                  
+               
         $clientes = Cliente::where('estado','A')
-                    ->get();        
-        
+                    ->get(); 
+
         $actividades = Codigo::where('cuis_id',$cuis->id)
                             ->orderBy('descripcion','ASC')
                             ->pluck('descripcion','codigo_caeb');        

@@ -13,15 +13,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use RealRashid\SweetAlert\Facades\Alert;
-use SoapClient;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Parametro;
-use App\Models\TipoParametro;
 use App\Models\Codigo;
 use App\Models\Leyenda;
 use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
 use App\Helpers\BitacoraHelper;
+use Illuminate\Support\Facades\Session;
 
 class CajaController extends Controller
 {
@@ -62,25 +61,27 @@ class CajaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {           
+    {          
+        $sesion = Session::all();
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
         $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
         $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";
         
         $userId = Auth::id();
+        
         $empresa = Empresa::where('estado','A')->first();        
-        $sucursal = Agencia::where('empresa_id',$empresa->id)->first(); 
-        $puntoVenta = PuntoVenta::where('user_id',$userId)->first();                                                                    
+        $sucursal = Agencia::where('id',$sesion['agencia_id'])->first(); 
+        $puntoVenta = PuntoVenta::where('id',$sesion['punto_venta_id'])->first();                                                                    
         $clienteCodigo = Ajuste::consumoSIAT($token,$wsdlCodigos);
         $clienteSincro = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
         
         //Sincronizar CUIS
-        $msjCuis = Cuis::sincroCUIS($clienteCodigo, $puntoVenta);
+        $msjCuis = Cuis::sincroCUIS($clienteCodigo);
         if ($msjCuis == "") 
         {
             //Sincronizar CUFD
-            $msjCufd = Cufd::sincroCUFD($clienteCodigo, $puntoVenta);
+            $msjCufd = Cufd::sincroCUFD($clienteCodigo);
             if ($msjCufd == "") 
             {
                 $cuis = Cuis::obtenerCuis();

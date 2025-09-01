@@ -11,6 +11,7 @@ use App\Models\Ajuste;
 use App\Models\Cuis;
 use App\Models\Parametro;
 use PhpParser\Builder\Param;
+use Illuminate\Support\Facades\DB;
 
 class PuntoVentaController extends Controller
 {
@@ -26,8 +27,11 @@ class PuntoVentaController extends Controller
     public function index()
     {
         $userid = Auth::id();
-        $puntoventas = PuntoVenta::where('estado','A')
-                                ->where('user_id',$userid)
+        $puntoventas = PuntoVenta::join('user_punto_venta','punto_ventas.id','=','user_punto_venta.punto_venta_id')
+                                ->join('users','user_punto_venta.user_id','=','users.id')
+                                ->where('user_punto_venta.user_id','=',$userid)
+                                ->where('punto_ventas.estado','=','A')
+                                ->where('user_punto_venta.estado','=','A')
                                 ->get();
         return view('puntoventa.index',['puntoventas' => $puntoventas]);
     }
@@ -131,5 +135,28 @@ class PuntoVentaController extends Controller
             return redirect('/puntoventa')->with('toast_error', $msjError);
         }
         
-    }    
+    }  
+    
+    public function cargarPuntosVentaU(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('punto_ventas as pv')
+                    ->join('agencias as a', 'pv.agencia_id', '=', 'a.id')                
+                    ->join('user_punto_venta as upv', 'pv.id', '=', 'upv.punto_venta_id')
+                    ->join('users as u', 'upv.user_id', '=', 'u.id')
+                    ->where('u.id','=', Auth::user()->id)
+                    ->where('a.id','=', $request->agencia)
+                    ->where('pv.estado','=', 'A')
+                    ->where('upv.estado','=', 'A')
+                    ->select('pv.id', 'pv.nombre')
+                    ->get();
+            if ($data->isEmpty()) {
+                return response()->json(["mensaje"=>"No existe puntos de ventas en esta Sucursal"],409);
+            }
+        }
+        
+        return response()->json($data);
+    }
+
+    
 }

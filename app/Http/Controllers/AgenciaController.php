@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\BitacoraHelper;
 use App\Models\Agencia;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,17 +45,17 @@ class AgenciaController extends Controller
     public function store(Request $request)
     {
         $agencia = new Agencia($request->all());
+        $ultimoCodigo = Agencia::max('codigo');
+        $agencia->codigo    = is_null($ultimoCodigo) ? '1' : $ultimoCodigo + 1;
         $agencia->nombre    = $request->nombre;
-        $agencia->direccion = $request->direccion; 
-        $agencia->telefono  = $request->telefono;
-        $agencia->ciudad    = $request->ciudad;
+        $agencia->departamento    = $request->departamento;
         $agencia->municipio = $request->municipio;
+        $agencia->direccion = $request->direccion; 
+        $agencia->telefono  = $request->telefono;        
         $agencia->estado    = 'A';
-        $agencia->empresa_id= $request->empresa_id;
-        
+        $agencia->empresa_id= Empresa::first()->id;        
         
         if ($agencia->save()) {
-            // Registrar en Bitacora
             BitacoraHelper::registrar('Registro Sucursal', 'Sucursal creada por el usuario: ' . Auth::user()->name, 'Agencia');
             return redirect('/agencia')->with('toast_success','Registro realizado exitosamente');
         } else {
@@ -95,14 +96,15 @@ class AgenciaController extends Controller
     public function update(Request $request, $id)
     {
         $agencia = Agencia::find($id);
+        $ultimoCodigo = Agencia::max('codigo');
+        $agencia->codigo    = is_null($ultimoCodigo) ? '1' : $ultimoCodigo + 1;
         $agencia->nombre    = $request->nombre;
-        $agencia->direccion = $request->direccion; 
-        $agencia->telefono  = $request->telefono;
-        $agencia->ciudad    = $request->ciudad;
+        $agencia->departamento    = $request->departamento;
         $agencia->municipio = $request->municipio;
+        $agencia->direccion = $request->direccion; 
+        $agencia->telefono  = $request->telefono;        
         $agencia->estado    = 'A';
-        $agencia->empresa_id= $request->empresa_id;
-        
+        $agencia->empresa_id= Empresa::first()->id;
         
         if ($agencia->save()) {
             //Registrar en Bitocora

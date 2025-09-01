@@ -7,7 +7,6 @@ use App\Http\Controllers\ViaController;
 use App\Http\Controllers\MedidaController;
 use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\ClaseController;
-use App\Http\Controllers\InsumoController;
 use App\Http\Controllers\MedicamentoController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\AgenteController;
@@ -17,7 +16,6 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ExcelController;
-use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DocumentoController;
@@ -26,6 +24,9 @@ use App\Http\Controllers\PuntoVentaController;
 use App\Http\Controllers\MensajeController;
 use App\Http\Controllers\AjusteController;
 use App\Http\Controllers\EventoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use Illuminate\Auth\Events\Login;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,12 @@ Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('iniciar');
 // Route::get('charts',[App\Http\Controllers\HomeController::class,'index'])->name('home');
+Route::get('/loginUbicacion', function () {
+    return view('auth.loginUbicacion');
+})->name('loginUbicacion')->middleware('auth');
+Route::get('/cargarPuntosVentaU',[PuntoVentaController::class,'cargarPuntosVentaU'])->name('cargarPuntosVentaU')->middleware('auth');
+Route::get('/cargarPuntosVentaP',[RegisterController::class,'cargarPuntosVentaP'])->name('cargarPuntosVentaP');
+Route::post('/guardarUbicacion',[LoginController::class,'guardarUbicacion'])->name('guardarUbicacion')->middleware('auth');
 Route::resource('empresa',EmpresaController::class);
 Route::resource('laboratorio',LaboratorioController::class);
 Route::resource('via',ViaController::class);

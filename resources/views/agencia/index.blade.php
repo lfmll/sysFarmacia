@@ -19,7 +19,7 @@
                                 <td>Nombre</td>            
                                 <td>Direccion</td>
                                 <td>Telefono</td>
-                                <td>Ciudad</td>
+                                <td>Departamento</td>
                                 <td>Municipio</td>
                                 <td>Acciones</td>
                             </tr>
@@ -30,8 +30,8 @@
                                 <td>{{$agencia->id}}</td>
                                 <td>{{$agencia->nombre}}</td>
                                 <td>{{$agencia->direccion}}</td>
-                                <td>{{$agencia->telefonos}}</td>
-                                <td>{{$agencia->ciudad}}</td>
+                                <td>{{$agencia->telefono}}</td>
+                                <td>{{$agencia->departamento}}</td>
                                 <td>{{$agencia->municipio}}</td>
                                 <td>
                                     <a href="{{url('/agencia/'.$agencia->id.'/edit')}}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Editar</a>

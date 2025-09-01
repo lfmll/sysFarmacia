@@ -4,14 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 class PuntoVenta extends Model
 {
     protected $fillable=[
         'codigo',
         'nombre',
+        'descripcion',
         'agencia_id',
-        'user_id',
         'estado'
     ];
 
@@ -27,8 +30,16 @@ class PuntoVenta extends Model
         return $this->hasMany(Cuis::class);
     }
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function cufd(){
+        return $this->hasMany(Cufd::class);
+    }
+
+    public function usuarios():BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'user_punto_venta')
+                    ->using(UserPuntoVenta::class)
+                    ->withPivot('estado', 'fecha_asignacion')
+                    ->withTimestamps();
     }   
     
     public static function consultarPuntoVentas($clienteSoap, $puntoVenta)
@@ -84,10 +95,16 @@ class PuntoVenta extends Model
                     'codigo' => $responsePuntoVenta->RespuestaRegistroPuntoVenta->codigoPuntoVenta,
                     'nombre' => $request->nombre,
                     'agencia_id' => $request->agencias,
-                    'user_id' => 1,
                     'estado' => 'A'
                 ]);
                 $puntoVenta->save();
+                $userPuntoVenta = new UserPuntoVenta();
+                $userPuntoVenta->fill([
+                    'user_id' => Auth::id(),
+                    'punto_venta_id' => $puntoVenta->id,
+                    'estado' => 'A'
+                ]);
+                $userPuntoVenta->save();
                 return $msj;
             } else {
                 return $msj = $responsePuntoVenta->RespuestaRegistroPuntoVenta->mensajesList->descripcion;

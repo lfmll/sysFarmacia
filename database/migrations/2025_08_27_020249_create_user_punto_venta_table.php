@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePuntoVentasTable extends Migration
+class CreateUserPuntoVentaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreatePuntoVentasTable extends Migration
      */
     public function up()
     {
-        Schema::create('punto_ventas', function (Blueprint $table) {
-            $table->smallIncrements('id');
-            $table->string('codigo',5);
-            $table->string('nombre',50);
-            $table->string('descripcion',100)->nullable();
-            $table->smallinteger('agencia_id')->unsigned();
+        Schema::create('user_punto_venta', function (Blueprint $table) {
+            $table->id();
+            $table->string('user_id');
+            $table->smallInteger('punto_venta_id')->unsigned();
             $table->char('estado',1);
+            $table->string('fecha_asignacion');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreatePuntoVentasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('punto_ventas');
+        Schema::dropIfExists('user_punto_venta');
     }
 }
