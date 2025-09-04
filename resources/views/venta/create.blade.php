@@ -378,42 +378,20 @@
                 <div class="modal-body">                                                                      
                     <div>
                         <br>
-                        <table id="tlotem" class="table">
+                        <table id="tlotem" class="table table-hover">
                             <thead>
                                 <tr>
+                                    <th></th> <!-- Para el botón de expansión -->
+                                    <th>Seleccionar Medicamento</th>
                                     <th></th>
-                                    <th>Nro Lote</th>
-                                    <th>Medicamento</th>
-                                    <th>Fecha Vencimiento</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio Venta</th>
-                                    <th>Laboratorio</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
-                            <tbody id="tbodyLotem">
-                                <!-- @php $grupoActual = null; @endphp -->
-                                @foreach ($lotesm as $lotem)
-                                    <!-- @if ($grupoActual !== $lotem->nombre_comercial)
-                                        @php $grupoActual = $lotem->nombre_comercial; @endphp
-                                        <tr class="table-primary grupo-toggle" data-grupo ="{{Str::slug($grupoActual)}}">
-                                            <td colspan="7"><strong>{{ $grupoActual }}</strong></td>
-                                        </tr>
-                                    @endif -->
-                                    <tr id="{{$lotem->id}}">
-                                        <td>
-                                            <div class="chk">
-                                                <input type="radio" name="chk" class="chk" value="{{$lotem->id}},{{$lotem->nombre_comercial}},{{$lotem->cantidad}},{{$lotem->precio_venta}}" id="{{$lotem->id}}">
-                                            </div>
-                                        </td>
-                                        <td>{{$lotem->numero}}</td>
-                                        <td>{{$lotem->nombre_comercial}}</td>
-                                        <td>{{date('d-m-Y', strtotime($lotem->fecha_vencimiento))}}</td>
-                                        <td>{{$lotem->cantidad}}</td>
-                                        <td>{{$lotem->precio_venta}}</td>
-                                        <td>{{$lotem->nombre}}</td>
-                                    </tr>                                            
-                                @endforeach                                                                                
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -579,6 +557,7 @@
             }
         });
     }
+    
     function catalogarProducto()
     {      
         var formData = {
@@ -595,69 +574,90 @@
             url: '{{url("/catalogarP")}}',
             data: formData,
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {  
+                // Agrupar los lotes por nombre comercial  
                 const grupos = {};
                 data.forEach(lote => {
-                    const key = lote.nombre_comercial;
-                    if (!grupos[key]) grupos[key] = [];
-                    grupos[key].push(lote);
-                });
-                
-                $("#tbodyLotem tr").empty();
-                let tablaHTML="";
-                
-                Object.keys(grupos).forEach(nombre => {
-                    const grupoId = nombre.replace(/\s+/g, '_');
+                    if (!grupos[lote.nombre_comercial]) {
+                        grupos[lote.nombre_comercial] = [];
+                    }
+                    grupos[lote.nombre_comercial].push(lote);
+                })            
+                // Construir las filas principales para cada grupo
+                if ($.fn.DataTable.isDataTable('#tlotem')) {
+                    $('#tlotem').DataTable().clear().destroy();
+                }
+                $("#tlotem tbody").empty();
 
-                    // Fila principal del grupo
-                    tablaHTML += `
-                        <tr class="table-success grupo-toggle" data-grupo="${grupoId}">
-                            <td colspan="7"><strong>${nombre}</strong></td>
+                let filas = "";
+                Object.keys(grupos).forEach(nombreComercial => {                                        
+                    filas += `
+                        <tr class="grupo table-secondary border border-2 border-dark rounded" data-nombre="${nombreComercial}">
+                            <td class="dt-control">
+                                <button class="btn-toggle">
+                                    <i class="fas fa-angle-right" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                            <td colspan="2"><strong>${nombreComercial}</strong></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
-                    `;
-
-                    // Subfilas ocultas
-                    grupos[nombre].forEach(lote => {
-                        const fecha = new Date(lote.fecha_vencimiento);
-                        const fechaFormateada = isNaN(fecha) ? 'Fecha inválida' :
-                            `${String(fecha.getDate()).padStart(2, '0')}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${fecha.getFullYear()}`;
-
-                        tablaHTML += `
-                            <tr class="subfila ${grupoId}" style="display: none;" id="${lote.id}">
-                                <td>
-                                    <div class='chk'>
-                                        <input type='radio' name='chk' class='chk' id="${lote.id}"
-                                            value="${lote.id},${lote.nombre_comercial},${lote.cantidad},${lote.precio_venta}">
-                                    </div>
-                                </td>
-                                <td>${lote.numero}</td>
-                                <td>${lote.nombre_comercial}</td>
-                                <td>${fechaFormateada}</td>
-                                <td>${lote.cantidad}</td>
-                                <td>${lote.precio_venta}</td>
-                                <td>${lote.nombre}</td>
-                            </tr>
-                        `;
-                    });
+                        `;                    
                 });
-
-                $('#tlotem').DataTable().destroy();
-                $('#tcliente').DataTable().destroy();
-                $('#tlotem').find('tbody').append(tablaHTML);
-                let tablal = $('#tlotem').DataTable({
+                $("#tlotem tbody").html(filas);
+                // Inicializar DataTable sobre los grupos
+                const tablal = $('#tlotem').DataTable({
                     paging: true,
                     ordering: false,
-                    info: false,
                     searching: true,
                     language: { url: "{{ asset('js/es-ES.json') }}" }
                 });
-                let tablac = $('#tcliente').DataTable({
+
+                // Evento para abrir/cerrar child row
+                $('#tlotem tbody').on('click', 'td.dt-control', function () {
+                    const tr = $(this).closest('tr');
+                    const nombre = tr.data('nombre');
+                    const row = tablal.row(tr);
+
+                    if (row.child.isShown()) {
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    } else {
+                        const lotes = grupos[nombre];
+                        let contenido = '<table class="table table-sm" class="display stripe hover row-border"><thead><tr><th></th><th>Lote</th><th>Medicamento</th><th>Vencimiento</th><th>Cantidad</th><th>Precio</th><th>Laboratorio</th></tr></thead><tbody>';
+                        lotes.forEach(lote => {
+                            contenido += `
+                                <tr id="${lote.id}">
+                                    <td>
+                                        <div class="chk">
+                                            <input type="radio" name="chk" class="chk" id="${lote.id}" value="${lote.id},${lote.nombre_comercial},${lote.cantidad},${lote.precio_venta}">
+                                        </div>
+                                    </td>
+                                    <td>${lote.numero}</td>
+                                    <td>${lote.nombre_comercial}</td>
+                                    <td>${lote.fecha_vencimiento}</td>
+                                    <td>${lote.cantidad}</td>
+                                    <td>${lote.precio_venta}</td>
+                                    <td>${lote.nombre}</td>
+                                </tr>
+                            `;
+                        });
+                        contenido += '</tbody></table>';
+                        row.child(contenido).show();
+                        tr.addClass('shown');
+                    }
+                });
+                // Cliente (si aplica)
+                if ($.fn.DataTable.isDataTable('#tcliente')) {
+                    $('#tcliente').DataTable().clear().destroy();
+                }
+                $('#tcliente').DataTable({
                     language: { url: "{{ asset('js/es-ES.json') }}" }
                 });
-
-                // Aplicar búsqueda y redibujar
-                tablal.search('').draw();               
-                tablac.search('').draw();
             },
             error: function (data) {
                 if (data.status==409) {
@@ -670,15 +670,7 @@
             }
         });
     }
-    document.addEventListener('click', function (e) {
-        const fila = e.target.closest('.grupo-toggle');
-        if (fila) {
-            const grupoId = fila.getAttribute('data-grupo');
-            document.querySelectorAll(`.${grupoId}`).forEach(subfila => {
-                subfila.style.display = (subfila.style.display === 'none') ? 'table-row' : 'none';
-            });
-        }
-    });
+
 
     function agregar(){
         arreglo = document.getElementById("pcodigo").innerText;
