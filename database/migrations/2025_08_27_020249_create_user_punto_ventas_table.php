@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserPuntoVentaTable extends Migration
+class CreateUserPuntoVentasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateUserPuntoVentaTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_punto_venta', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_id');
+        Schema::create('user_punto_ventas', function (Blueprint $table) {
+            $table->smallIncrements('id');
+            $table->unsignedBigInteger('user_id');
             $table->smallInteger('punto_venta_id')->unsigned();
             $table->char('estado',1);
             $table->string('fecha_asignacion');

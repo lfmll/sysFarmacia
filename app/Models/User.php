@@ -26,7 +26,7 @@ class User extends Authenticatable
 
     public function puntosVenta():BelongsToMany
     {
-        return $this->belongsToMany(PuntoVenta::class, 'user_punto_venta')
+        return $this->belongsToMany(PuntoVenta::class, 'user_punto_ventas')
                     ->using(UserPuntoVenta::class)
                     ->withPivot('estado', 'fecha_asignacion')
                     ->withTimestamps();

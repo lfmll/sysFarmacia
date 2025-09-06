@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Agencia;
 use App\Models\PuntoVenta;
+use App\Models\UserPuntoVenta;
 use Carbon\Carbon;
 
 class RegisterController extends Controller
@@ -74,9 +75,12 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
         //Obtener punto de venta
-        $puntoVenta = PuntoVenta::where('id',$data['punto_venta_id'])->first();
+        $puntoVenta = PuntoVenta::where('id',$data['punto_venta'])->first();
         if ($puntoVenta) {
-            $user->puntosVenta()->attach($puntoVenta, ['estado' => 'A', 'fecha_asignacion' => Carbon::now('America/La_Paz')]);
+            $user->puntosVenta()->attach($puntoVenta->id, [
+                'estado' => 'A',
+                'fecha_asignacion' => Carbon::now('America/La_Paz')
+            ]);
         }
         return $user;
     }

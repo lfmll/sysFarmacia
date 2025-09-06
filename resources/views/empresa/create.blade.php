@@ -35,11 +35,22 @@
 @stop
 
 @section('auth_body')
-<div class="col-md-12">               
+<div class="col-md-12">              
     @include('empresa.form',['empresa'=>$empresa,'url'=>'/empresa','method'=>'POST'])
 </div>
 @stop
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('toast_error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('toast_error') }}"
+            });
+        </script>
+    @endif
+
 <script>
   var currentTab = 0; // Current tab is set to be the first tab (0)
   showTab(currentTab); // Display the current tab

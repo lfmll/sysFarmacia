@@ -24,6 +24,7 @@ use App\Http\Controllers\PuntoVentaController;
 use App\Http\Controllers\MensajeController;
 use App\Http\Controllers\AjusteController;
 use App\Http\Controllers\EventoController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Auth\Events\Login;
@@ -42,8 +43,13 @@ use Illuminate\Auth\Events\Login;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('iniciar');
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('iniciar');
 // Route::get('charts',[App\Http\Controllers\HomeController::class,'index'])->name('home');
+// Route::middleware(['iniciar'])->group(function () {
+//     Route::get('/login', [LoginController::class, 'showLoginForm']);
+//     Route::get('/register', [RegisterController::class, 'showRegistrationForm']);
+// });
+Route::get('/', [HomeController::class, 'index'])->middleware('iniciar');
 Route::get('/loginUbicacion', function () {
     return view('auth.loginUbicacion');
 })->name('loginUbicacion')->middleware('auth');

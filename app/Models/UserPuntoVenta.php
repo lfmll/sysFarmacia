@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class UserPuntoVenta extends Model
+class UserPuntoVenta extends Pivot
 {
+    protected $table = 'user_punto_ventas';
     protected $fillable = [
         'user_id',
         'punto_venta_id',

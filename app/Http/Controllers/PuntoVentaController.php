@@ -140,16 +140,16 @@ class PuntoVentaController extends Controller
     public function cargarPuntosVentaU(Request $request)
     {
         if ($request->ajax()) {
-            $data = DB::table('punto_ventas as pv')
-                    ->join('agencias as a', 'pv.agencia_id', '=', 'a.id')                
-                    ->join('user_punto_venta as upv', 'pv.id', '=', 'upv.punto_venta_id')
-                    ->join('users as u', 'upv.user_id', '=', 'u.id')
-                    ->where('u.id','=', Auth::user()->id)
-                    ->where('a.id','=', $request->agencia)
-                    ->where('pv.estado','=', 'A')
-                    ->where('upv.estado','=', 'A')
-                    ->select('pv.id', 'pv.nombre')
-                    ->get();
+            $data = DB::table('punto_ventas')
+                    ->join('agencias', 'punto_ventas.agencia_id', '=', 'agencias.id')
+                    ->join('user_punto_ventas', 'punto_ventas.id', '=', 'user_punto_ventas.punto_venta_id')
+                    ->join('users', 'user_punto_ventas.user_id', '=', 'users.id')
+                    ->where('users.id', '=', Auth::user()->id)
+                    ->where('agencias.id', '=', $request->agencia)
+                    ->where('punto_ventas.estado', '=', 'A')
+                    ->where('user_punto_ventas.estado', '=', 'A')
+                    ->select('punto_ventas.id', 'punto_ventas.nombre')
+    ->get();
             if ($data->isEmpty()) {
                 return response()->json(["mensaje"=>"No existe puntos de ventas en esta Sucursal"],409);
             }

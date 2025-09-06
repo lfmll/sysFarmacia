@@ -36,7 +36,7 @@ class PuntoVenta extends Model
 
     public function usuarios():BelongsToMany
     {
-        return $this->belongsToMany(User::class,'user_punto_venta')
+        return $this->belongsToMany(User::class,'user_punto_ventas')
                     ->using(UserPuntoVenta::class)
                     ->withPivot('estado', 'fecha_asignacion')
                     ->withTimestamps();

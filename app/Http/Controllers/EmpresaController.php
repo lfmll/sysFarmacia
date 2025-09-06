@@ -16,10 +16,10 @@ use Carbon\Carbon;
 
 class EmpresaController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
     /**
      * Display a listing of the resource.
      *
@@ -83,9 +83,7 @@ class EmpresaController extends Controller
             $sucursal->estado = 'A';
             $sucursal->empresa_id = $empresa->id;
             $sucursal->save();
-            
-            $idUsuario = Auth::id();
-            
+                        
             $puntoventa = new PuntoVenta;
             $puntoventa->codigo = 0;
             $puntoventa->nombre = "Por defecto";            
@@ -93,12 +91,12 @@ class EmpresaController extends Controller
             $puntoventa->estado = "A";
             $puntoventa->save();                
 
-            $userPuntoVenta = new UserPuntoVenta;
-            $userPuntoVenta->user_id = $idUsuario;
-            $userPuntoVenta->punto_venta_id = $puntoventa->id;
-            $userPuntoVenta->estado = 'A';
-            $userPuntoVenta->fecha_asignacion = Carbon::now('America/La_Paz');
-            $userPuntoVenta->save();
+            // $userPuntoVenta = new UserPuntoVenta;
+            // $userPuntoVenta->user_id = $idUsuario;
+            // $userPuntoVenta->punto_venta_id = $puntoventa->id;
+            // $userPuntoVenta->estado = 'A';
+            // $userPuntoVenta->fecha_asignacion = Carbon::now('America/La_Paz');
+            // $userPuntoVenta->save();
 
             $ajuste = new Ajuste;
             $ajuste->username = $request->correo;
@@ -108,18 +106,12 @@ class EmpresaController extends Controller
             $ajuste->save();
 
             DB::commit();
-                            
-        } catch (\Exception $e) {            
-            DB::rollBack();
-        }   
 
-        if ($ajuste->save() && $puntoventa->save() && $sucursal->save() && $empresa->save()) {
-            //Registrar Bitacora
-            BitacoraHelper::registrar('Registro Empresa', 'Empresa creada por el usuario: ' . Auth::user()->name, 'Empresa');
-            return redirect('/')->with('toast_success','Datos de Empresa registrados');
-        } else {
-            return view('empresa.create')->with('toast_error',"Error al registrar");
-        }
+            return redirect('/register');                          
+        } catch (\Exception $e) {          
+            DB::rollBack();
+            return redirect()->route('empresa.create')->with('toast_error',"Excepción: " . $e->getMessage());
+        }           
                            
     }
 
