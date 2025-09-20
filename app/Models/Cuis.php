@@ -44,6 +44,11 @@ class Cuis extends Model
         return $this->hasMany(ActividadDocumento::class);
     }
 
+    public function sincronizaciones()
+    {
+        return $this->hasMany(Sincronizacion::class);
+    }
+
     public static function obtenerCuis()
     {
         $fechaActual = Carbon::now('America/La_Paz')->toDatetimeString();
@@ -58,7 +63,7 @@ class Cuis extends Model
     public static function sincroCUIS($clienteCuis)
     {
         $empresa = Empresa::first();
-        $agencia = Agencia::where('id', session('agencia_id'))->first();
+        $agencia = Agencia::where('id', session('agencia_id'))->first();        
         $puntoVenta = PuntoVenta::where('id', session('punto_venta_id'))->first();
         
         $msjError = "";

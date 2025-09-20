@@ -21,6 +21,7 @@ use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
 use App\Helpers\BitacoraHelper;
 use Illuminate\Support\Facades\Session;
+use App\Models\Sincronizacion;
 
 class CajaController extends Controller
 {
@@ -61,88 +62,98 @@ class CajaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {          
-        $sesion = Session::all();
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";
+    {                          
+        $CajaAbierta = Caja::where('user_id', Auth::id())
+            ->where('agencia_id', session('agencia_id'))
+            ->where('punto_venta_id', session('punto_venta_id'))
+            ->whereDate('fecha', Carbon::parse($request->fecha)->toDateString())
+            ->where('estado', 'A')
+            ->exists();        
         
-        $userId = Auth::id();
-        
-        $empresa = Empresa::where('estado','A')->first();        
-        $sucursal = Agencia::where('id',$sesion['agencia_id'])->first(); 
-        $puntoVenta = PuntoVenta::where('id',$sesion['punto_venta_id'])->first();                                                                    
-        $clienteCodigo = Ajuste::consumoSIAT($token,$wsdlCodigos);
-        $clienteSincro = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
-        
-        //Sincronizar CUIS
-        $msjCuis = Cuis::sincroCUIS($clienteCodigo);
-        if ($msjCuis == "") 
-        {
-            //Sincronizar CUFD
-            $msjCufd = Cufd::sincroCUFD($clienteCodigo);
-            if ($msjCufd == "") 
-            {
-                $cuis = Cuis::obtenerCuis();
-                
-                //Sincronizar Parametros
-                $parametrosSincronizacion = array(
-                    'SolicitudSincronizacion' => array(
-                        'codigoAmbiente' => 2, 
-                        'codigoPuntoVenta' => $puntoVenta->codigo,
-                        'codigoSistema' => $empresa->codigo_sistema,
-                        'codigoSucursal' => $sucursal->codigo,
-                        'cuis' => $cuis->codigo_cuis,
-                        'nit' => $empresa->nit
-                    )
-                );
-                
-                 //PARAMETROS
-                 $responseParametros = Parametro::sincronizarParametro($clienteSincro, $parametrosSincronizacion, $cuis->id);            
-                                        
-                 //SECTOR
-                 //Sincronizar Actividades
-                 $responseActividades = Codigo::soapActividad($clienteSincro, $parametrosSincronizacion, $cuis->id);
- 
-                 //Sincronizar Leyendas
-                 $responseLeyendas = Leyenda::soapLeyenda($clienteSincro, $parametrosSincronizacion, $cuis->id);            
-                 
-                 //Sincronizar Catalogos (Productos/Servicios)
-                 $responseCatalogos = Catalogo::soapCatalogo($clienteSincro, $parametrosSincronizacion, $cuis->id);
-                 
-                 //Sincronizar Actividad Documento Sector
-                 $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincro, $parametrosSincronizacion, $cuis->id);
- 
-                // $responseFechaHora = $clienteSincro->sincronizarFechaHora($parametrosSincronizacion);
-                // $fechaHora = $responseFechaHora->RespuestaFechaHora->fechaHora; 
+        if (!$CajaAbierta) 
+        {                        
+            $ajuste = Ajuste::first();
+            $token = $ajuste->token;
+            $wsdlCodigos = $ajuste->wsdl."/FacturacionCodigos?wsdl";
+            $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";
+            
+                    
+            $empresa = Empresa::where('estado','A')->first();        
+            $sucursal = Agencia::where('id',session('agencia_id'))->first(); 
+            $puntoVenta = PuntoVenta::where('id',session('punto_venta_id'))->first();                                                                    
+            $clienteCodigo = Ajuste::consumoSIAT($token,$wsdlCodigos);
+            $clienteSincro = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
+            
+            
+            //Sincronizar CUIS
+            $msjCuis = Cuis::sincroCUIS($clienteCodigo);
+            if ($msjCuis == "") 
+            {            
+                //Sincronizar CUFD
+                $msjCufd = Cufd::sincroCUFD($clienteCodigo);
+                if ($msjCufd == "") 
+                {
+                    $cuis = Cuis::obtenerCuis();
+                    
+                    //Sincronizar Parametros
+                    $parametrosSincronizacion = array(
+                        'SolicitudSincronizacion' => array(
+                            'codigoAmbiente' => 2, 
+                            'codigoPuntoVenta' => $puntoVenta->codigo,
+                            'codigoSistema' => $empresa->codigo_sistema,
+                            'codigoSucursal' => $sucursal->codigo,
+                            'cuis' => $cuis->codigo_cuis,
+                            'nit' => $empresa->nit
+                        )
+                    );
+                    $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion(session('agencia_id'), session('punto_venta_id'));
+                    if (!$estaSincronizado) {
+                        $sincronizacion = new Sincronizacion();
+                        $sincronizacion->nit = $empresa->nit;
+                        $sincronizacion->agencia_id = $sucursal->id;
+                        $sincronizacion->punto_venta_id = $puntoVenta->id;
+                        $sincronizacion->cuis_id = $cuis->id;
+                        $sincronizacion->save();
+                    } else {
+                        $sincronizacion = $estaSincronizado;
+                    }
+                    
+                    //PARAMETROS
+                    $responseParametros = Parametro::sincronizarParametro($clienteSincro, $parametrosSincronizacion, $cuis->id);            
+                                            
+                    //SECTOR
+                    //Sincronizar Actividades
+                    $responseActividades = Codigo::soapActividad($clienteSincro, $parametrosSincronizacion, $cuis->id);
 
-                $caja = new Caja($request->all());
-                $caja->fecha = $request->fecha;
-                
-                $caja->hora_inicio = $request->hora_inicio;
-                $caja->monto_apertura = $request->monto_apertura;
+                    //Sincronizar Leyendas
+                    $responseLeyendas = Leyenda::soapLeyenda($clienteSincro, $parametrosSincronizacion, $cuis->id);            
+                    
+                    //Sincronizar Catalogos (Productos/Servicios)
+                    $responseCatalogos = Catalogo::soapCatalogo($clienteSincro, $parametrosSincronizacion, $cuis->id);
+                    
+                    //Sincronizar Actividad Documento Sector
+                    $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincro, $parametrosSincronizacion, $cuis->id);
+    
+                    //Sincronizar Fecha y Hora
+                    $responseFechaHora = Sincronizacion::sincronizacionFechaHora($clienteSincro, $parametrosSincronizacion, $sincronizacion->id);
 
-                $ultimaApertura = Caja::all()->last();
-                
-                if ($ultimaApertura==null || $ultimaApertura->fecha != $caja->fecha) {
-                    Alert::warning('Warning', '¿Desea Continuar? Una vez realizada la apertura no se podrá modificar');
+                    $caja = new Caja($request->all());
+                    $caja->fecha = $request->fecha;                    
+                    $caja->hora_inicio = $request->hora_inicio;
+                    $caja->monto_apertura = $request->monto_apertura;                    
                     $caja->save();
                     // Registrar en Bitacora
                     BitacoraHelper::registrar('Apertura de Caja', 'Apertura de Caja realizada por el usuario: ' . Auth::user()->name, 'Caja');
                     return redirect('/caja')->with('toast_success','Apertura de Caja realizado exitosamente');
                 } else {
-                    return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
+                    return redirect('/caja')->with('toast_error',$msjCufd);
                 }
             } else {
-                return redirect('/caja')->with('errors',$msjCufd);
-            }
+                return redirect('/caja')->with('toast_error',$msjCuis);
+            }             
         } else {
-            return redirect('/caja')->with('toast_error',$msjCuis);
-        }
-        
-         
-           
+            return redirect('/caja')->with('errors','Ya se realizó la Apertura de Caja');
+        }                             
     }
 
     /**

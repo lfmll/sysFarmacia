@@ -19,6 +19,7 @@ class CreateCajasTable extends Migration
             $table->date('fecha');
             $table->time('hora_inicio');            
             $table->time('hora_fin')->nullable();
+            $table->char('estado',1);
             $table->integer('b200')->nullable();
             $table->integer('b100')->nullable();
             $table->integer('b50')->nullable();
@@ -33,6 +34,9 @@ class CreateCajasTable extends Migration
             $table->decimal('gastos',12,2)->nullable();
             $table->decimal('ganancias',12,2)->nullable();
             $table->decimal('total',12,2)->nullable();
+            $table->smallInteger('agencia_id')->unsigned();
+            $table->smallInteger('punto_venta_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
         });
     }

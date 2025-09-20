@@ -23,6 +23,7 @@ use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\BitacoraHelper;
+use App\Models\Sincronizacion;
 
 class AjusteController extends Controller
 {
@@ -39,33 +40,43 @@ class AjusteController extends Controller
     {
         $ajustes = Ajuste::first();        
         $cuis = Cuis::obtenerCuis();
-        $tipo_parametro = TipoParametro::all();                         
-        if (is_null($cuis)) {
-            $cufd = null;
-            $parametros = null;
-            $actividades = null;
-            $leyendas = null;
-            $catalogos = null;
-            $actividad_documentos = null;
-        } else {
-            $cufd = Cufd::where('estado','A')
-                    ->where('cuis_id',$cuis->id)
-                    ->first();
-            $parametros = Parametro::where('cuis_id',$cuis->id)->orderBy('codigo_clasificador','ASC')->get();        
-            $actividades = Codigo::where('cuis_id',$cuis->id)->get();          
-            $leyendas = Leyenda::where('cuis_id',$cuis->id)->get();
-            $catalogos = Catalogo::where('cuis_id',$cuis->id)->get();
-            $actividad_documentos = ActividadDocumento::where('cuis_id',$cuis->id)->get();
+        $tipo_parametro = TipoParametro::all();     
+        $fecha_local = Carbon::now('America/La_Paz')->format('Y-m-d H:i:s');       
+        
+         //Datos para sincronizacion                    
+        if (!is_null($cuis)) {
+            $cufd = Cufd::obtenerCufd();
+            if (!is_null($cufd)) {
+                $parametros = Parametro::where('cuis_id',$cuis->id)->orderBy('codigo_clasificador','ASC')->get();        
+                $actividades = Codigo::where('cuis_id',$cuis->id)->get();          
+                $leyendas = Leyenda::where('cuis_id',$cuis->id)->get();
+                $catalogos = Catalogo::where('cuis_id',$cuis->id)->get();
+                $actividad_documentos = ActividadDocumento::where('cuis_id',$cuis->id)->get();
+                $sincronizacionFechaHora = Sincronizacion::obtenerUltimaSincronizacion(session('agencia_id'), session('punto_venta_id')); 
+                            
+                if ($sincronizacionFechaHora) {
+                    $fechaSincronizada = $sincronizacionFechaHora->fecha_sincronizada;
+                    $fecha_local = $sincronizacionFechaHora->fecha_local;
+                    $diferencia_horaria = $sincronizacionFechaHora->diferencia_horaria;
+                } else {
+                    $fechaSincronizada = null;
+                    $fecha_local = null;
+                    $diferencia_horaria = null;
+                }            
+            }
         }
         return view('ajuste.index',['ajuste'=>$ajustes])
                 ->with('cuis',$cuis)
                 ->with('cufd',$cufd)
-                ->with('parametros',$parametros)
                 ->with('tipo_parametro',$tipo_parametro)
-                ->with('actividades',$actividades)
-                ->with('leyendas',$leyendas)
-                ->with('catalogos',$catalogos)
-                ->with('actividad_documentos',$actividad_documentos);
+                ->with('parametros',$parametros ?? null)                
+                ->with('actividades',$actividades ?? null)
+                ->with('leyendas',$leyendas ?? null)
+                ->with('catalogos',$catalogos ?? null)
+                ->with('actividad_documentos',$actividad_documentos ?? null)
+                ->with('fechaSincronizada',$fechaSincronizada ?? null)
+                ->with('fecha_local',$fecha_local)
+                ->with('diferencia_horaria',$diferencia_horaria ?? null);
     }
 
     /**
@@ -229,7 +240,19 @@ class AjusteController extends Controller
                         'nit' => $empresa->nit
                     )
                 );
-
+                $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($sucursal->id, $puntoVenta->id);
+                if (!$estaSincronizado) {
+                    //Registrar Sincronizacion
+                    $sincronizacion = new Sincronizacion();
+                    $sincronizacion->nit = $empresa->nit;
+                    $sincronizacion->agencia_id = $sucursal->id;
+                    $sincronizacion->punto_venta_id = $puntoVenta->id;
+                    $sincronizacion->cuis_id = $cuis->id;
+                    $sincronizacion->save();
+                } else {
+                    $sincronizacion = $estaSincronizado;
+                }
+                
                 //PARAMETROS
                 $responseParametros = Parametro::sincronizarParametro($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);            
                                         
@@ -246,9 +269,9 @@ class AjusteController extends Controller
                 //Sincronizar Actividad Documento Sector
                 $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);
 
-                // $responseFechaHora = $clienteSincronizacion->sincronizarFechaHora($parametrosSincronizacion);
-                // $fechaHora = $responseFechaHora->RespuestaFechaHora->fechaHora;
-                            
+                //Sincronizar Fecha y Hora
+                $responseFechaHora = Sincronizacion::sincronizacionFechaHora($clienteSincronizacion, $parametrosSincronizacion, $sincronizacion->id);
+                                            
                 // Registrar en Bitacora
                 BitacoraHelper::registrar('Sincronizacion Parametros', 'Sincronizacion realizada por el usuario: ' . Auth::user()->name, 'Parametro');
                 return redirect('/ajuste')->with('toast_success', 'Sincronizacion Completada');

@@ -34,6 +34,10 @@ class PuntoVenta extends Model
         return $this->hasMany(Cufd::class);
     }
 
+    public function sincronizaciones(){
+        return $this->hasMany(Sincronizacion::class);
+    }
+
     public function usuarios():BelongsToMany
     {
         return $this->belongsToMany(User::class,'user_punto_ventas')

@@ -74,6 +74,11 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+        session([
+            'agencia_id' => $data['agencia'],
+            'punto_venta_id' => $data['punto_venta'],
+        ]);
+
         //Obtener punto de venta
         $puntoVenta = PuntoVenta::where('id',$data['punto_venta'])->first();
         if ($puntoVenta) {

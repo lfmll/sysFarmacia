@@ -27,11 +27,11 @@ class PuntoVentaController extends Controller
     public function index()
     {
         $userid = Auth::id();
-        $puntoventas = PuntoVenta::join('user_punto_venta','punto_ventas.id','=','user_punto_venta.punto_venta_id')
-                                ->join('users','user_punto_venta.user_id','=','users.id')
-                                ->where('user_punto_venta.user_id','=',$userid)
+        $puntoventas = PuntoVenta::join('user_punto_ventas','punto_ventas.id','=','user_punto_ventas.punto_venta_id')
+                                ->join('users','user_punto_ventas.user_id','=','users.id')
+                                ->where('user_punto_ventas.user_id','=',$userid)
                                 ->where('punto_ventas.estado','=','A')
-                                ->where('user_punto_venta.estado','=','A')
+                                ->where('user_punto_ventas.estado','=','A')
                                 ->get();
         return view('puntoventa.index',['puntoventas' => $puntoventas]);
     }

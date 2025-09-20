@@ -397,27 +397,7 @@ class VentaController extends Controller
                     $msjError = Factura::validarXML($xml, 'facturaComputarizadaCompraVenta.xsd');                        
                     if (empty($msjError)) 
                     {
-                        //TODO: 3 - COMPRIMIR XML
-                        // $zip = new ZipArchive();
-                        
-                        // $zipNombreArchivo = 'factura'.$factura->numeroFactura.'.zip';
-                        // $xmlNombreArchivo = $factura->numeroFactura.'.xml';                        
-                        // $path = public_path('/siat/facturas');
-                        // if (!file_exists($path)) {
-                        //     mkdir($path, 0777, true);
-                        // }
-                        // $ziPath = $path.'/'.$zipNombreArchivo;
-
-                        // if ($zip->open($ziPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-                        //     $zip->addFromString($xmlNombreArchivo, $xml); //Anadir el XML al ZIP                            
-                        //     $zip->close();  // Cerrar el ZIP
-                        //     $hashArchivo = hash_file('sha256', $ziPath);  // Calcular el hash del archivo ZIP                            
-                        //     $contenidoZip = file_get_contents($ziPath); // Leer el contenido del ZIP    
-                        //     $archivoZipBase64 = base64_encode($contenidoZip); // Codificar a Base64                                                        
-                        // } else {
-                        //     return redirect('/venta')->with('toast_error', 'Error al crear el archivo ZIP.');
-                        // }
-                        /////////***************/////////
+                        //TODO: 3 - COMPRIMIR XML                        
                         //1. Generar nombres y rutas de archivos
                         $gzipFileName = $factura->numeroFactura.'.gz';
                         $path = public_path('/siat/facturas/');
@@ -431,11 +411,7 @@ class VentaController extends Controller
                         file_put_contents($gzPath, $gzdata); // Guardar el archivo comprimido                        
                         //3. Calcular el hash del archivo comprimido
                         $hashArchivo = hash_file('sha256', $gzPath); // Calcular el hash del archivo comprimido
-                        
-                        // $zp = gzopen($path, 'w9'); // Abrir el archivo comprimido
-                        // gzwrite($zp, $xml); // Escribir el contenido comprimido                                                
-                        // gzclose($zp); // Cerrar el archivo comprimido
-                        
+                                                
                         /////////***************/////////
                         //TODO: 4 Enviar Factura SIAT                    
                         $ajuste = Ajuste::first();

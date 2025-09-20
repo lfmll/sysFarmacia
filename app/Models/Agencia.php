@@ -24,6 +24,10 @@ class Agencia extends Model
         return $this->hasMany(Cuis::class);
     }
     
+    public function cufd(){
+        return $this->hasMany(Cufd::class);
+    }
+    
     public function puntosVenta(){
         return $this->hasMany(PuntoVenta::class);
     }
@@ -31,4 +35,9 @@ class Agencia extends Model
     public function empresa(){
         return $this->belongsTo(Empresa::class);
     }
+    
+    public function sincronizaciones(){
+        return $this->hasMany(Sincronizacion::class);
+    }
+
 }

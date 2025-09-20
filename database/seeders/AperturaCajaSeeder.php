@@ -20,7 +20,11 @@ class AperturaCajaSeeder extends Seeder
         Caja::firstOrCreate([
             'monto_apertura' => 0,
             'fecha' => $fecha,
-            'hora_inicio' => $hora_inicio
+            'hora_inicio' => $hora_inicio,
+            'estado' => 'A',
+            'agencia_id' => 1,
+            'punto_venta_id' => 1,
+            'user_id' => 1
         ]);
     }
 }

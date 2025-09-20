@@ -40,6 +40,8 @@
 </div>
 @stop
 @section('js')
+  @include('utilitario.sanitizador')
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(session('toast_error'))
         <script>

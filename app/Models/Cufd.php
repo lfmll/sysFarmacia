@@ -15,11 +15,16 @@ class Cufd extends Model
         'fecha_vigencia',
         'estado',
         'cuis_id',
+        'agencia_id',
         'punto_venta_id'
     ];
 
     public function cuis(){
         return $this->belongsTo(Cuis::class);
+    }
+
+    public function agencia(){
+        return $this->belongsTo(Agencia::class);
     }
 
     public function punto_venta(){
@@ -32,10 +37,11 @@ class Cufd extends Model
         $cuis = Cuis::obtenerCuis();
         $cufd = null;
         if (!is_null($cuis)) {
-            $cufd =  Cufd::where('estado','A')
-                    ->where('cuis_id',$cuis->id)
-                    ->where('punto_venta_id',session('punto_venta_id')) 
-                    ->where('fecha_vigencia','>',$fechaActual)
+            $cufd =  Cufd::where('estado', 'A')
+                    ->where('cuis_id', $cuis->id)
+                    ->where('agencia_id', session('agencia_id'))
+                    ->where('punto_venta_id', session('punto_venta_id')) 
+                    ->where('fecha_vigencia', '>' ,$fechaActual)
                     ->first();
         }
         
@@ -78,6 +84,7 @@ class Cufd extends Model
                     'direccion' => $responseCufd->RespuestaCufd->direccion,
                     'fecha_vigencia' => $fecha,
                     'estado' => 'A',
+                    'agencia_id' => $agencia->id,
                     'punto_venta_id' => $puntoVenta->id,
                     'cuis_id' => $cuis->id
                 ]);

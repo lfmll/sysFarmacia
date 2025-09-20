@@ -53,7 +53,7 @@ class EmpresaController extends Controller
             DB::beginTransaction();
             $hasFile=$request->hasFile('cover') && $request->cover->isValid();
             $empresa= new Empresa($request->all());
-            $empresa->nombre = $request->nombre;
+            $empresa->nombre = $request->razon_social;
             $empresa->nit = $request->nit;
             $empresa->correo = $request->correo;
             if ($hasFile) {

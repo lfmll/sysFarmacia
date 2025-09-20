@@ -13,7 +13,7 @@
             <form method="POST" action="{{url('/guardarUbicacion')}}" accept-charset="UTF-8" enctype="multipart/form-data">
                 @csrf
                 <div class="input-group mb-4">
-                    <select id="sucursales" name="agencia_id" class="form-control" onchange="cargarPuntosVentas()" required>
+                    <select id="agencia_id" name="agencia_id" class="form-control" onchange="cargarPuntosVentas()" required>
                         <option value="">Seleccione una Sucursal</option>
                         @foreach($sucursales as $sucursal)
                             <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
@@ -21,7 +21,7 @@
                     </select>
                 </div>
                 <div class="input-group mb-4">
-                    <select id="puntosVentas" name="punto_venta_id" class="form-control" required>
+                    <select id="punto_venta_id" name="punto_venta_id" class="form-control" required>
                         <option value="">Seleccione un Punto de Venta</option>
                     </select>
                 </div>
@@ -44,17 +44,17 @@
 <script>
     function cargarPuntosVentas()
     {
-        var formData = { agencia: $('#sucursales').val() };        
+        var formData = { agencia: $('#agencia_id').val() };        
         $.ajax({
             url: "{{ url('/cargarPuntosVentaU') }}",
             type: "GET",
             data: formData,
             dataType: 'json',
             success: function(data) {
-                $('#puntosVentas').empty();
-                $('#puntosVentas').append('<option value="">Seleccione un Punto de Venta</option>');
+                $('#punto_venta_id').empty();
+                $('#punto_venta_id').append('<option value="">Seleccione un Punto de Venta</option>');
                 $.each(data, function(key, value) {
-                    $('#puntosVentas').append('<option value="'+ value.id +'">'+ value.nombre +'</option>');
+                    $('#punto_venta_id').append('<option value="'+ value.id +'">'+ value.nombre +'</option>');
                 });
             },
             error: function(data) {

@@ -259,6 +259,7 @@ return [
             'text' => 'Empresa',
             'url'  => '/empresa',
             'icon' => 'fas fa-fw fa-hospital',
+            'icon_color' => 'danger',
             'submenu' => [
                 [
                     'text'  => 'Empresa',
@@ -281,7 +282,7 @@ return [
             'text' => 'Clientes',
             'url'  => '/cliente',
             'icon' => 'fas fa-fw fa-user',
-            'icon_color' => 'white',
+            'icon_color' => 'blue',
         ],
         [
             'text'        => 'Farmacología',
@@ -297,12 +298,7 @@ return [
                     'text' => 'Acciones Terapéuticas',
                     'url'  => '/clase',
                     'icon' => 'fas fa-fw fa-notes-medical'
-                ],      
-                [
-                    'text' => 'Presentaciones',
-                    'url'  => '/formato',
-                    'icon' => 'fas fa-fw fa-pills',
-                ], 
+                ],
                 [
                     'text'       => 'Posología',
                     'icon'       => 'fas fa-fw fa-eye-dropper',
@@ -403,7 +399,7 @@ return [
         [
             'text'      =>  'Facturas',
             'icon'      =>  'fas fa-archive',
-            'icon_color'=>  'white',
+            'icon_color'=>  'blue',
             'submenu'   =>  [
                 [
                     'text'  =>  'Facturas',
@@ -440,7 +436,7 @@ return [
         [
             'text'      =>  'Configuracion',
             'icon'      =>  'fas fa-fw fa-cog',
-            'icon_color'=>  'white',
+            'icon_color'=>  'black',
             'url'       =>  '/ajuste'
         ],
     ],

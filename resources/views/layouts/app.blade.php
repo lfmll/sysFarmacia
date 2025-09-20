@@ -88,5 +88,25 @@
             @yield('content')
         </main>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="search"], textarea');
+            const exepcionesMayus = ['token', 'correo', 'razon_social'];
+
+            inputs.forEach(input => {
+                input.addEventListener('blur', function () {
+                    let valor = input.value.trim(); // siempre se limpia
+                    const id = input.id;
+                    const name = input.name;
+
+                    if (!exepcionesMayus.includes(id) && !exepcionesMayus.includes(name)) {
+                        valor = valor.toUpperCase();
+                    }
+
+                    input.value = valor;
+                });
+            });
+        });
+    </script>
 </body>
 </html>

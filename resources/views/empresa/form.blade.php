@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('nombre',null,['class'=>'form-control', 'placeholder'=>'Nombre/Razon Social','required'])}}
+            {{Form::text('razon_social',null,['class'=>'form-control', 'placeholder'=>'Nombre/Razon Social','required'])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-first-aid"></span>
@@ -39,15 +39,17 @@
             </div>
         </div>
         <div class="input-group mb-4">
-            {{Form::select('departamento', ['Beni'=>'Beni', 
-                                        'Cochabamba'=>'Cochabamba',
-                                        'Chuquisaca'=>'Chuquisaca',
-                                        'La Paz'=>'La Paz',
-                                        'Oruro'=>'Oruro',
-                                        'Pando'=>'Pando',
-                                        'Potosí'=>'Potosí',
-                                        'Santa Cruz'=>'Santa Cruz',
-                                        'Tarija'=>'Tarija'], null, ['class'=>'form-control','placeholder'=>'Departamento','required'])}}
+            {{ Form::select('departamento', [
+                                                'BENI' => 'BENI',
+                                                'COCHABAMBA' => 'COCHABAMBA',
+                                                'CHUQUISACA' => 'CHUQUISACA',
+                                                'LA PAZ' => 'LA PAZ',
+                                                'ORURO' => 'ORURO',
+                                                'PANDO' => 'PANDO',
+                                                'POTOSÍ' => 'POTOSÍ',
+                                                'SANTA CRUZ' => 'SANTA CRUZ',
+                                                'TARIJA' => 'TARIJA'
+                                            ], null, ['class' => 'form-control', 'placeholder' => 'DEPARTAMENTO', 'required']) }}
                                         <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-align-justify"></span>
@@ -130,5 +132,4 @@
         <span class="step"></span>
     </div>
     
-
 {!! Form::close() !!}

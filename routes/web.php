@@ -49,7 +49,7 @@ Auth::routes();
 //     Route::get('/login', [LoginController::class, 'showLoginForm']);
 //     Route::get('/register', [RegisterController::class, 'showRegistrationForm']);
 // });
-Route::get('/', [HomeController::class, 'index'])->middleware('iniciar');
+Route::get('/', [HomeController::class, 'index'])->name('inicio')->middleware('iniciar');
 Route::get('/loginUbicacion', function () {
     return view('auth.loginUbicacion');
 })->name('loginUbicacion')->middleware('auth');
@@ -62,7 +62,7 @@ Route::resource('via',ViaController::class);
 Route::resource('medida',MedidaController::class);
 Route::resource('formato',FormatoController::class);
 Route::resource('clase',ClaseController::class);
-Route::resource('medicamento',MedicamentoController::class)->middleware('parametrizar');
+
 Route::resource('lote', LoteController::class);
 Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
@@ -70,22 +70,27 @@ Route::get('/lote/{id}/create_producto',[LoteController::class,'create_producto'
 Route::get('/catalogarA',[LoteController::class,'catalogarActividad'])->name('lote.catalogarA');
 Route::get('/catalogarP',[LoteController::class,'catalogarProducto'])->name('lote.catalogarP');
 Route::resource('compra', CompraController::class)->middleware('aperturar');
-Route::resource('venta', VentaController::class)->middleware('aperturar');
-Route::resource('factura', FacturaController::class);
-Route::resource('cliente', ClienteController::class);
 Route::resource('agencia', AgenciaController::class);
-Route::resource('puntoventa', PuntoVentaController::class);
 Route::resource('ajuste', AjusteController::class);
-Route::resource('evento', EventoController::class);
 Route::get('sincronizarCuis', [AjusteController::class, 'sincronizarCuis']);
 Route::get('sincronizarCufd', [AjusteController::class, 'sincronizarCufd']);
 Route::get('sincronizar', [AjusteController::class, 'sincronizar']);
+Route::middleware(['parametrizar'])->group(function(){
+    Route::resource('medicamento',MedicamentoController::class);
+    Route::resource('cliente', ClienteController::class);
+    Route::resource('puntoventa', PuntoVentaController::class);
+});
+Route::middleware(['auth', 'aperturar', 'sincronizacionFechaHora'])->group(function(){
+    Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
+    Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
+    Route::resource('venta', VentaController::class);
+    Route::resource('factura', FacturaController::class);
+    Route::resource('evento', EventoController::class);
+    Route::get('/verSIAT/{id}',[FacturaController::class, 'verSIAT']);
+    Route::get('emitirFactura/{id}',[FacturaController::class,'emitirFactura']);
+    Route::get('revertirAnulacionFactura/{id}',[FacturaController::class, 'revertirAnulacionFactura']);
+});
 
-Route::get('/compra/{id}/salida',[CompraController::class, 'salida']);
-Route::get('/venta/{id}/entrada',[VentaController::class, 'entrada']);
-Route::get('/verSIAT/{id}',[FacturaController::class, 'verSIAT']);
-Route::get('emitirFactura/{id}',[FacturaController::class,'emitirFactura']);
-Route::get('revertirAnulacionFactura/{id}',[FacturaController::class, 'revertirAnulacionFactura']);
 
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 
@@ -114,7 +119,6 @@ Route::get('reporteCompraMensual',[PDFController::class,'reporteCompraMensual'])
 Route::get('reporteCompraAnual',[PDFController::class,'reporteCompraAnual']);
 Route::get('reporteCierreAnterior',[PDFController::class,'reporteCierreAnterior']);
 Route::get('reporteLotesVencimiento',[PDFController::class,'reporteLotesVencimiento']);
-Route::get('firmarFactura/{id}',[FacturaController::class, 'firmarFactura']);
 Route::get('facturaCarta/{id}',[PDFController::class,'facturaCarta']);
 Route::get('facturaRollo/{id}',[PDFController::class,'facturaRollo']);
 Route::get('importMedicamento',[ExcelController::class,'importMedicamento']);

@@ -99,15 +99,27 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <span style="font-size: 10px;"><b>Servidor</b></span>
-                                <p>Aqui Fecha</p>
+                                @if (!is_null($fechaSincronizada))
+                                    {{Form::text('fechaSincronizada',$fechaSincronizada,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}  
+                                @else
+                                    <p>Aqui Fecha</p>
+                                @endif
                             </div>
                             <div class="col-sm-4">
                                 <span style="font-size: 10px;"><b>Local</b></span>
-                                <p>Aqui Fecha</p>
+                                @if (!is_null($fechaSincronizada))
+                                    {{Form::text('fecha_local',$fecha_local,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                @else
+                                    <p>Aqui Fecha</p>
+                                @endif
                             </div>
                             <div class="col-sm-4">
-                                <span style="font-size: 10px;"><b>Diferencia Horaria</b></span>
-                                <p>Aqui Hora</p>
+                                <span style="font-size: 10px;"><b>Diferencia Horaria (seg)</b></span>
+                                @if (!is_null($fechaSincronizada))
+                                    {{Form::text('diferencia_horaria',$diferencia_horaria,['class'=>'form-control','style'=>'font-size: 10px;','readonly'])}}
+                                @else
+                                    <p>Aqui Hora</p>
+                                @endif                                
                             </div>
                             <span style="font-size: 10px;">La diferencia entre la fecha y hora local y la del servidor no debe exceder los 5 minutos</span>
                         </div>                                
