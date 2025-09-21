@@ -422,10 +422,10 @@ class VentaController extends Controller
                         {
                             $parametrosFactura = array(
                                 'SolicitudServicioRecepcionFactura' => array(
-                                    'codigoAmbiente' => 2,
+                                    'codigoAmbiente' => $empresa->ambiente,
                                     'codigoDocumentoSector' => $factura->codigoDocumentoSector,
                                     'codigoEmision' => 1,
-                                    'codigoModalidad' => 2,
+                                    'codigoModalidad' => $empresa->modalidad,
                                     'codigoPuntoVenta' => $factura->codigoPuntoVenta,
                                     'codigoSistema' => $empresa->codigo_sistema,
                                     'codigoSucursal' => $factura->codigoSucursal,

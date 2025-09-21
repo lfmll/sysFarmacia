@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Agencia;
 use App\Models\Ajuste;
 use App\Models\Cuis;
+use App\Models\Empresa;
 use App\Models\Parametro;
 use PhpParser\Builder\Param;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,7 @@ class PuntoVentaController extends Controller
                                 ->where('user_punto_ventas.user_id','=',$userid)
                                 ->where('punto_ventas.estado','=','A')
                                 ->where('user_punto_ventas.estado','=','A')
+                                ->select('punto_ventas.*','users.name as usuario')
                                 ->get();
         return view('puntoventa.index',['puntoventas' => $puntoventas]);
     }
@@ -122,7 +124,7 @@ class PuntoVentaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {        
+    {
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
         $wsdlOperaciones = $ajuste->wsdl."/FacturacionOperaciones?wsdl";
@@ -149,7 +151,7 @@ class PuntoVentaController extends Controller
                     ->where('punto_ventas.estado', '=', 'A')
                     ->where('user_punto_ventas.estado', '=', 'A')
                     ->select('punto_ventas.id', 'punto_ventas.nombre')
-    ->get();
+                    ->get();
             if ($data->isEmpty()) {
                 return response()->json(["mensaje"=>"No existe puntos de ventas en esta Sucursal"],409);
             }

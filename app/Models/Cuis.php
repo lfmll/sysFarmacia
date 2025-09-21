@@ -71,7 +71,7 @@ class Cuis extends Model
         if ($clienteCuis->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") {
             $parametrosCUIS = array(
                 'SolicitudCuis' => array(
-                    'codigoAmbiente' => 2, 
+                    'codigoAmbiente' => $empresa->ambiente, 
                     'codigoModalidad' => $empresa->modalidad,
                     'codigoPuntoVenta' => $puntoVenta->codigo,
                     'codigoSistema' => $empresa->codigo_sistema,

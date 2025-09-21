@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PuntoVenta extends Model
 {
@@ -48,17 +49,17 @@ class PuntoVenta extends Model
     
     public static function consultarPuntoVentas($clienteSoap, $puntoVenta)
     {
-        $agencia = Agencia::where('id', $puntoVenta->agencia_id)->first();
+        $agencia = Agencia::where('id', session('agencia_id'))->first();
         $empresa = Empresa::where('id', $agencia->empresa_id)->first();
         $cuis = Cuis::where('estado', 'A')
-                    ->where('punto_venta_id',$puntoVenta->id)
+                    ->where('punto_venta_id',session('puntoVenta->id'))
                     ->first();
         $msj = "";
         if ($clienteSoap->verificarComunicacion()->return->mensajesList->codigo == "926") 
         {
             $parametrosPVenta = array(
                 'SolicitudConsultaPuntoVenta' => array(
-                    'codigoAmbiente' => 2,
+                    'codigoAmbiente' => $empresa->ambiente,
                     'codigoSistema' => $empresa->codigo_sistema,
                     'codigoSucursal' => $agencia->codigo,
                     'cuis' => $cuis->codigo_cuis, 
@@ -81,8 +82,8 @@ class PuntoVenta extends Model
         if ($clienteSoap->verificarComunicacion()->return->transaccion == true) {
             $parametrosPVenta = array(
                 'SolicitudRegistroPuntoVenta' => array(
-                    'codigoAmbiente' => 2,
-                    'codigoModalidad' => 2,
+                    'codigoAmbiente' => $empresa->ambiente,
+                    'codigoModalidad' => $empresa->modalidad,
                     'codigoSistema' => $empresa->codigo_sistema,
                     'codigoSucursal' => $agencia->codigo,
                     'codigoTipoPuntoVenta' => $request->tipoPuntoVenta,  //5: Cajero
@@ -106,7 +107,8 @@ class PuntoVenta extends Model
                 $userPuntoVenta->fill([
                     'user_id' => Auth::id(),
                     'punto_venta_id' => $puntoVenta->id,
-                    'estado' => 'A'
+                    'estado' => 'A',
+                    'fecha_asignacion' => Carbon::now('America/La_Paz')
                 ]);
                 $userPuntoVenta->save();
                 return $msj;
@@ -128,7 +130,7 @@ class PuntoVenta extends Model
         {
             $parametrosPVenta = array(
                 'SolicitudCierrePuntoVenta' => array(
-                    'codigoAmbiente' => 2,
+                    'codigoAmbiente' => $empresa->ambiente,
                     'codigoPuntoVenta' => $puntoVenta->codigo,
                     'codigoSistema' => $empresa->codigo_sistema,
                     'codigoSucursal' => $agencia->codigo,

@@ -64,6 +64,7 @@ class EmpresaController extends Controller
             $empresa->codigo_sistema = $request->codigo_sistema;
             $empresa->version = $request->version;
             $empresa->modalidad = $request->modalidad;
+            $empresa->ambiente = $request->ambiente;
             $empresa->estado = 'A';
             $empresa->save();
             $path = public_path('/imagen');

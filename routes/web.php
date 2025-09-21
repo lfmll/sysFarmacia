@@ -62,7 +62,6 @@ Route::resource('via',ViaController::class);
 Route::resource('medida',MedidaController::class);
 Route::resource('formato',FormatoController::class);
 Route::resource('clase',ClaseController::class);
-
 Route::resource('lote', LoteController::class);
 Route::resource('agente',AgenteController::class);
 Route::get('/lote/{id}/create_medicamento',[LoteController::class,'create_medicamento']);
@@ -77,7 +76,7 @@ Route::get('sincronizarCufd', [AjusteController::class, 'sincronizarCufd']);
 Route::get('sincronizar', [AjusteController::class, 'sincronizar']);
 Route::middleware(['parametrizar'])->group(function(){
     Route::resource('medicamento',MedicamentoController::class);
-    Route::resource('cliente', ClienteController::class);
+    Route::resource('cliente', ClienteController::class);    
     Route::resource('puntoventa', PuntoVentaController::class);
 });
 Route::middleware(['auth', 'aperturar', 'sincronizacionFechaHora'])->group(function(){

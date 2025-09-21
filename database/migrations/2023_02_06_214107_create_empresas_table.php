@@ -23,6 +23,7 @@ class CreateEmpresasTable extends Migration
             $table->string('codigo_sistema',25)->nullable();
             $table->string('version',10)->nullable();
             $table->char('modalidad',1)->nullable();
+            $table->char('ambiente',1)->nullable();
             $table->char('estado',1)->nulllable();
             $table->timestamps();
         });

@@ -84,7 +84,7 @@ class EventoController extends Controller
         
         $evento = new Evento();
         
-        $evento->codigoAmbiente = 2; // Ambiente de Prueba
+        $evento->codigoAmbiente = $empresa->ambiente; // Ambiente de Prueba
         $evento->codigoSistema = $empresa->codigo_sistema;
         $evento->nit = $empresa->nit;
         $evento->cuis = $ultimocuis->codigo_cuis;

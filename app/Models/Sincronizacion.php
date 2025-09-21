@@ -33,7 +33,7 @@ class Sincronizacion extends Model
         return $this->belongsTo(Cuis::class, 'cuis_id');
     }
 
-    public function obtenerUltimaSincronizacion($agencia_id, $punto_venta_id)
+    public static function obtenerUltimaSincronizacion($agencia_id, $punto_venta_id)
     {
         return Sincronizacion::where('agencia_id', $agencia_id)
                             ->where('punto_venta_id', $punto_venta_id)

@@ -11,8 +11,13 @@ class Empresa extends Model
         'nombre',
         'nit',
         'correo',
-
-        
+        'extension',
+        'sistema',
+        'codigo_sistema',
+        'version',
+        'modalidad',    
+        'ambiente',
+        'estado'        
     ];
 
     public function agencias(){

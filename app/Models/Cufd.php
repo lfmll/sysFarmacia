@@ -59,7 +59,7 @@ class Cufd extends Model
         {
             $parametrosCUFD = array(
                 'SolicitudCufd' => array(
-                    'codigoAmbiente' => 2, 
+                    'codigoAmbiente' => $empresa->ambiente, 
                     'codigoModalidad' => $empresa->modalidad,
                     'codigoPuntoVenta' => $puntoVenta->codigo,
                     'codigoSistema' => $empresa->codigo_sistema,

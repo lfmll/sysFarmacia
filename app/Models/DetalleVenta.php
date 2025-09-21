@@ -21,7 +21,4 @@ class DetalleVenta extends Model
         return $this->belongsTo(Venta::class);
     }
 
-    public function producto(){
-        return $this->belongsTo(Producto::class);
-    }
 }

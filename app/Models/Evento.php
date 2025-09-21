@@ -137,7 +137,7 @@ class Evento extends Model
                                         'codigoAmbiente' => $evento->codigoAmbiente,
                                         'codigoDocumentoSector' => $evento->codigoDocumentoSector,
                                         'codigoEmision' => 2, // Tipo de Emisión: 1 Online 2 Offline  
-                                        'codigoModalidad' => 2,
+                                        'codigoModalidad' => $empresa->modalidad,
                                         'codigoPuntoVenta' => $evento->codigoPuntoVenta,
                                         'codigoSistema' => $empresa->codigo_sistema,
                                         'codigoSucursal' => $evento->codigoSucursal,
@@ -191,7 +191,7 @@ class Evento extends Model
         if (!is_null($cufd)) {
             $parametrosValidacion = array(
                 'SolicitudServicioValidacionRecepcionPaquete' => array(
-                    'codigoAmbiente' => 2, // Ambiente de Prueba
+                    'codigoAmbiente' => $evento->codigoAmbiente, 
                     'codigoDocumentoSector' => $evento->codigoDocumentoSector,
                     'codigoEmision' => 2, // Tipo de Emisión: 1 Online 2 Offline
                     'codigoModalidad' => 2,

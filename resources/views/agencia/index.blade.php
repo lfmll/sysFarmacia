@@ -15,7 +15,7 @@
                     <table id="tagencia" class="table table-bordered">
                         <thead>
                             <tr>
-                                <td>ID</td>    
+                                <td>Código</td>    
                                 <td>Nombre</td>            
                                 <td>Direccion</td>
                                 <td>Telefono</td>
@@ -27,7 +27,7 @@
                         <tbody>
                             @foreach($agencias as $agencia)
                             <tr>
-                                <td>{{$agencia->id}}</td>
+                                <td>{{$agencia->codigo}}</td>
                                 <td>{{$agencia->nombre}}</td>
                                 <td>{{$agencia->direccion}}</td>
                                 <td>{{$agencia->telefono}}</td>

@@ -114,6 +114,14 @@
                 </div>
             </div>
         </div>
+        <div class="input-group mb-3">
+            {{Form::select('ambiente', ['1'=>'Producción','2'=>'Pruebas'], '2', ['class'=>'form-control', 'required'])}}    
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-warehouse"></span>
+                </div>
+            </div>
+        </div>
         <h5 class="input-group mb-12"><i class="fas fa-fw fa-cogs"></i> Token Delegado</h5>
         <div class="input-group mb-3">
             <textarea name="token" id="token" class="form-control" rows="6" cols="30"></textarea>            

@@ -98,7 +98,7 @@ class CajaController extends Controller
                     //Sincronizar Parametros
                     $parametrosSincronizacion = array(
                         'SolicitudSincronizacion' => array(
-                            'codigoAmbiente' => 2, 
+                            'codigoAmbiente' => $empresa->ambiente, 
                             'codigoPuntoVenta' => $puntoVenta->codigo,
                             'codigoSistema' => $empresa->codigo_sistema,
                             'codigoSucursal' => $sucursal->codigo,

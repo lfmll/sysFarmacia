@@ -113,10 +113,10 @@ class FacturaController extends Controller
             if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") {
                 $parametrosFactura = array(
                     'SolicitudServicioAnulacionFactura' => array(
-                        'codigoAmbiente' => 2,
+                        'codigoAmbiente' => $empresa->ambiente,
                         'codigoDocumentoSector' => $factura->codigoDocumentoSector,
                         'codigoEmision' => 1,
-                        'codigoModalidad' => 2,
+                        'codigoModalidad' => $empresa->modalidad,
                         'codigoPuntoVenta' => $factura->codigoPuntoVenta,
                         'codigoSistema' => $empresa->codigo_sistema,
                         'codigoSucursal' => $factura->codigoSucursal,

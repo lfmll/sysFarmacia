@@ -65,9 +65,10 @@ class AjusteController extends Controller
                 }            
             }
         }
+        // dd($cuis);
         return view('ajuste.index',['ajuste'=>$ajustes])
-                ->with('cuis',$cuis)
-                ->with('cufd',$cufd)
+                ->with('cuis',$cuis ?? null)
+                ->with('cufd',$cufd ?? null)
                 ->with('tipo_parametro',$tipo_parametro)
                 ->with('parametros',$parametros ?? null)                
                 ->with('actividades',$actividades ?? null)
@@ -232,7 +233,7 @@ class AjusteController extends Controller
                 //Iniciar Parametros
                 $parametrosSincronizacion = array(
                     'SolicitudSincronizacion' => array(
-                        'codigoAmbiente' => 2, 
+                        'codigoAmbiente' => $empresa->ambiente, 
                         'codigoPuntoVenta' => $puntoVenta->codigo,
                         'codigoSistema' => $empresa->codigo_sistema,
                         'codigoSucursal' => $sucursal->codigo,

@@ -15,7 +15,7 @@
                     <table id="tagente" class="table table-bordered">
                         <thead>
                             <tr>                            
-                                <th>ID</th>    
+                                <th>Código</th>    
                                 <th>Nombre</th>            
                                 <th>Sucursal</th>
                                 <th>Empleado</th>
@@ -25,10 +25,10 @@
                         <tbody>
                             @foreach($puntoventas as $puntoventa)
                             <tr>
-                                <td>{{$puntoventa->id}}</td>
+                                <td>{{$puntoventa->codigo}}</td>
                                 <td>{{$puntoventa->nombre}}</td>
                                 <td>{{$puntoventa->agencia->nombre}}</td>
-                                <td>{{$puntoventa->name}}</td>
+                                <td>{{$puntoventa->usuario}}</td>
                                 <td>
                                     @include('puntoventa.delete',['puntoventa'=>$puntoventa])
                                 </td>                                
@@ -51,12 +51,14 @@
 @section('js')
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
-        $(".eliminar").on('click', function(e){
+        $(document).on('click', '.eliminar', function(e){
             e.preventDefault();
-            var form = $(this).parents('form');
+            const form = $(this).closest('form');
+            const nombre = $(this).data('nombre');
+
             Swal.fire({
                 title: '¿Está seguro de cerrar el Punto de Venta?',
-                text: "Punto de Venta: "+$(this).data('nombre'),
+                text: "Punto de Venta: "+ nombre,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -64,10 +66,10 @@
                 confirmButtonText: 'Si, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
-                if (result.value) {
+                if (result.isConfirmed) {
                     form.submit();            
                 }
-            })
+            });
         });
     </script>
 @stop
