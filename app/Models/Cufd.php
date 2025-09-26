@@ -51,8 +51,8 @@ class Cufd extends Model
     public static function sincroCUFD($clienteCufd)
     {
         $empresa = Empresa::first();
-        $agencia = Agencia::where('id',session('agencia_id'))->first();
-        $puntoVenta = PuntoVenta::where('id',session('punto_venta_id'))->first();
+        $agencia = Agencia::find(session('agencia_id'));
+        $puntoVenta = PuntoVenta::find(session('punto_venta_id'));
         $cuis = Cuis::obtenerCuis();
         $msjError = "";
         if ($clienteCufd->verificarComunicacion()->RespuestaComunicacion->mensajesList->codigo == "926") 
@@ -70,11 +70,12 @@ class Cufd extends Model
             );
             $responseCufd = $clienteCufd->cufd($parametrosCUFD);
             if ($responseCufd->RespuestaCufd->transaccion==true) {
-                $ultimoCufd = Cufd::orderBy('created_at','desc')->first();
-                if (!is_null($ultimoCufd)) {
-                    $ultimoCufd->estado = "N";
-                    $ultimoCufd->save();
-                }
+                Cufd::where('estado','A')
+                    ->where('cuis_id',$cuis->id)
+                    ->where('agencia_id',$agencia->id)
+                    ->where('punto_venta_id',$puntoVenta->id)
+                    ->update(['estado'=>'N']);
+
                 $cufd = new Cufd;
                 $fechaUTC = strtotime($responseCufd->RespuestaCufd->fechaVigencia);
                 $fecha = date("Y-m-d H:i:s", $fechaUTC);

@@ -202,6 +202,21 @@ class Parametro extends Model
             ]);
             $parametro->save();
         }
+        
+        //Sincronizar Tipo Habitacion
+        $responseTipoHabitacion = $clienteSincronizacion->sincronizarParametricaTipoHabitacion($parametrosSincronizacion);        
+        $listaTipoHabitacion = $responseTipoHabitacion->RespuestaListaParametricas->listaCodigos;
+        $tipoParametro = TipoParametro::where('nombre','TIPO HABITACION')->first();
+        foreach ($listaTipoHabitacion as $thab) {
+            $parametro = new Parametro;
+            $parametro->fill([
+                'codigo_clasificador' => $thab->codigoClasificador,
+                'descripcion' => $thab->descripcion,
+                'tipo_parametro_id' => $tipoParametro->id,
+                'cuis_id' => $cuisId
+            ]);
+            $parametro->save(); 
+        }
         return true;
     }
     

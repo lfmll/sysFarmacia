@@ -25,9 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Luecano\NumeroALetras\NumeroALetras;
-use GuzzleHttp\Client;
-use SoapClient;
-use ZipArchive;
+
 use Illuminate\Support\Facades\Auth;
 
 class VentaController extends Controller
@@ -416,8 +414,8 @@ class VentaController extends Controller
                         //TODO: 4 Enviar Factura SIAT                    
                         $ajuste = Ajuste::first();
                         $token = $ajuste->token;
-                        $wslSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
-                        $clienteFacturacion = Ajuste::consumoSIAT($token,$wslSincronizacion);
+                        $wsdlSincronizacion = $ajuste->wsdl."/ServicioFacturacionCompraVenta?wsdl";
+                        $clienteFacturacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
                         if ($clienteFacturacion->verificarComunicacion()->return->transaccion == "true") 
                         {
                             $parametrosFactura = array(

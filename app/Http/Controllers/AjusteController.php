@@ -241,6 +241,7 @@ class AjusteController extends Controller
                         'nit' => $empresa->nit
                     )
                 );
+                
                 $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($sucursal->id, $puntoVenta->id);
                 if (!$estaSincronizado) {
                     //Registrar Sincronizacion
@@ -269,7 +270,7 @@ class AjusteController extends Controller
                 
                 //Sincronizar Actividad Documento Sector
                 $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametrosSincronizacion, $cuis->id);
-
+                
                 //Sincronizar Fecha y Hora
                 $responseFechaHora = Sincronizacion::sincronizacionFechaHora($clienteSincronizacion, $parametrosSincronizacion, $sincronizacion->id);
                                             

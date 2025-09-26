@@ -80,7 +80,12 @@ class Cuis extends Model
                 )            
             ); 
             $responseCuis = $clienteCuis->cuis($parametrosCUIS);
-            $ultimoCuis = Cuis::orderby('created_at','desc')->first();            
+            $ultimoCuis = Cuis::where('agencia_id', $agencia->id)
+                            ->where('punto_venta_id', $puntoVenta->id)
+                            ->where('estado', 'A')
+                            ->where('fecha_vigencia', '>', Carbon::now('America/La_Paz')->toDatetimeString())
+                            ->orderBy('created_at', 'desc')
+                            ->first();            
             if ($responseCuis->RespuestaCuis->transaccion == true) {
                 if (!is_null($ultimoCuis)) {
                     $ultimoCuis->estado = "N";
@@ -136,7 +141,6 @@ class Cuis extends Model
             }            
         } else {
             return $msjError = "Error en la comunicación con el Servicio SIAT";
-        }
-        
+        }        
     }
 }
