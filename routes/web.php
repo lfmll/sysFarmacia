@@ -27,6 +27,7 @@ use App\Http\Controllers\EventoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\NotaAjusteController;
 use Illuminate\Auth\Events\Login;
 
 /*
@@ -88,6 +89,7 @@ Route::middleware(['auth', 'aperturar', 'sincronizacionFechaHora'])->group(funct
     Route::get('/verSIAT/{id}',[FacturaController::class, 'verSIAT']);
     Route::get('emitirFactura/{id}',[FacturaController::class,'emitirFactura']);
     Route::get('revertirAnulacionFactura/{id}',[FacturaController::class, 'revertirAnulacionFactura']);
+    Route::resource('notaAjuste', NotaAjusteController::class);
 });
 
 

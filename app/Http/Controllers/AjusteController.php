@@ -65,7 +65,6 @@ class AjusteController extends Controller
                 }            
             }
         }
-        // dd($cuis);
         return view('ajuste.index',['ajuste'=>$ajustes])
                 ->with('cuis',$cuis ?? null)
                 ->with('cufd',$cufd ?? null)
@@ -222,6 +221,7 @@ class AjusteController extends Controller
         $sucursal = Agencia::where('id', session('agencia_id'))->where('estado','A')->first();
         $puntoVenta = PuntoVenta::where('id', session('punto_venta_id'))->where('estado','A')->first();
         $cuis = Cuis::obtenerCuis(); 
+        
         if (!is_null($cuis)) {  
             // PASO 2: Consumir Servicios de Sincronizacion
             $clienteSincronizacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
@@ -241,7 +241,7 @@ class AjusteController extends Controller
                         'nit' => $empresa->nit
                     )
                 );
-                
+                // dd($parametrosSincronizacion);
                 $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($sucursal->id, $puntoVenta->id);
                 if (!$estaSincronizado) {
                     //Registrar Sincronizacion

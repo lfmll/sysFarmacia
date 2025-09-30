@@ -33,8 +33,15 @@ class FacturaController extends Controller
      */
     public function index()
     {
-        $factura = Factura::all();             
-        return view('factura.index',['factura'=>$factura]);
+        $facturas = Factura::all(); 
+        foreach ($facturas as $fact) {
+            $fact->enPlazoNota = Carbon::parse($fact->fechaEmision)
+                                    ->addMonths(18)
+                                    ->gte(Carbon::now('America/La_Paz')) ? true : false;
+
+        }
+        // dd($facturas);
+        return view('factura.index',['factura'=>$facturas]);
     }
 
     /**
@@ -240,122 +247,38 @@ class FacturaController extends Controller
      **************************************/
     public function generarXML($idfactura)
     {  
+        $factura=Factura::find($idfactura);        
+        $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
         $fecha=Carbon::now('America/La_Paz')->format('Y-m-d\TH:i:s');        
         
+        $gzPath = public_path('siat/facturas/'.$factura->numeroFactura.'.gz');
+        //Si existe el archivo comrimido, descomprimir y mostrar
+        if (file_exists($gzPath)) {
+            $xmlContent = gzdecode(file_get_contents($gzPath));
+            return response($xmlContent)
+                ->header('Content-Type', 'application/xml')
+                ->header('Content-Disposition', 'attachment; filename="'.$factura->numeroFactura.'.xml"');
+        }
         //PASO 1: Generar Cadena XML
-        $a = Factura::generarXML($idfactura);
+        $xml = Factura::generarXML($idfactura);
         
         //PASO 2: Validar XML con XSD
-        $m = Factura::validarXML($a,'facturaComputarizadaCompraVenta.xsd');
+        $error = Factura::validarXML($xml,'facturaComputarizadaCompraVenta.xsd');
         
-        if (empty($m)) {
-            $gzipFileName = 'pruebaXML.txt.gz';
-            $path = public_path('/siat/facturas');
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true);
-            }
-            $path = public_path('/siat/facturas/'.$gzipFileName);
-
-            $gzdata = gzencode($a);
-            file_put_contents($path,$gzdata);
-            $byteArray = base64_encode($gzdata);
-
-            $zp = gzopen($path, "w9");
-            gzwrite($zp, $a);
-            gzclose($zp);            
+        if (!empty($error)) {
+            return redirect("/factura")->with('toast_error','Error en Formato XSD: '.implode(" ", $error));
         }
-        $hashArchivo = hash('sha256', $byteArray);
-        
-        $factura=Factura::find($idfactura);
-        
-        $detallefactura=DetalleFactura::where('factura_id','=',$idfactura)->get();
-        
-        try {            
-            $xml = new \XMLWriter();
-            $xml->openMemory();
-            $xml->startDocument('1.0','UTF-8');
-            $xml->startElement('facturaComputarizadaCompraVenta');
-            $xml->writeAttribute('xsi:noNamespaceSchemaLocation','facturaComputarizadaCompraVenta.xsd');
-            $xml->writeAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');            
-                $xml->startElement('cabecera');            
-                $xml->writeElement('nitEmisor',$factura->nitEmisor);
-                $xml->writeElement('razonSocialEmisor',$factura->razonSocialEmisor);
-                $xml->writeElement('municipio',$factura->municipio);
-                $xml->writeElement('telefono',$factura->telefono);
-                $xml->writeElement('numeroFactura',$factura->numeroFactura);
-                $xml->writeElement('cuf',$factura->cuf);
-                $xml->writeElement('cufd',$factura->cufd);
-                $xml->writeElement('codigoSucursal',$factura->codigoSucursal);
-                $xml->writeElement('direccion',$factura->direccion);
-                if (is_null($factura->codigoPuntoVenta) || empty($factura->codigoPuntoVenta)) {
-                    $xml->startElement('codigoPuntoVenta');
-                        $xml->startAttribute('xsi:nil');
-                        $xml->text('true');
-                        $xml->endAttribute();
-                    $xml->endElement();
-                } else {
-                    $xml->writeElement('codigoPuntoVenta',$factura->codigoPuntoVenta);                    
-                }                
-                $xml->writeElement('fechaEmision',$factura->fechaEmision);
-                $xml->writeElement('nombreRazonSocial',$factura->nombreRazonSocial);
-                $xml->writeElement('codigoTipoDocumentoIdentidad',$factura->codigoTipoDocumentoIdentidad);
-                $xml->writeElement('numeroDocumento',$factura->numeroDocumento);
-                if (is_null($factura->complemento) || empty($factura->complemento)) {
-                    $xml->startElement('complemento');
-                        $xml->startAttribute('xsi:nil');
-                        $xml->text('true');
-                        $xml->endAttribute();
-                    $xml->endElement();
-                } else {
-                    $xml->writeElement('complemento',$factura->complemento);                    
-                }                                            
-                $xml->writeElement('codigoCliente',$factura->codigoCliente);
-                $xml->writeElement('codigoMetodoPago',$factura->codigoMetodoPago);
-                if (is_null($factura->numeroTarjeta) || empty($factura->numeroTarjeta)) {
-                    $xml->startElement('numeroTarjeta');
-                        $xml->startAttribute('xsi:nil');
-                        $xml->text('true');
-                        $xml->endAttribute();
-                    $xml->endElement();
-                } else {
-                    $xml->writeElement('numeroTarjeta',$factura->numeroTarjeta);                    
-                }                 
-                $xml->writeElement('montoTotal',$factura->montoTotal);
-                $xml->writeElement('montoTotalSujetoIva',$factura->montoTotalSujetoIva);
-                $xml->writeElement('codigoMoneda',$factura->codigoMoneda);
-                $xml->writeElement('tipoCambio',$factura->tipoCambio);
-                $xml->writeElement('montoTotalMoneda',$factura->montoTotalMoneda);
-                $xml->writeElement('leyenda',$factura->leyenda);
-                $xml->writeElement('usuario',$factura->usuario);
-                $xml->writeElement('codigoDocumentoSector',$factura->codigoDocumentoSector);
-                $xml->endElement();
-
-                $xml->startElement('detalle');
-                foreach ($detallefactura as $detalle) {
-                    $xml->writeElement('actividadEconomica', $detalle->actividadEconomica);
-                    $xml->writeElement('codigoProductoSin', $detalle->codigoProductoSin);
-                    $xml->writeElement('codigoProducto', $detalle->codigoProducto);
-                    $xml->writeElement('descripcion', $detalle->descripcion);
-                    $xml->writeElement('cantidad', $detalle->cantidad);
-                    $xml->writeElement('unidadMedida', $detalle->unidadMedida);
-                    $xml->writeElement('precioUnitario', $detalle->precioUnitario);
-                    $xml->writeElement('montoDescuento', $detalle->montoDescuento);
-                    $xml->writeElement('subTotal', $detalle->subTotal);
-                    $xml->writeElement('numeroSerie', $detalle->numeroSerie);
-                    $xml->writeElement('numeroImei', $detalle->numeroImei);
-                    $xml->endElement();
-                }                
-                $xml->endElement();
-
-            $xml->endElement();
-            $xml->endDocument();
-            $content = $xml->flush();
-              
-            return response()->download($factura->numeroFactura.'.xml');
-
-        } catch (\Exception $e) {
-            return redirect('/factura')->with('toast_error',$e);            
+        //PASO 3: Guardar XML y comprimir
+        $gzipFileName = $factura->numeroFactura.'.gz';
+        $path = public_path('/siat/facturas');
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
         }
+        $path = public_path('/siat/facturas/'.$gzipFileName);
+        file_put_contents($path, gzencode($xml, 9));
+        return response($xml,200)
+                ->header('Content-Type', 'application/xml')
+                ->header('Content-Disposition', 'attachment; filename="'.$factura->numeroFactura.'.xml"');        
     }
 
     /**************************************

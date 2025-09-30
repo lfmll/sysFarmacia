@@ -44,6 +44,9 @@
                                         <a href="{{url('generarXML/'.$fact->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
                                         <a href="{{url('enviarCorreo/'.$fact->id)}}" class="btn btn-info btn-sm" onClick="loading()"><i class="fa fa-envelope"></i> Notificacion</a>                                        
                                         <button type="button" class="btn btn-danger btn-sm" onclick="anularFactura('{{$fact->id}}')"><i class="fa fa-trash"></i> Anular</button>                                                                             
+                                        @if($fact->enPlazoNota)
+                                        <a href="{{url('notaAjuste/create/'.$fact->id)}}" class="btn btn-primary btn-sm"><i class="fa fa-file-alt"></i> Nota Ajuste</a>
+                                        @endif
                                     </td>
                                     @elseif ($fact->estado == 'ANULADA')
                                     <td><span class="badge badge-pill badge-danger">{{$fact->estado}}</span></td>
@@ -79,8 +82,32 @@
     </style>     
 @stop
 @section('js')
-<script type="text/javascript">
-  
+<script>
+  $(function(){
+    $('#tfactura').DataTable({
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron registros",
+            "info": "Mostrando página _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "search": "Buscar:",
+            "paginate": {
+                'next': 'Siguiente',
+                'previous': 'Anterior'
+            }
+        },
+        "responsive" : false,
+        "paging": true,
+        "lengthMenu": [4, 8, "All"],
+        "searching": true,
+        "ordering": false,
+        "info": false,
+        "autoWidth": false
+    });
+  })
+</script>
+<script type="text/javascript">  
     $("#postForm").submit(function(e){
         e.preventDefault();  
         $.ajax({

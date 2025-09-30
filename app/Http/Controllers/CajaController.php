@@ -79,7 +79,7 @@ class CajaController extends Controller
             
                     
             $empresa = Empresa::where('estado','A')->first();        
-            $sucursal = Agencia::where('id',session('agencia_id'))->first(); 
+            $sucursal = Agencia::where('id',session('agencia_id'))->where('estado','A')->first(); 
             $puntoVenta = PuntoVenta::where('id',session('punto_venta_id'))->first();                                                                    
             $clienteCodigo = Ajuste::consumoSIAT($token,$wsdlCodigos);
             $clienteSincro = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
@@ -140,7 +140,11 @@ class CajaController extends Controller
                     $caja = new Caja($request->all());
                     $caja->fecha = $request->fecha;                    
                     $caja->hora_inicio = $request->hora_inicio;
-                    $caja->monto_apertura = $request->monto_apertura;                    
+                    $caja->estado = 'A';
+                    $caja->monto_apertura = $request->monto_apertura;  
+                    $caja->agencia_id = session('agencia_id');
+                    $caja->punto_venta_id = session('punto_venta_id');
+                    $caja->user_id = Auth::id();            
                     $caja->save();
                     // Registrar en Bitacora
                     BitacoraHelper::registrar('Apertura de Caja', 'Apertura de Caja realizada por el usuario: ' . Auth::user()->name, 'Caja');
@@ -228,7 +232,7 @@ class CajaController extends Controller
         $caja->gastos=$request->gastos;
         $caja->ganancias=$request->ganancias;
         $caja->total=$request->total;
-
+        $caja->estado='C'; //Cerrada
         $ultimoArqueo = Caja::all()->last();
         if ($ultimoArqueo -> fecha == $caja->fecha && $ultimoArqueo -> hora_fin <> null) {
             return redirect('/caja')->with('errors','Ya se realizó el Arqueo de Caja');    

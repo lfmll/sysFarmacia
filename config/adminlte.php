@@ -410,6 +410,11 @@ return [
                     'text'  =>  'Eventos',
                     'url'   =>  '/evento',
                     'icon'  =>  'fas fa-cubes'
+                ],
+                [
+                    'text'  =>  'Nota Credito-Debito',
+                    'url'   =>  '/notaCD',
+                    'icon'  =>  'fas fa-file-alt'
                 ]
             ],
         ],
