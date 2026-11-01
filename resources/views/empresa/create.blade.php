@@ -140,7 +140,8 @@
 
   document.querySelectorAll('.btn-ver-clave').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var campo = document.getElementById(btn.dataset.target);
+      var campo = btn.closest('.input-group').querySelector('input');
+      if (!campo) return;
       var icono = btn.querySelector('span');
       var mostrar = campo.type === 'password';
 
@@ -149,7 +150,7 @@
       btn.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
     });
   });
-  
+
   var quitar = {
     numeros:      /[^0-9]/g,
     letras:       /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]/g,

@@ -24,6 +24,11 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function esAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+    
     public function puntosVenta():BelongsToMany
     {
         return $this->belongsToMany(PuntoVenta::class, 'user_punto_ventas')

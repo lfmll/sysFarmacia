@@ -297,7 +297,7 @@ class AjusteController extends Controller
         $abrirZip = $zip->open($path, ZipArchive::CREATE);
         
         if ($abrirZip === TRUE) {
-            $dba = DB::connection()->getPdo();
+            $dba = DB::getPdo();
             $query1 = $dba->query('SHOW TABLES');
             $tablas = array();
             while ($row1 = $query1->fetch()) {
