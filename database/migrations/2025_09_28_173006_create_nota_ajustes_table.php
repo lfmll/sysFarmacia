@@ -15,16 +15,25 @@ class CreateNotaAjustesTable extends Migration
     {
         Schema::create('nota_ajustes', function (Blueprint $table) {
             $table->smallIncrements('id');
+            $table->string('numeroNotaCreditoDebito');
             $table->string('tipo'); //credito o debito
             $table->string('estado'); //enviado, aceptado, rechazado
-            $table->string('monto');
             $table->string('motivo');
-            $table->string('codigoPuntoVenta');
+            $table->string('tipoFactura'); //tipo factura documento ajuste
             $table->string('codigoDocumentoSector');
             $table->string('fechaEmision');
-            $table->string('usuario');
+            $table->string('montoTotal');
+            $table->string('cuf');
+            $table->string('montoTotalDevuelto');
+            $table->string('montoDescuentoCreditoDebito');
+            $table->string('montoEfectivoCreditoDebito');
+            $table->string('codigoExcepcion')->nullable();
+            $table->string('codigoRecepcion')->nullable();
+            $table->string('leyenda');
             $table->smallInteger('factura_id')->unsigned();
             $table->smallInteger('cufd_id')->unsigned();
+            $table->smallInteger('punto_venta_id')->unsigned();
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }

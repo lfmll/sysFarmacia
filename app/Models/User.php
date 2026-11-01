@@ -35,6 +35,10 @@ class User extends Authenticatable
     public function ventas(){
         return $this->hasMany(Venta::class);
     }
+
+    public function notasAjuste(){
+        return $this->hasMany(NotaAjuste::class);
+    }
     /**
      * The attributes that should be hidden for arrays.
      *

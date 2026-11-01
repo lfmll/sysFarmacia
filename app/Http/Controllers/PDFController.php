@@ -16,13 +16,14 @@ use App\Models\Medida;
 use App\Models\ClaseMedicamento;
 use App\Models\MedidaMedicamento;
 use App\Models\Caja;
-use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\DetalleFactura;
 use App\Models\Venta;
 use App\Models\Parametro;
 use App\Models\TipoParametro;
+use App\Models\NotaAjuste;
+use App\Models\DetalleNotaAjuste;
 
 class PDFController extends Controller
 {
@@ -299,5 +300,21 @@ class PDFController extends Controller
                                                     'venta'=>$venta]);
         
         return $pdf->setPaper('B7','portrait')->stream();        
+    }
+
+    public function notaAjustePDF($id)
+    {
+        $notaAjuste=NotaAjuste::find($id);
+        $detalleNotaAjuste=DetalleNotaAjuste::where('nota_ajuste_id',$id)
+                                            ->where('codigoDetalleTransaccion',2)
+                                            ->get();
+        $factura=Factura::find($notaAjuste->factura_id);
+        $detalleFactura=DetalleFactura::where('factura_id',$factura->id)->get();
+        
+        $pdf=PDF::loadView('notaAjuste.notaAjustePDF',['notaAjuste'=>$notaAjuste,
+                                                        'detalleNotaAjuste'=>$detalleNotaAjuste,
+                                                        'factura'=>$factura,
+                                                        'detalleFactura'=>$detalleFactura]);
+        return $pdf->setPaper('letter','portrait')->stream();        
     }
 }

@@ -68,5 +68,7 @@ class Kernel extends HttpKernel
         'iniciar' => \App\Http\Middleware\ControlAccesoEmpresaMiddleware::class,
         'parametrizar' => \App\Http\Middleware\ControlParametroMiddleware::class,
         'sincronizacionFechaHora' => \App\Http\Middleware\SincronizarFechaHoraMiddleware::class,
+        'setup.pendiente' => \App\Http\Middleware\SetupPendienteMiddleware::class,  
+        'admin' => \App\Http\Middleware\SoloAdminMiddleware::class,
     ];
 }

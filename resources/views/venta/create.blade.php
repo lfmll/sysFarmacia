@@ -101,14 +101,14 @@
                                                 </a>
                                             </div>                                            
                                         </div>                                        
-                                        <label  for="loteid" id="pcodigo">idcliente</label>
+                                        <label style="display:none" for="loteid" id="pcodigo">idcliente</label>
                                         {!! Form::hidden('maximo', null, ['id'=>'pmaximo','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
                                     </div>
                                 </div>
                                 <div class="col-sm-1">
                                     <div class="form-group">
                                         {!! Form::label('Cantidad', 'Cantidad') !!}
-                                        {!! Form::number('cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'0', 'oninput'=>'this.value|=0']) !!}
+                                        {!! Form::number('cantidad', null, ['id'=>'pcantidad','class'=>'form-control','placeholder'=>'0','min'=>'1']) !!}
                                     </div>
                                 </div>
                                 <div class="col-sm-1">
@@ -136,31 +136,42 @@
                                 <table id="detalles" class="table table-bordered table-condensed table-hover">
                                     <thead style="background-color: #2ab27b">
                                         <th class="col-sm-1"></th>
-                                        <th class="col-sm-1">Codigo</th>
-                                        <th class="col-sm-5">Concepto</th>
+                                        <th class="col-sm-2">Codigo</th>
+                                        <th class="col-sm-3">Concepto</th>
                                         <th class="col-sm-1">Cantidad</th>
-                                        <th class="col-sm-2">P. Unitario</th>
+                                        <th class="col-sm-2">Precio</th>
+                                        <th class="col-sm-1">Descueto</th>
                                         <th class="col-sm-2">SubTotal</th>
                                     </thead>
                                     <tfoot>     
                                         <tr>
-                                            <td colspan="4"></td>                                                                                
+                                            <td colspan="5"></td>                                                                                
                                             <td>SubTotal: </td>                                 
                                             <td><input type="number" name="eSubTotal" id="eSubTotal" class="form-control" step="any" readonly required></td>
                                         </tr>    
                                         <tr>
-                                            <td colspan="4"></td>
-                                            <td>Monto Descuento: </td>
-                                            <td><input type="number" name="eDescuento" id="eDescuento" class="form-control" value="0" min="0" max="100" onchange="descuentoTotal(this.value)"></td>
+                                            <td colspan="5"></td>
+                                            <td>Descuento: </td>
+                                            <td><input type="number" name="eDescuento" id="eDescuento" class="form-control" value="0" min="0" max="100" onchange="descontarTotal(this.value)"></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4"></td>
+                                            <td colspan="5"></td>
                                             <td>Total: </td>
-                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" value="0" min="0" step="any" required></td>
+                                            <td><input type="number" name="eTotal" id="eTotal" class="form-control" value="0" min="0" step="any" readonly required></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4"></td>
-                                            <td>Monto Total Subjeto IVA: </td>
+                                            <td colspan="5"></td>
+                                            <td>GiftCard: </td>
+                                            <td><input type="number" name="eGiftCard" id="eGiftCard" class="form-control" value="0" min="0" step="any" onchange="descontarGiftCard(this.value)"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td>Monto a Pagar: </td>
+                                            <td><input type="number" name="eMontoPagar" id="eMontoPagar" class="form-control" step="any" readonly></td>
+                                        </tr> 
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td>Monto Total Sujeto IVA: </td>
                                             <td><input type="number" name="eTotalIVA" id="eTotalIVA" class="form-control" step="any" readonly></td>
                                         </tr>                                        
                                     </tfoot>
@@ -194,12 +205,12 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                        {!! Form::number('ppago_giftcard', null, ['id'=>'ppago_giftcard','class'=>'form-control','min'=>'0', 'step'=>'any', 'readonly']) !!}
+                                                        {!! Form::number('ppago_digital', null, ['id'=>'ppago_digital','class'=>'form-control','min'=>'0', 'step'=>'any', 'readonly']) !!}
                                                         <hr>
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="radio" name="forma_pago" value="27" id="chkgiftcard" onchange="onchkgiftcard()">
-                                                                <label class="form-check-label" for="chkgiftcard">
-                                                                    Giftcard
+                                                                <input class="form-check-input" type="radio" name="forma_pago" value="33" id="chkqr" onchange="onchkdigital()">
+                                                                <label class="form-check-label" for="chkqr">
+                                                                    QR
                                                                 </label>
                                                             </div> 
                                                         </td>
@@ -457,8 +468,7 @@
         }
     });
 
-    let total=0;
-    let subtotal=[];
+    let detalle=[];
 
     $('#modalLote.save').click(function (e) {        
         e.preventDefault();
@@ -665,56 +675,10 @@
                     swal.fire("Alerta",JSON.parse(data.responseText).mensaje,"warning");    
                 } else {
                     swal.fire("Error","Error en la consulta","error");
-                }
-                
+                }                
             }
         });
     }
-
-
-    function agregar(){
-        arreglo = document.getElementById("pcodigo").innerText;
-        arr=arreglo.split(',')
-        codigo=arr[0];
-        cant_max=arr[2];
-        
-        concepto = document.getElementById("pproducto").value;               
-        cantidad = document.getElementById("pcantidad").value; 
-        precio = document.getElementById("pprecio").value;
-        descuento = document.getElementById("pdescuento").value;
-
-        if (parseInt(descuento)<0 || parseInt(descuento)>100) {
-            alert("Error: Valores no validos");
-            return;
-        }
-               
-        if (concepto=="" || cantidad=="" || precio=="") {
-            alert("Error: Campos no pueden estar vacíos");     
-            return;                   
-        } else if (parseInt(cantidad) > parseInt(cant_max)) {            
-            alert("Error: la cantidad excede el stock del lote");    
-            return;        
-        } else {
-            [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
-                idlote=cb.id;
-                $('#'+idlote).fadeOut('slow');
-            });
-            precio=precio - (Math.floor(precio*descuento)/100);
-            
-            calculo=(cantidad*precio);    
-                                
-            subtotal.push(calculo.toFixed(2));
-            cont=subtotal.length-1;
-            total=parseFloat(total)+parseFloat(subtotal[cont]);            
-            document.getElementById('eSubTotal').value = total.toFixed(2);
-            document.getElementById('eTotal').value = total.toFixed(2);
-            document.getElementById('eTotalIVA').value = total.toFixed(2); //Cambiar al saber el monto que cobrara IVA
-            var fila='<tr class="detalle" id="fila'+idlote+'"><td><button type="button" class="btn btn-danger" onclick="eliminar('+idlote+','+cont+');"><i class="fas fa-times-circle"></i></button></td><td><input type="number" class="form-control input-sm" name="dcodigo[]" readonly value="'+codigo+'"></td><td><input type="text" class="form-control input-sm" name="dconcepto[]" readonly value="'+concepto+'"></td><td><input id="dpcantidad'+idlote+'" type="number" min=1 max="'+cant_max+'" onchange="onCambiarCantidad('+idlote+');" class="form-control input-sm" name="dcantidad[]" value="'+cantidad+'"></td><td><input id="dpprecio'+idlote+'"  onchange="onCambiarPrecio('+idlote+');" class="form-control input-sm" type="number" step="any" min="0" name="dprecio[]" value="'+precio+'"></td><td><input id="dsubtotal'+idlote+'" class="form-control input-sm" type="number" step="any" name="dsubtotal" readonly value="'+subtotal[cont]+'"></td></tr>';                   
-            $('#detalles').append(fila);                                                              
-        }
-        limpiar();        
-    }
-
     function limpiar(){        
         document.getElementById("pcantidad").value = "";
         document.getElementById("pprecio").value = "";
@@ -722,7 +686,6 @@
         document.getElementById("pdescuento").value = "";
         document.getElementById("pcodigo").innerText = "";        
         $('input[name="chk"]').prop('checked', false);
-
     }
 
     function limpiarCliente(){
@@ -734,49 +697,187 @@
         document.getElementById("ccorreo").value = "";
     }
 
-    function eliminar(index, cont){            
-        total=parseFloat(total)-parseFloat(subtotal[cont]);
-        document.getElementById('eSubTotal').value = total.toFixed(2);
-        document.getElementById('eTotal').value = total.toFixed(2);
-        document.getElementById('eTotalIVA').value = total.toFixed(2);
-        subtotal.splice(cont,1);        
-        limpiarMetodosPago();
-        $('#fila'+index).remove();                
-        $('#'+index).fadeIn('slow');
+    function camposValidos(concepto, cantidad, precio, descuento){
+        if (concepto=="" || cantidad=="" || precio=="" || cantidad < 0 || precio < 0 || descuento < 0) 
+            return false;
+        else return true;        
+    }
+
+    function excedeLimite(cantidad, cant_max){
+        if (parseInt(cantidad) > parseInt(cant_max)) 
+            return true;
+        else return false;
+    }
+
+    function descuentoEsMayor(calculo, descuento){
+        if (Number(descuento) > Number(calculo))
+            return true;
+        else return false;
+    }
+
+    function obtenerSubtotal(fila){
+        const [, , cantidad, precio, descuento] = fila;
+        const c = parseFloat(cantidad) || 0;
+        const p = parseFloat(precio) || 0;
+        const d = parseFloat(descuento) || 0;
+        console.log("Calculando subtotal:", { cantidad, precio, descuento });
+
+        return parseFloat((c * p - d).toFixed(2));
+    }
+
+    function actualizarTotalesVisuales() {
+        let subTotales = 0;
+        for (let i = 0; i < detalle.length; i++) {
+            subTotales += obtenerSubtotal(detalle[i]);
+        }
+
+        const descuentoGlobal = Number(document.getElementById('eDescuento').value) || 0;
+        const descuentoGiftCard = Number(document.getElementById('eGiftCard').value) || 0;
+
+        if (descuentoEsMayor(subTotales, descuentoGlobal)) {
+            Swal.fire({
+                icon: "error",
+                title: "Datos No Válidos",
+                text: "Error: el Descuento global no puede exceder el Total Fiscal"
+            });
+            return;
+        }
+        subTotales = parseFloat(subTotales.toFixed(2));
+        totales = parseFloat((subTotales - descuentoGlobal).toFixed(2));
+        
+        if (descuentoEsMayor(totales, descuentoGiftCard)) {
+            Swal.fire({
+                icon: "error",
+                title: "Datos No Válidos",
+                text: "Error: el Descuento por GiftCard no puede exceder el Subtotal"
+            });
+            return;
+        }
+
+        const montoPagar = parseFloat((totales - descontarGiftCard).toFixed(2));
+        
+        document.getElementById('eSubTotal').value = subTotales.toFixed(2);
+        document.getElementById('eTotal').value = totales.toFixed(2);
+        document.getElementById('eMontoPagar').value = montoPagar;
+        document.getElementById('eTotalIVA').value = totales.toFixed(2);
+    }
+
+    function agregar() {
+        const arreglo = document.getElementById("pcodigo").innerText;
+        const arr = arreglo.split(',');
+        const codigo = arr[0];
+        const cant_max = arr[2];
+
+        const concepto = document.getElementById("pproducto").value;
+        const cantidad = parseInt(document.getElementById("pcantidad").value);
+        const precio = parseFloat(document.getElementById("pprecio").value);
+        const descuento = parseFloat(document.getElementById("pdescuento").value) || 0;
+
+        if (!camposValidos(concepto, cantidad, precio, descuento)) {
+            Swal.fire({ icon: "error", title: "Alerta", text: "Campos inválidos" });
+            return;
+        }
+
+        if (excedeLimite(cantidad, cant_max)) {
+            Swal.fire({ icon: "error", title: "Alerta", text: "Cantidad excede el stock" });
+            return;
+        }
+
+        let calculo = cantidad * precio;
+        if (descuentoEsMayor(calculo, descuento)) {
+            Swal.fire({ icon: "error", title: "Alerta", text: "Descuento excede el importe" });
+            return;
+        }
+
+        calculo = parseFloat((calculo - descuento).toFixed(2));
+
+        [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
+            idlote = cb.id;
+            $('#' + idlote).fadeOut('slow');
+        });
+        console.log("Valores agregados:", { cantidad, precio, descuento });
+        detalle.push([idlote, codigo, cantidad, precio, descuento]);
+        const index = detalle.length - 1;
+        const subtotal = obtenerSubtotal(detalle[index]);
+
+        const fila = '<tr class="detalle" id="fila' + index + '">' +
+            '<td><button type="button" class="btn btn-danger" onclick="eliminar(' + index + ');"><i class="fas fa-times-circle"></i></button></td>' +
+            '<td hidden><input type="number" id="dcantMax' + index + '" name="dcantMax[]" class="form-control input-sm" value="' + cant_max + '"></td>' +
+            '<td><input type="number" id="dcodigo' + index + '" name="dcodigo[]" class="form-control input-sm" value="' + codigo + '" readonly required></td>' +
+            '<td><input type="text" id="dconcepto' + index + '" name="dconcepto[]" class="form-control input-sm" value="' + concepto + '" readonly required></td>' +
+            '<td><input type="number" id="dcantidad' + index + '" name="dcantidad[]" class="form-control input-sm" value="' + cantidad + '" min="1" max="' + cant_max + '" step="1" onchange="recalcularImporte(' + index + ');" required></td>' +
+            '<td><input type="number" id="dprecio' + index + '" name="dprecio[]" class="form-control input-sm" value="' + precio + '" min="0" step="0.01" onchange="recalcularImporte(' + index + ');" required></td>' +
+            '<td><input type="number" id="ddescuento' + index + '" name="ddescuento[]" class="form-control input-sm" value="' + descuento + '" min="0" step="0.01" onchange="recalcularImporte(' + index + ');"></td>' +
+            '<td><input type="number" id="dsubtotal' + index + '" name="dsubtotal[]" class="form-control input-sm" value="' + subtotal + '" min="0" step="0.01" readonly></td>' +
+            '</tr>';
+
+        $('#detalles').append(fila);
+        actualizarTotalesVisuales();
+        limpiar();
+    }
+
+    function recalcularImporte(index) {
+        console.log(detalle);
+        const concepto = document.getElementById('dconcepto' + index).value;
+        const cantidad = parseInt(document.getElementById('dcantidad' + index).value);
+        const precio = Number(document.getElementById('dprecio' + index).value);
+        const descuento = Number(document.getElementById('ddescuento' + index).value);
+        const cant_max = parseInt(document.getElementById('dcantMax' + index).value);
+
+        if (!camposValidos(concepto, cantidad, precio, descuento)) {
+            Swal.fire({
+                icon: "error",
+                title: "Datos No Válidos",
+                text: "Error: Los Campos no pueden estar vacíos o con valores negativos"
+            });
+            return;
+        }
+
+        if (excedeLimite(cantidad, cant_max)) {
+            Swal.fire({
+                icon: "error",
+                title: "Datos No Válidos",
+                text: "Error: la cantidad excede el stock del lote"
+            });
+            return;
+        }
+
+        const bruto = cantidad * precio;
+        if (descuentoEsMayor(bruto, descuento)) {
+            Swal.fire({
+                icon: "error",
+                title: "Datos No Válidos",
+                text: "Error: el Descuento no puede exceder el importe"
+            });
+            return;
+        }
+
+        // Actualizar la fila en la matriz fiscal
+        const codigo = document.getElementById('dcodigo' + index).value;
+        detalle[index] = [idlote, codigo, cantidad, precio, descuento];
+
+        // Calcular subtotal dinámico
+        const calculo = obtenerSubtotal(detalle[index]);
+        document.getElementById('dsubtotal' + index).value = calculo.toFixed(2);
+
+        actualizarTotalesVisuales();
+    }
+      
+    function eliminar(index) {
+        const fila = detalle[index];
+        const idlote = fila[0]; // ✅ primer campo es el id visual
+
+        detalle.splice(index, 1);
+        $('#fila' + index).remove();
+        actualizarTotalesVisuales();
+
+        const total = parseFloat(document.getElementById('eTotal').value) || 0;
+        if (total === 0) limpiarMetodosPago();
+
+        // ✅ Reactivar el ítem en el modal
+        $('#' + idlote).fadeIn('slow');
     }
     
-    function onCambiarCantidad(index){
-        cant = document.getElementById('dpcantidad'+index).value;
-        precio = document.getElementById('dpprecio'+index).value;
-        elementos = document.getElementsByName('dpsubtotal');        
-        calculo=(cant*precio);
-        document.getElementById('dpsubtotal'+index).value = calculo.toFixed(2);
-        total = 0;
-        for (let i = 0; i < elementos.length; i++) {
-            total = total + parseFloat(elementos[i].value);         
-        }                                        
-        total=total.toFixed(2);                  
-        document.getElementById('eSubTotal').value = total;
-        document.getElementById('eTotal').value = total;
-        document.getElementById('eTotalIVA').value = total; //Cambiar al saber el monto que cobrara IVA
-    }
-
-    function onCambiarPrecio(index){
-        cant = document.getElementById('dpcantidad'+index).value;
-        precio = document.getElementById('dpprecio'+index).value;
-        elementos = document.getElementsByName('dpsubtotal');        
-        calculo=(cant*precio);
-        document.getElementById('dpsubtotal'+index).value = calculo.toFixed(2);
-        total = 0;
-        for (let i = 0; i < elementos.length; i++) {
-            total = total + parseFloat(elementos[i].value);         
-        }                                        
-        total=total.toFixed(2);                  
-        document.getElementById('eSubTotal').value = total;
-        document.getElementById('eTotal').value = total;
-        document.getElementById('eTotalIVA').value = total; //Cambiar al saber el monto que cobrara IVA
-    }
-
     function seleccionarCliente(){
         [].forEach.call(document.querySelectorAll('input[name="chkCliente"]:checked'), function(cb) {
             document.getElementById('ccliente').innerText=cb.value;            
@@ -798,8 +899,7 @@
     }
 
     function seleccionar(){          
-        [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {
-            console.log(cb.value);
+        [].forEach.call(document.querySelectorAll('input[name="chk"]:checked'), function(cb) {            
             document.getElementById('pcodigo').innerText=cb.value;                        
         });
         
@@ -817,34 +917,34 @@
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = false;
         document.getElementById("pcambio").readOnly        = false;
-        document.getElementById("ppago_giftcard").readOnly = true;
+        document.getElementById("ppago_digital").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = true;        
     }
-    function onchkgiftcard(){
+    function onchkdigital(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = true;
         document.getElementById("pcambio").readOnly        = true;
-        document.getElementById("ppago_giftcard").readOnly = false;
+        document.getElementById("ppago_digital").readOnly = false;
         document.getElementById("ppago_tarjeta").readOnly  = true;        
     }
     function onchktarjeta(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = true;
         document.getElementById("pcambio").readOnly        = true;
-        document.getElementById("ppago_giftcard").readOnly = true;
+        document.getElementById("ppago_digital").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = false;        
     }
     function onchkotros(){
         limpiarMetodosPago();
         document.getElementById("ppago_efectivo").readOnly = true;
         document.getElementById("pcambio").readOnly        = true;
-        document.getElementById("ppago_giftcard").readOnly = true;
+        document.getElementById("ppago_digital").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = true;
     }
 
     function limpiarMetodosPago(){
         document.getElementById("ppago_efectivo").value = "";
-        document.getElementById("ppago_giftcard").value = "";
+        document.getElementById("ppago_digital").value = "";
         document.getElementById("ppago_tarjeta").value  = "";
         document.getElementById("pcambio").value        = "";
     }
@@ -855,41 +955,36 @@
         document.getElementById('pcambio').value = cambio.toFixed(2);
     }
 
-    function descuentoTotal(val){
-        total=document.getElementById('eSubTotal').value;
-        total= total - (Math.floor(total*val)/100);
-        document.getElementById("eTotal").value = total;
+    function descontarTotal(val){
+        sub=document.getElementById('eSubTotal').value;
+        if (descuentoEsMayor(sub, val)){
+            Swal.fire({
+                icon: "error",
+                title: "Alerta",
+                text: "El descuento no puede exceder el subtotal"
+            });
+            return;
+        }      
+        sub = parseFloat(sub) - parseFloat(val); 
+        sub.toFixed(2);
+        document.getElementById("eTotal").value = sub;
+        document.getElementById("eMontoPagar").value = sub;
+        document.getElementById("eTotalIVA").value = sub;
     }
 
-    function onFactura(){
-        var chkFactura=document.getElementById("fcheck");        
-        var txtNit = document.getElementById("fnit");
-        var txtRazon = document.getElementById("frazon");
-        var txtAutorizacion = document.getElementById("fautorizacion");
-
-            document.getElementById("ffactura").value="factura" ;
-        if (chkFactura.checked == true) {
-            txtNit.style.display = "block";
-            txtRazon.style.display = "block";
-            txtAutorizacion.style.display = "block";
-
-            txtNit.required=true;
-            txtRazon.required=true;
-            txtAutorizacion.required=true;
-        } else {
-            document.getElementById("ffactura").value="";
-            txtNit.style.display = "none";
-            txtRazon.style.display = "none";
-            txtAutorizacion.style.display = "none";     
-
-            txtNit.value='';
-            txtRazon.value='';
-            txtAutorizacion.value='';
-
-            txtNit.required=false;
-            txtRazon.required=false;
-            txtAutorizacion.required=false;
+    function descontarGiftCard(val){
+        sub=document.getElementById('eSubTotal').value;
+        if (descuentoEsMayor(sub, val)) {
+            Swal.fire({
+                icon: "error",
+                title: "Alerta",
+                text: "El descuento no puede exceder el subtotal"
+            });
+            return;
         }
+        sub = parseFloat(sub) - parseFloat(val);
+        sub.toFixed(2);
+        document.getElementById("eMontoPagar").value = sub;
     }
 </script>
 

@@ -24,36 +24,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($nota as $not)
+                                @foreach($notas as $nota)
                                 <tr>
-                                    <td>{{$not->numeroNota}}</td>
-                                    <td><span class="badge badge-light">{{$not->factura->cuf}}</span></td>                                 
-                                    <td>{{$not->factura->nitEmisor}}</td>
-                                    <td>{{$not->factura->nombreRazonSocial}}</td>
-                                    <td>{{ date('d-m-Y h:i A', strtotime($not->fechaEmision)) }}</td>  
-                                    <td>{{$not->monto}}</td>
+                                    <td>{{$nota->numeroNotaCreditoDebito}}</td>
+                                    <td><span class="badge badge-light">{{$nota->factura->cuf}}</span></td>                                 
+                                    <td>{{$nota->factura->nitEmisor}}</td>
+                                    <td>{{$nota->factura->nombreRazonSocial}}</td>
+                                    <td>{{ date('d-m-Y h:i A', strtotime($nota->fechaEmision)) }}</td>  
+                                    <td>{{$nota->montoTotal}}</td>
                                     
-                                    @if ($not->estado == 'VALIDADA')
-                                    <td><span class="badge badge-pill badge-success">{{$not->estado}}</span></td>
+                                    @if ($nota->estado == 'VALIDADA')
+                                    <td><span class="badge badge-pill badge-success">{{$nota->estado}}</span></td>
                                     <td>
-                                        <a href="{{url('verSIATNota/'.$not->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-laptop"></i> Ver</a>
-                                        <a href="{{url('notaCarta/'.$not->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF</a>
-                                        <a href="{{url('notaRollo/'.$not->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF Rollo</a>
-                                        <a href="{{url('generarXMLNota/'.$not->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
-                                        <!-- <a href="{{url('enviarCorreoNota/'.$not->id)}}" class="btn btn-info btn-sm" onClick="loading()"><i class="fa fa-envelope"></i> Notificacion</a>                                         -->
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="anularNota
-                                        ('{{$not->id}}')"><i class="fa fa-trash"></i> Anular</button>                                                                             
+                                        <a href="{{url('verSIATNota/'.$nota->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-laptop"></i> Ver</a>
+                                        <a href="{{url('notaAjustePDF/'.$nota->id)}}" class="btn btn-danger btn-sm"><i class="fa fa-file-pdf"></i> PDF</a>
+                                        
+                                        <a href="{{url('generarXMLNota/'.$nota->id)}}" class="btn btn-success btn-sm"><i class="fa fa-file-code"></i> XML</a>
+                                        <!-- <a href="{{url('enviarCorreoNota/'.$nota->id)}}" class="btn btn-info btn-sm" onClick="loading()"><i class="fa fa-envelope"></i> Notificacion</a>                                         -->
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="anularNota('{{$nota->id}}')"><i class="fa fa-trash"></i> Anular</button>                                                                             
                                     </td>
-                                    @elseif ($not->estado == 'ANULADA')
+                                    @elseif ($nota->estado == 'ANULADA')
 
-                                    <td><span class="badge badge-pill badge-danger">{{$not->estado}}</span></td>
+                                    <td><span class="badge badge-pill badge-danger">{{$nota->estado}}</span></td>
                                     <td>
-                                      <a><button type="submit" class="btn btn-info btn-sm" onclick="revertirAnulacionNota('{{$not->id}}')"><i class="fa fa-undo"></i> Revertir Anulacion</button></a>   
+                                      <a><button type="submit" class="btn btn-info btn-sm" onclick="revertirAnulacionNota('{{$nota->id}}')"><i class="fa fa-undo"></i> Revertir Anulacion</button></a>   
                                     </td>
                                     @else
-                                    <td><span class="badge badge-pill badge-warning">{{$not->estado}}</span></td>
+                                    <td><span class="badge badge-pill badge-warning">{{$nota->estado}}</span></td>
                                     <td>                                  
-                                      <a href="{{url('emitirNota/'.$not->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-receipt"></i> Emitir</a>     
+                                      <a href="{{url('emitirNota/'.$nota->id)}}" class="btn btn-warning btn-sm"><i class="fa fa-receipt"></i> Emitir</a>     
                                     </td>
                                     @endif  
                                 </tr>
@@ -69,5 +68,131 @@
         </div>    
     </div> 
 @stop
- 
+@section('js') 
+<script>
+    $(function(){
+        $('#tnota').DataTable({
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "No se encontraron registros",
+                "info": "Mostrando página _PAGE_ de _PAGES_",
+                "infoEmpty": "No hay registros disponibles",
+                "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                "search": "Buscar:",
+                "paginate": {
+                    'next': 'Siguiente',
+                    'previous': 'Anterior'
+                }
+            },
+            "responsive" : false,
+            "paging": true,
+            "lengthMenu": [4, 8, "All"],
+            "searching": true,
+            "ordering": false,
+            "info": false,
+            "autoWidth": false
+        });
+    });
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="text/javascript">
+    function anularNota(id){
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+        Swal.fire({
+            title: '¿Está seguro de anular la Nota Crédito-Débito?',
+            text: "Motivo",
+            icon: 'info',
+            input: 'radio',
+            inputOptions: {
+                '2': 'Nota de Crédito-Débito mal Emitida',
+                '3': 'Datos Emisión Incorrectos',
+                '4': 'Factura o Nota de Crédito-Débito devuelta'
+            },
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Debe seleccionar un motivo de anulación';
+                }  
+            },
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, anular',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.value) {
+                motivo = result.value;
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ url('anularNotaAjuste') }}" + '/' + id,
+                    type: "POST",
+                    data: {'_method': 'DELETE','_token': csrf_token, motivo},
+                    success: function(data) {
+                        Swal.fire({                            
+                            title: 'Operación Exitosa',
+                            text: data.message,
+                            icon: 'success'
+                        });
+                        setTimeout(function(){
+                            window.location.reload();
+                        }, 4000);
+                    },
+                    error: function(data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la Operación',
+                            text: data.responseJSON.message
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    function revertirAnulacionNota(id){
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+        Swal.fire({
+            title: '¿Está seguro de revertir la anulación de la Nota Crédito-Débito?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, revertir',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.value) {                
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ url('/revertirAnulacionNotaAjuste') }}" + '/' + id,
+                    type: "GET",
+                    success: function(data) {
+                        Swal.fire({                            
+                            title: 'Operación Exitosa',
+                            text: data.message,
+                            icon: 'success'
+                        });
+                        setTimeout(function(){
+                            window.location.reload();
+                        }, 4000);
+                    },
+                    error: function(data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la Operación',
+                            text: data.responseJSON.message
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+@endsection
 

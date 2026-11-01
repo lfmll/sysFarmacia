@@ -443,7 +443,9 @@ class VentaController extends Controller
                             } else {
                                 return redirect('/venta')->with('toast_error', $responseRecepcionFactura);
                             }                    
-                        }            
+                        } else {
+                            return redirect("venta")->with('toast_error','Error de comunicación SIAT');
+                        }         
                     } else {
                         return redirect("/venta")->with('toast_error','Error en Formato XSD: '.implode(" ", $msjError));
                     }                             

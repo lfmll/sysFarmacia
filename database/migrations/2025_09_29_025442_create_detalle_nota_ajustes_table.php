@@ -18,14 +18,15 @@ class CreateDetalleNotaAjustesTable extends Migration
             $table->string('actividadEconomica');
             $table->string('codigoProductoSin');
             $table->string('codigoProducto');
-            $table->string('descripcion');
             $table->string('cantidad');
+            $table->string('descripcion');            
             $table->string('unidadMedida');
             $table->string('precioUnitario');
             $table->string('montoDescuento');
             $table->string('subTotal');
             $table->string('numeroSerie')->nullable();
             $table->string('numeroImei')->nullable();
+            $table->string('codigoDetalleTransaccion'); //1: Transaccion Original, 2: Devuelto
             $table->smallInteger('nota_ajuste_id')->unsigned();
             $table->timestamps();
         });

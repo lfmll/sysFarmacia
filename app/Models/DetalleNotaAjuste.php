@@ -10,15 +10,16 @@ class DetalleNotaAjuste extends Model
     protected $fillable = [
         'actividadEconomica',
         'codigoProductoSin',
-        'codigoProducto',
-        'descripcion',
+        'codigoProducto',        
         'cantidad',
+        'descripcion',
         'unidadMedida',
         'precioUnitario',
         'montoDescuento',
         'subTotal',
         'numeroSerie',
         'numeroImei',
+        'codigoDetalleTransaccion', //1: Transaccion Original, 2: Devuelto
         'nota_ajuste_id'
     ];
     

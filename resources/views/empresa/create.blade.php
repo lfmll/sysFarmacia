@@ -97,25 +97,35 @@
   }
 
   function validateForm() {
-    // This function deals with validation of the form fields
-    var x, y, i, valid = true;
-    x = document.getElementsByClassName("tab");
-    y = x[currentTab].getElementsByClassName("form-control");    
-    // A loop that checks every input field in the current tab:
-    for (i = 0; i < y.length; i++) {
-      // If a field is empty...
-      if (y[i].value == "") {
-        // add an "invalid" class to the field:
-        y[i].Name += " invalid";
-        // and set the current valid status to false
+    var tab = document.getElementsByClassName("tab")[currentTab];
+    var campos = tab.querySelectorAll("input, select, textarea");
+    var valid = true, i;
+
+    for (i = 0; i < campos.length; i++) {
+      campos[i].classList.remove("is-invalid");
+      campos[i].setCustomValidity("");
+    }
+
+    // Reglas que HTML no expresa solo
+    var p1 = tab.querySelector('[name="admin_password"]');
+    var p2 = tab.querySelector('[name="admin_password_confirmation"]');
+    if (p1 && p2 && p1.value !== p2.value) p2.setCustomValidity("Las contraseñas no coinciden");
+
+    var logo = tab.querySelector('input[type="file"]');
+    if (logo && logo.files.length && logo.files[0].size > 2 * 1024 * 1024) {
+      logo.setCustomValidity("El logo no debe pesar más de 2 MB");
+    }
+
+    for (i = 0; i < campos.length; i++) {
+      if (!campos[i].checkValidity()) {
+        campos[i].classList.add("is-invalid");
+        if (valid) campos[i].reportValidity();   // mensaje nativo en el primer campo con error
         valid = false;
       }
     }
-    // If the valid status is true, mark the step as finished and valid:
-    if (valid) {
-      document.getElementsByClassName("step")[currentTab].className += " finish";
-    }
-    return valid; // return the valid status
+
+    if (valid) document.getElementsByClassName("step")[currentTab].className += " finish";
+    return valid;
   }
 
   function fixStepIndicator(n) {
@@ -127,5 +137,29 @@
     //... and adds the "active" class on the current step:
     x[n].className += " active";
   }
+
+  document.querySelectorAll('.btn-ver-clave').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var campo = document.getElementById(btn.dataset.target);
+      var icono = btn.querySelector('span');
+      var mostrar = campo.type === 'password';
+
+      campo.type = mostrar ? 'text' : 'password';
+      icono.className = mostrar ? 'fas fa-eye-slash' : 'fas fa-eye';
+      btn.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    });
+  });
+  
+  var quitar = {
+    numeros:      /[^0-9]/g,
+    letras:       /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]/g,
+    alfanumerico: /[^A-Za-z0-9]/g,
+    version:      /[^0-9.]/g
+  };
+  document.querySelectorAll('[data-solo]').forEach(function (campo) {
+    campo.addEventListener('input', function () {
+      campo.value = campo.value.replace(quitar[campo.dataset.solo], '');
+    });
+  });
 </script>
 @stop

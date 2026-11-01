@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('razon_social',null,['class'=>'form-control', 'placeholder'=>'Nombre/Razon Social','required'])}}
+            {{Form::text('razon_social',null,['class'=>'form-control','placeholder'=>'Nombre/Razon Social','required','maxlength'=>50])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-first-aid"></span>
@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('nit',null,['class'=>'form-control','placeholder'=>'NIT','required'])}}
+            {{Form::text('nit',null,['class'=>'form-control','placeholder'=>'NIT','required','maxlength'=>25,'pattern'=>'[0-9]+','inputmode'=>'numeric','title'=>'Solo números','data-solo'=>'numeros'])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-id-card"></span>
@@ -23,7 +23,7 @@
             </div>
         </div>       
         <div class="input-group mb-3">
-            {{Form::text('correo',null,['class'=>'form-control', 'placeholder'=>'Correo','required'])}}    
+            {{Form::email('correo',null,['class'=>'form-control','placeholder'=>'Correo','required','maxlength'=>50])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-envelope"></span>
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('telefono',null,['class'=>'form-control', 'placeholder'=>'Teléfono','required'])}}    
+            {{Form::text('telefono',null,['class'=>'form-control','placeholder'=>'Teléfono','required','maxlength'=>10,'pattern'=>'[0-9]+','inputmode'=>'numeric','title'=>'Solo números (máximo 10)','data-solo'=>'numeros'])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-phone"></span>
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('municipio',null,['class'=>'form-control', 'placeholder'=>'Municipio','required'])}}    
+            {{Form::text('municipio',null,['class'=>'form-control','placeholder'=>'Municipio','required','maxlength'=>50,'pattern'=>'[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+','title'=>'Solo letras','data-solo'=>'letras'])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-home"></span>
@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('direccion',null,['class'=>'form-control', 'placeholder'=>'Dirección','required'])}}    
+            {{Form::text('direccion',null,['class'=>'form-control','placeholder'=>'Dirección','required','maxlength'=>255])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-map-marker-alt"></span>
@@ -74,7 +74,7 @@
         </div>
         <div class="mb-3">
             <label for="logo">Subir Imagen Logo</label>
-            <input type="file" class="form-control" id="logo">
+            <input type="file" class="form-control" id="logo" name="cover" accept="image/png,image/jpeg">
         </div>                               
     </div>
     <div class="tab">
@@ -86,7 +86,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="input-group mb-3">
-                    {{Form::text('sistema', $empresa->sistema,['class'=>'form-control', 'placeholder'=>'Nombre de Sist.'])}}    
+                    {{Form::text('sistema', $empresa->sistema,['class'=>'form-control','placeholder'=>'Nombre de Sist.','maxlength'=>50])}}
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-desktop"></span>
@@ -95,11 +95,11 @@
                 </div>
             </div>
             <div class="col-md-4">
-                {{Form::text('version', $empresa->version,['class'=>'form-control', 'placeholder'=>'Version'])}}            
+                {{Form::text('version', $empresa->version,['class'=>'form-control','placeholder'=>'Version','maxlength'=>10,'pattern'=>'[0-9.]+','title'=>'Solo números y punto','data-solo'=>'version'])}}
             </div>
         </div>
         <div class="input-group mb-3">
-            {{Form::text('codigo_sistema', $empresa->codigo_sistema,['class'=>'form-control', 'placeholder'=>'Codigo Sistema'])}}    
+            {{Form::text('codigo_sistema', $empresa->codigo_sistema,['class'=>'form-control','placeholder'=>'Codigo Sistema','required','maxlength'=>25,'pattern'=>'[A-Za-z0-9]+','title'=>'Solo letras y números','data-solo'=>'alfanumerico'])}}
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-code"></span>
@@ -124,9 +124,42 @@
         </div>
         <h5 class="input-group mb-12"><i class="fas fa-fw fa-cogs"></i> Token Delegado</h5>
         <div class="input-group mb-3">
-            <textarea name="token" id="token" class="form-control" rows="6" cols="30"></textarea>            
+            <textarea name="token" id="token" class="form-control" rows="6" cols="30" required maxlength="500"></textarea>
         </div> 
     </div>
+    
+    <div class="tab">
+        <div class="row">
+            <div class="col-12">
+                <h5 class="input-group mb-12"><i class="fas fa-fw fa-user-shield"></i> Administrador del sistema</h5>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            {{ Form::text('admin_name', null, ['class'=>'form-control','placeholder'=>'Nombre completo','required','maxlength'=>255,'pattern'=>'[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+','title'=>'Solo letras','data-solo'=>'letras']) }}
+            <div class="input-group-append">
+                <div class="input-group-text"><span class="fas fa-user"></span></div>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            {{ Form::email('admin_email', null, ['class'=>'form-control','placeholder'=>'Correo (será su usuario)','required','maxlength'=>255]) }}
+            <div class="input-group-append">
+                <div class="input-group-text"><span class="fas fa-envelope"></span></div>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            {{ Form::password('admin_password', ['class'=>'form-control','placeholder'=>'Contraseña (mínimo 8 caracteres)','required','minlength'=>8]) }}
+            <button type="button" class="btn btn-outline-secondary btn-ver-clave" data-target="admin_password" aria-label="Mostrar contraseña">
+                <span class="fas fa-eye"></span>
+            </button>
+        </div>
+        <div class="input-group mb-3">
+            {{ Form::password('admin_password_confirmation', ['class'=>'form-control','placeholder'=>'Repita la contraseña','required','minlength'=>8]) }}
+            <button type="button" class="btn btn-outline-secondary btn-ver-clave" data-target="admin_password_confirmation" aria-label="Mostrar contraseña">
+                <span class="fas fa-eye"></span>
+            </button>
+        </div>
+    </div>
+    
     <div class="col-md-12" style="overflow:auto;">
         <div class="btn-group" style="float:right;">
             <button type="button" class="form-control btn btn-default" id="prevBtn" onclick="nextPrev(-1)">Atras</button>
@@ -136,6 +169,7 @@
         
     <!-- Circles which indicates the steps of the form: -->
     <div class="col-md-12" style="text-align:center;margin-top:40px;">
+        <span class="step"></span>
         <span class="step"></span>
         <span class="step"></span>
     </div>

@@ -90,8 +90,10 @@ Route::middleware(['auth', 'aperturar', 'sincronizacionFechaHora'])->group(funct
     Route::get('emitirFactura/{id}',[FacturaController::class,'emitirFactura']);
     Route::get('revertirAnulacionFactura/{id}',[FacturaController::class, 'revertirAnulacionFactura']);
     Route::resource('notaAjuste', NotaAjusteController::class);
+    Route::get('notaAjustePDF/{id}', [PDFController::class, 'notaAjustePDF']);
+    Route::get('notaAjuste/create/{factura_id}', [NotaAjusteController::class, 'create']);
+    Route::get('revertirAnulacionNotaAjuste/{id}',[NotaAjusteController::class, 'revertirAnulacionNotaAjuste']);
 });
-
 
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 

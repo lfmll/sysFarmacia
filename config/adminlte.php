@@ -413,7 +413,7 @@ return [
                 ],
                 [
                     'text'  =>  'Nota Credito-Debito',
-                    'url'   =>  '/notaCD',
+                    'url'   =>  '/notaAjuste',
                     'icon'  =>  'fas fa-file-alt'
                 ]
             ],

@@ -6,6 +6,7 @@ use App\Models\Empresa;
 use App\Models\Agencia;
 use App\Models\PuntoVenta;
 use App\Models\Ajuste;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,18 +14,24 @@ use RealRashid\SweetAlert\Facades\Alert;
 use App\Helpers\BitacoraHelper;
 use App\Models\UserPuntoVenta;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+
 
 class EmpresaController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+    public function __construct()
+    {
+        $this->middleware('setup.pendiente')->only(['create', 'store']);
+        $this->middleware(['auth', 'admin'])->only(['edit', 'update']);
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    
     public function index()
     {
         
@@ -48,7 +55,30 @@ class EmpresaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {      
+        $validator = Validator::make($request->all(), [
+            'admin_email'    => 'required|email|unique:users,email',
+            'admin_password' => 'required|string|min:8|confirmed',
+            'cover'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ], [], [
+            'admin_email'    => 'correo del administrador',
+            'admin_password' => 'contraseña del administrador',
+            'cover'          => 'logo',
+        ]);  
+        
+        $sinClaves = $request->except(['admin_password', 'admin_password_confirmation']);
+ 
+        if ($validator->fails()) {
+            return back()->withInput($sinClaves)->with('toast_error', $validator->errors()->first());
+        }
+
+        // URL de SIAT según el ambiente elegido
+        $wsdl = config('siat.wsdl.' . $request->ambiente);
+        if (empty($wsdl)) {
+            return back()->withInput($sinClaves)->with('toast_error',
+                'No hay una URL de SIAT configurada para ese ambiente. Revise config/siat.php y el archivo .env.');
+        }
+
         try {
             DB::beginTransaction();
             $hasFile=$request->hasFile('cover') && $request->cover->isValid();
@@ -90,25 +120,39 @@ class EmpresaController extends Controller
             $puntoventa->nombre = "Por defecto";            
             $puntoventa->agencia_id = $sucursal->id;
             $puntoventa->estado = "A";
-            $puntoventa->save();                
+            $puntoventa->save();                        
 
-            // $userPuntoVenta = new UserPuntoVenta;
-            // $userPuntoVenta->user_id = $idUsuario;
-            // $userPuntoVenta->punto_venta_id = $puntoventa->id;
-            // $userPuntoVenta->estado = 'A';
-            // $userPuntoVenta->fecha_asignacion = Carbon::now('America/La_Paz');
-            // $userPuntoVenta->save();
+            // NUEVO: el primer usuario es el administrador
+            $usuario = new User;
+            $usuario->name = $request->admin_name;
+            $usuario->email = $request->admin_email;
+            $usuario->password = Hash::make($request->admin_password);
+            $usuario->rol = 'admin';
+            $usuario->save();
+            
+            $userPuntoVenta = new UserPuntoVenta;
+            $userPuntoVenta->user_id = $usuario->id;
+            $userPuntoVenta->punto_venta_id = $puntoventa->id;
+            $userPuntoVenta->estado = 'A';
+            $userPuntoVenta->fecha_asignacion = Carbon::now('America/La_Paz');
+            $userPuntoVenta->save();
 
             $ajuste = new Ajuste;
             $ajuste->username = $request->correo;
             $ajuste->punto_venta_id = $puntoventa->id;
             $ajuste->token = $request->token;
-            $ajuste->wsdl = "https://pilotosiatservicios.impuestos.gob.bo/v2";
+            $ajuste->wsdl = $wsdl;
             $ajuste->save();
 
             DB::commit();
 
-            return redirect('/register');                          
+            // NUEVO: entra directo como administrador, ya ubicado en la matriz / punto de venta 0
+            Auth::login($usuario);
+            $request->session()->regenerate();
+            session(['agencia_id' => $sucursal->id, 'punto_venta_id' => $puntoventa->id]);
+            BitacoraHelper::registrar('Registro Inicial', 'Instalación inicial realizada por el usuario: ' . $usuario->name, 'Empresa');
+
+            return redirect('/ajuste')->with('toast_success', 'Empresa registrada. Sincronice CUIS, CUFD y catálogos con SIAT para empezar a facturar.');                          
         } catch (\Exception $e) {          
             DB::rollBack();
             return redirect()->route('empresa.create')->with('toast_error',"Excepción: " . $e->getMessage());
@@ -149,6 +193,14 @@ class EmpresaController extends Controller
     public function update(Request $request)
     {
         $empresa = Empresa::first();
+
+        $validator = Validator::make($request->all(), [
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ], [], ['cover' => 'logo']);
+        if ($validator->fails()) {
+            return back()->withInput()->with('toast_error', $validator->errors()->first());
+        }
+        
         $hasFile=$request->hasFile('cover') && $request->cover->isValid();
         $empresa->nombre = $request->nombre;
         $empresa->nit = $request->nit;

@@ -11,6 +11,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facade\DB;
 use Carbon\Carbon;
+use App\Models\Ajuste;
 use Illuminate\Support\Facades\Log;
 
 use App\Services\SiatService;
@@ -50,7 +51,26 @@ class SincronizarFechaHoraMiddleware
 
         $desfaseMinutos = Carbon::now('America/La_Paz')->diffInMinutes($sincronizada->fecha_sincronizada);
         if ($desfaseMinutos > 5) {
-            return redirect('ajuste')->withInput()->with('toast_error','La sincronizacion está desfasda más de 5 min. Actualice antes de continuar.');
+            $ajuste = Ajuste::first();
+            $token = $ajuste->token;
+            $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";
+            $clienteSincronizacion = Ajuste::consumoSIAT($token,$wsdlSincronizacion);
+            if ($clienteSincronizacion->verificarComunicacion()->return->mensajesList->codigo == "926") 
+            {
+                $parametrosSincronizacion = array(
+                    'SolicitudSincronizacion' => array(
+                        'codigoAmbiente' => $empresa->ambiente, 
+                        'codigoPuntoVenta' => $puntoVenta->codigo,
+                        'codigoSistema' => $empresa->codigo_sistema,
+                        'codigoSucursal' => $sucursal->codigo,
+                        'cuis' => $cuis->codigo_cuis,
+                        'nit' => $empresa->nit
+                    )
+                );
+                $responseFechaHora = Sincronizacion::sincronizacionFechaHora($clienteSincronizacion, $parametrosSincronizacion, $sincronizada->id);                
+            } else {
+                return redirect('ajuste')->withInput()->with('toast_error','No se pudo comunicar con SIAT, para sincronizar fecha y hora.');
+            };
         }
         return $next($request);
     }

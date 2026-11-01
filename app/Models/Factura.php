@@ -51,6 +51,9 @@ class Factura extends Model
         return $this->hasMany(DetalleFactura::class);
     }
 
+    public function notasAjustes(){
+        return $this->hasMany(NotaAjuste::class);
+    }
     /**************************************
      * Generar CUF
      **************************************/
@@ -69,6 +72,7 @@ class Factura extends Model
         $cadena .= str_pad($tipo_documento_sector, 2, '0', STR_PAD_LEFT);
         $cadena .= str_pad($nro_factura, 10, '0', STR_PAD_LEFT);
         $cadena .= str_pad($pos, 4, '0', STR_PAD_LEFT);
+        // dd($cadena);
         /**
          * PASO 3 Obtiene modulo 11 y adjunta resultado a la cadena
          */
@@ -89,7 +93,7 @@ class Factura extends Model
             $suma = 0;
             $mult = 2;
             for ($i=strlen($cadena)-1; $i >= 0; $i--) { 
-                $suma += ($mult * substr($cadena, $i, 1));
+                $suma += ($mult * intval(substr($cadena, $i, 1)));
                 if (++$mult > $limMult) {
                     $mult = 2;
                 }
@@ -277,7 +281,7 @@ class Factura extends Model
     {
         $responseFacturacionSOAP = $clienteSoap->recepcionFactura($parametrosFactura);
         $respuesta = $responseFacturacionSOAP->RespuestaServicioFacturacion;        
-        if ($respuesta->codigoEstado == 908) 
+        if ($respuesta->mensajesList->codigo == 908)
         {
             //Cambiar Estado, actualizar factura
             $factura = Factura::find($idfactura);

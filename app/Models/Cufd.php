@@ -31,6 +31,10 @@ class Cufd extends Model
         return $this->belongsTo(PuntoVenta::class);
     }
 
+    public function notasAjuste(){
+        return $this->hasMany(NotaAjuste::class);
+    }
+    
     public static function obtenerCufd()
     {
         $fechaActual = Carbon::now('America/La_Paz')->toDatetimeString();

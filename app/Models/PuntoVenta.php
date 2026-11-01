@@ -39,6 +39,10 @@ class PuntoVenta extends Model
         return $this->hasMany(Sincronizacion::class);
     }
 
+    public function notasAjustes(){
+        return $this->hasMany(PuntoVenta::class);
+    }
+    
     public function usuarios():BelongsToMany
     {
         return $this->belongsToMany(User::class,'user_punto_ventas')
