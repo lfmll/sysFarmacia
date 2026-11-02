@@ -49,7 +49,7 @@ class SincronizarFechaHoraMiddleware
             return redirect('ajuste')->withInput()->with('toast_error', 'Debe sincronizar fecha y hora antes de continuar.');
         }         
 
-        $desfaseMinutos = Carbon::now('America/La_Paz')->diffInMinutes($sincronizada->fecha_sincronizada);
+        $desfaseMinutos = Carbon::now('America/La_Paz')->diffInMinutes($sincronizada->fecha_sincronizada, 'America/La_Paz');
         if ($desfaseMinutos > 5) {
             $ajuste = Ajuste::first();
             $token = $ajuste->token;

@@ -53,7 +53,7 @@ class Sincronizacion extends Model
             $sincronizacion->fill([
                 'fecha_sincronizada' => $fecha_sincronizada,
                 'fecha_local' => $fecha_local,
-                'diferencia_horaria' => $fecha_local->diffInSeconds(Carbon::parse($fecha_sincronizada))
+                'diferencia_horaria' => $fecha_local->diffInSeconds(Carbon::parse($fecha_sincronizada, 'America/La_Paz')),
             ]);
             $sincronizacion->save();
             return true;
