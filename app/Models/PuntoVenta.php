@@ -103,6 +103,7 @@ class PuntoVenta extends Model
                 $puntoVenta->fill([
                     'codigo' => $responsePuntoVenta->RespuestaRegistroPuntoVenta->codigoPuntoVenta,
                     'nombre' => $request->nombre,
+                    'descripcion' => $request->descripcion,
                     'agencia_id' => $request->agencias,
                     'estado' => 'A'
                 ]);

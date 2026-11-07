@@ -45,8 +45,9 @@
             <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
                    placeholder="{{ __('adminlte::adminlte.password') }}">
             <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                
+                <div class="input-group-text">                    
+                    <span class="fas fa-lock"></span>
                 </div>
             </div>
             @if($errors->has('password'))
@@ -93,4 +94,27 @@
             </a>
         </p>
     @endif
+@stop
+@section('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('password');
+            const toggle = document.getElementById('togglePassword');
+
+            function alternar() {
+                const mostrar = input.type === 'password';
+                input.type = mostrar ? 'text' : 'password';
+                toggle.classList.toggle('fa-eye', !mostrar);
+                toggle.classList.toggle('fa-eye-slash', mostrar);
+                const texto = mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña';
+                toggle.setAttribute('aria-label', texto);
+                toggle.title = texto;
+            }
+
+            toggle.addEventListener('click', alternar);
+            toggle.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternar(); }
+            });
+        });
+    </script>
 @stop

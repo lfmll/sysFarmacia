@@ -13,6 +13,7 @@ use App\Models\Codigo;
 use App\Models\Leyenda;
 use App\Models\Catalogo;
 use App\Models\ActividadDocumento;
+use App\Models\PuntoVenta;
 use App\Models\Sincronizacion;
 use Tests\TestCase;
 
@@ -21,6 +22,25 @@ class SincronizacionCatalogos extends TestCase
     /**
      * Ejemplo
      */
+    private const ITERACIONES = 50;
+    private const SUCURSAL = 0;
+
+    private function cuisVigente(int $codigoPuntoVenta): Cuis
+    {
+        $agencia = Agencia::where('codigo', self::SUCURSAL)->first();
+        $puntoVenta = PuntoVenta::where('codigo', $codigoPuntoVenta)->first();
+
+        session([
+            'agencia_id'     => $agencia->id,
+            'punto_venta_id' => $puntoVenta->id,
+        ]);
+
+        $cuis = Cuis::obtenerCuis();
+        $this->assertNotNull($cuis, "No hay CUIS vigente para punto de venta $codigoPuntoVenta");
+
+        return $cuis;
+    }
+
     public function testSincronizarCatalogo1()
     {
         // cuis = su CUIS
@@ -30,7 +50,7 @@ class SincronizacionCatalogos extends TestCase
         // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES
         // nit = su NIT
         // codigoSucursal = 0 
-        $cuis = "5E20BB5C";
+        $cuis = $this->cuisVigente(1);
         $empresa = Empresa::first();        
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
