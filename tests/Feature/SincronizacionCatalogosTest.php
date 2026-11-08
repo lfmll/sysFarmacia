@@ -141,13 +141,13 @@ class SincronizacionCatalogos extends TestCase
                 'codigoPuntoVenta' => 1,
                 'codigoSistema' => $empresa->codigo_sistema,
                 'codigoSucursal' => 0,
-                'cuis' => $cuis,
+                'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
         $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
         $errores = [];
-        $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion(0, 1);
+        $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($cuis->agencia_id, $cuis->punto_venta_id);
         if (!$estaSincronizado) {
             //Registrar Sincronizacion
             $sincronizacion = new Sincronizacion();
