@@ -176,7 +176,7 @@ class SincronizacionCatalogos extends TestCase
         // codigoAmbiente = 2
         // codigoPuntoVenta = 0
         // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE LEYENDAS
+        // resultadoEsperado = FECHA Y HORA ACTUAL
         // nit = su NIT
         // codigoSucursal = 0 
         $cuis = $this->cuisVigente(0);
@@ -191,7 +191,7 @@ class SincronizacionCatalogos extends TestCase
                 'codigoPuntoVenta' => 0,
                 'codigoSistema' => $empresa->codigo_sistema,
                 'codigoSucursal' => 0,
-                'cuis' => $cuis,
+                'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
