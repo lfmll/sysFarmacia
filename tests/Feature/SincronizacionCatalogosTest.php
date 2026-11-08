@@ -62,7 +62,7 @@ class SincronizacionCatalogos extends TestCase
                 'codigoPuntoVenta' => 1,
                 'codigoSistema' => $empresa->codigo_sistema,
                 'codigoSucursal' => 0,
-                'cuis' => $cuis,
+                'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
@@ -71,7 +71,7 @@ class SincronizacionCatalogos extends TestCase
         $errores = [];
         for ($i=0; $i < 50; $i++) {                       
             //Sincronizar Actividades
-            $responseActividades = Codigo::soapActividad($clienteSincronizacion, $parametros, 6);
+            $responseActividades = Codigo::soapActividad($clienteSincronizacion, $parametros, $cuis->id);
             
             if (!$responseActividades) {
                 $errores[] = "Iteración $i: Falló la sincronización de Actividades";
@@ -80,6 +80,7 @@ class SincronizacionCatalogos extends TestCase
         // Validación final
         $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
     }
+
     public function testSincronizarCatalogo2()
     {
         // cuis = su CUIS
