@@ -230,7 +230,7 @@ class SincronizacionCatalogos extends TestCase
         // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES DOCUMENTO SECTOR
         // nit = su NIT
         // codigoSucursal = 0 
-        $cuis = "5E20BB5C";
+        $cuis = $this->cuisVigente(1);
         $empresa = Empresa::first();        
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -242,7 +242,7 @@ class SincronizacionCatalogos extends TestCase
                 'codigoPuntoVenta' => 1,
                 'codigoSistema' => $empresa->codigo_sistema,
                 'codigoSucursal' => 0,
-                'cuis' => $cuis,
+                'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
@@ -250,10 +250,10 @@ class SincronizacionCatalogos extends TestCase
         $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
         $errores = [];
         for ($i=0; $i < 50; $i++) {                       
-            $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametros,6);
+            $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametros,$cuis->id);
             
             if (!$responseActividadDocumento) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
+                $errores[] = "Iteración $i: Falló la sincronización de Actividades Documento Sector";
             }
         }
         // Validación final
