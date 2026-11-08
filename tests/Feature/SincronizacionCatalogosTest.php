@@ -179,7 +179,7 @@ class SincronizacionCatalogos extends TestCase
         // resultadoEsperado = LISTADO TOTAL DE LEYENDAS
         // nit = su NIT
         // codigoSucursal = 0 
-        $cuis = "718E252F";
+        $cuis = $this->cuisVigente(0);
         $empresa = Empresa::first();        
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -198,14 +198,14 @@ class SincronizacionCatalogos extends TestCase
         
         $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
         $errores = [];
-        $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion(0, 1);
+        $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($cuis->agencia_id, $cuis->punto_venta_id);
         if (!$estaSincronizado) {
             //Registrar Sincronizacion
             $sincronizacion = new Sincronizacion();
             $sincronizacion->nit = $empresa->nit;
-            $sincronizacion->agencia_id = 0;
-            $sincronizacion->punto_venta_id = 1;
-            $sincronizacion->cuis_id = 5;
+            $sincronizacion->agencia_id = $cuis->agencia_id;
+            $sincronizacion->punto_venta_id = $cuis->punto_venta_id;
+            $sincronizacion->cuis_id = $cuis->id;
             $sincronizacion->save();
         } else {
             $sincronizacion = $estaSincronizado;
