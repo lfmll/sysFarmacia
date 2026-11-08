@@ -383,10 +383,10 @@ class SincronizacionCatalogos extends TestCase
         // codigoAmbiente = 2
         // codigoPuntoVenta = 1
         // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE LEYENDAS DE FACTURAS
+        // resultadoEsperado = LISTADO TOTAL DE MENSAJES DE SERVICIOS
         // nit = su NIT
         // codigoSucursal = 0 
-        $cuis = "5E20BB5C";
+        $cuis = $this->cuisVigente(1);
         $empresa = Empresa::first();        
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -398,7 +398,7 @@ class SincronizacionCatalogos extends TestCase
                 'codigoPuntoVenta' => 1,
                 'codigoSistema' => $empresa->codigo_sistema,
                 'codigoSucursal' => 0,
-                'cuis' => $cuis,
+                'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
@@ -406,10 +406,10 @@ class SincronizacionCatalogos extends TestCase
         $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
         $errores = [];
         for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Parametro::sincronizarParametro($clienteSincronizacion, $parametros,6);
+            $responseParametros = Parametro::sincronizarParametro($clienteSincronizacion, $parametros, $cuis->id);
             
             if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
+                $errores[] = "Iteración $i: Falló la sincronización de Listado de Mensajes de Servicios";
             }
         }
         // Validación final
