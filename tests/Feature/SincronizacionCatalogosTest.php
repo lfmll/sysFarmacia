@@ -41,650 +41,219 @@ class SincronizacionCatalogos extends TestCase
         return $cuis;
     }
 
-    public function testSincronizarCatalogo1()
+    private function probarParametrica(int $codigoPuntoVenta, string $metodoSoap): void
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            //Sincronizar Actividades
-            $responseActividades = Codigo::soapActividad($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseActividades) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo2()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            //Sincronizar Actividades
-            $responseActividades = Codigo::soapActividad($clienteSincronizacion, $parametros, 5);
-            
-            if (!$responseActividades) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }  
-    
-    public function testSincronizarCatalogo3()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = FECHA Y HORA ACTUAL
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
+        $cuis = $this->cuisVigente($codigoPuntoVenta);
         $empresa = Empresa::first();
         $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";
+        $wsdlSincronizacion = $ajuste->wsdl . "/FacturacionSincronizacion?wsdl";
+
         $parametros = array(
-            'SolicitudSincronizacion' => array(                
+            'SolicitudSincronizacion' => array(
                 'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
+                'codigoPuntoVenta' => $codigoPuntoVenta,
                 'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
+                'codigoSucursal' => self::SUCURSAL,
                 'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
+
+        $clienteSincronizacion = Ajuste::consumoSIAT($ajuste->token, $wsdlSincronizacion);
         $errores = [];
-        $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($cuis->agencia_id, $cuis->punto_venta_id);
-        if (!$estaSincronizado) {
-            //Registrar Sincronizacion
-            $sincronizacion = new Sincronizacion();
-            $sincronizacion->nit = $empresa->nit;
-            $sincronizacion->agencia_id = $cuis->agencia_id;
-            $sincronizacion->punto_venta_id = $cuis->punto_venta_id;
-            $sincronizacion->cuis_id = $cuis->id;
-            $sincronizacion->save();
-        } else {
-            $sincronizacion = $estaSincronizado;
-        }
-        for ($i=0; $i < 50; $i++) {
-            //Sincronizar Fecha y Hora
-            $responseFechaHora = Sincronizacion::sincronizacionFechaHora($clienteSincronizacion, $parametros, $sincronizacion->id);            
-            if (!$responseFechaHora) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
+        for ($i = 0; $i < self::ITERACIONES; $i++) {
+            try {
+                $respuesta = $clienteSincronizacion->$metodoSoap($parametros)->RespuestaListaParametricas;
+                if (!$respuesta->transaccion) {
+                    $errores[] = "Iteración $i: " . json_encode($respuesta->mensajesList ?? null);
+                }
+            } catch (\Throwable $e) {
+                $errores[] = "Iteración $i: " . $e->getMessage();
             }
         }
         // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo4()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = FECHA Y HORA ACTUAL
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        $estaSincronizado = Sincronizacion::obtenerUltimaSincronizacion($cuis->agencia_id, $cuis->punto_venta_id);
-        if (!$estaSincronizado) {
-            //Registrar Sincronizacion
-            $sincronizacion = new Sincronizacion();
-            $sincronizacion->nit = $empresa->nit;
-            $sincronizacion->agencia_id = $cuis->agencia_id;
-            $sincronizacion->punto_venta_id = $cuis->punto_venta_id;
-            $sincronizacion->cuis_id = $cuis->id;
-            $sincronizacion->save();
-        } else {
-            $sincronizacion = $estaSincronizado;
-        }
-        for ($i=0; $i < 50; $i++) {                       
-            //Sincronizar Fecha y Hora
-            $responseFechaHora = Sincronizacion::sincronizacionFechaHora($clienteSincronizacion, $parametros, $sincronizacion->id);            
-            if (!$responseFechaHora) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo5()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES DOCUMENTO SECTOR
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametros,$cuis->id);
-            
-            if (!$responseActividadDocumento) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades Documento Sector";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo6()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES DOCUMENTO SECTOR
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseActividadDocumento = ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseActividadDocumento) {
-                $errores[] = "Iteración $i: Falló la sincronización de Actividades";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo7()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE LEYENDAS DE FACTURAS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseLeyendas = Leyenda::soapLeyenda($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseLeyendas) {
-                $errores[] = "Iteración $i: Falló la sincronización Listado de Leyendas de Facturas";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo8()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE LEYENDAS DE FACTURAS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseLeyendas = Leyenda::soapLeyenda($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseLeyendas) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado de Leyendas de Facturas";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+        $this->assertEmpty($errores, "Errores encontrados en $metodoSoap (punto de venta $codigoPuntoVenta):\n" . implode("\n", $errores));
     }
 
     public function testSincronizarCatalogo9()
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE MENSAJES DE SERVICIOS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Parametro::sincronizarParametro($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado de Mensajes de Servicios";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE MENSAJES DE SERVICIOS
+        $this->probarParametrica(1, 'sincronizarListaMensajesServicios');
     }
 
     public function testSincronizarCatalogo10()
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE MENSAJES DE SERVICIOS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Parametro::sincronizarParametro($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado de Mensajes de Servicios";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-
-    public function testSincronizarCatalogo11()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE PRODUCTOS Y SERVICIOS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado de Productos y Servicios";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
-    }
-    public function testSincronizarCatalogo12()
-    {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE PRODUCTOS Y SERVICIOS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado de Productos y Servicios";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE MENSAJES DE SERVICIOS
+        $this->probarParametrica(0, 'sincronizarListaMensajesServicios');
     }
 
     public function testSincronizarCatalogo13()
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE EVENTOS SIGNIFICATIVOS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado total de Eventos Significativos";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE EVENTOS SIGNIFICATIVOS
+        $this->probarParametrica(1, 'sincronizarParametricaEventosSignificativos');
     }
 
     public function testSincronizarCatalogo14()
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE EVENTOS SIGNIFICATIVOS
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado total de Eventos Significativos";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE EVENTOS SIGNIFICATIVOS
+        $this->probarParametrica(0, 'sincronizarParametricaEventosSignificativos');
     }
 
     public function testSincronizarCatalogo15()
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE MOTIVO DE ANULACIÓN
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(1);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
-
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 1,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado total de Motivo de Anulación";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE MOTIVO DE ANULACIÓN
+        $this->probarParametrica(1, 'sincronizarParametricaMotivoAnulacion');
     }
 
     public function testSincronizarCatalogo16()
     {
-        // cuis = su CUIS
-        // codigoAmbiente = 2
-        // codigoPuntoVenta = 0
-        // codigoSistema = su código de sistema
-        // resultadoEsperado = LISTADO TOTAL DE MOTIVO DE ANULACIÓN
-        // nit = su NIT
-        // codigoSucursal = 0 
-        $cuis = $this->cuisVigente(0);
-        $empresa = Empresa::first();        
-        $ajuste = Ajuste::first();
-        $token = $ajuste->token;
-        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE MOTIVO DE ANULACIÓN
+        $this->probarParametrica(0, 'sincronizarParametricaMotivoAnulacion');
+    }
 
-        $parametros = array(
-            'SolicitudSincronizacion' => array(                
-                'codigoAmbiente' => $empresa->ambiente,
-                'codigoPuntoVenta' => 0,
-                'codigoSistema' => $empresa->codigo_sistema,
-                'codigoSucursal' => 0,
-                'cuis' => $cuis->codigo_cuis,
-                'nit' => $empresa->nit
-            )
-        );
-        
-        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
-        $errores = [];
-        for ($i=0; $i < 50; $i++) {                       
-            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
-            
-            if (!$responseParametros) {
-                $errores[] = "Iteración $i: Falló la sincronización de Listado total de Motivo de Anulación";
-            }
-        }
-        // Validación final
-        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+    public function testSincronizarCatalogo17()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE PAÍSES
+        $this->probarParametrica(1, 'sincronizarParametricaPaisOrigen');
+    }
+
+    public function testSincronizarCatalogo18()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE PAÍSES
+        $this->probarParametrica(0, 'sincronizarParametricaPaisOrigen');
+    }
+
+    public function testSincronizarCatalogo19()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE DOCUMENTO DE IDENTIDAD
+        $this->probarParametrica(1, 'sincronizarParametricaTipoDocumentoIdentidad');
+    }
+
+    public function testSincronizarCatalogo20()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE DOCUMENTO DE IDENTIDAD
+        $this->probarParametrica(0, 'sincronizarParametricaTipoDocumentoIdentidad');
+    }
+
+    public function testSincronizarCatalogo21()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE DOCUMENTO SECTOR
+        $this->probarParametrica(1, 'sincronizarParametricaTipoDocumentoSector');
+    }
+
+    public function testSincronizarCatalogo22()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE DOCUMENTO SECTOR
+        $this->probarParametrica(0, 'sincronizarParametricaTipoDocumentoSector');
+    }
+
+    public function testSincronizarCatalogo23()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPO EMISIÓN
+        $this->probarParametrica(1, 'sincronizarParametricaTipoEmision');
+    }
+
+    public function testSincronizarCatalogo24()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPO EMISIÓN
+        $this->probarParametrica(0, 'sincronizarParametricaTipoEmision');
+    }
+
+    public function testSincronizarCatalogo25()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPO HABITACIÓN
+        $this->probarParametrica(1, 'sincronizarParametricaTipoHabitacion');
+    }
+
+    public function testSincronizarCatalogo26()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPO HABITACIÓN
+        $this->probarParametrica(0, 'sincronizarParametricaTipoHabitacion');
+    }
+
+    public function testSincronizarCatalogo27()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE MÉTODO DE PAGO
+        $this->probarParametrica(1, 'sincronizarParametricaTipoMetodoPago');
+    }
+
+    public function testSincronizarCatalogo28()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE MÉTODO DE PAGO
+        $this->probarParametrica(0, 'sincronizarParametricaTipoMetodoPago');
+    }
+
+    public function testSincronizarCatalogo29()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE MONEDA
+        $this->probarParametrica(1, 'sincronizarParametricaTipoMoneda');
+    }
+
+    public function testSincronizarCatalogo30()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE MONEDA
+        $this->probarParametrica(0, 'sincronizarParametricaTipoMoneda');
+    }
+
+    public function testSincronizarCatalogo31()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE PUNTO DE VENTA
+        $this->probarParametrica(1, 'sincronizarParametricaTipoPuntoVenta');
+    }
+
+    public function testSincronizarCatalogo32()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE PUNTO DE VENTA
+        $this->probarParametrica(0, 'sincronizarParametricaTipoPuntoVenta');
+    }
+
+    public function testSincronizarCatalogo33()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE FACTURA
+        $this->probarParametrica(1, 'sincronizarParametricaTiposFactura');
+    }
+
+    public function testSincronizarCatalogo34()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE TIPOS DE FACTURA
+        $this->probarParametrica(0, 'sincronizarParametricaTiposFactura');
+    }
+
+    public function testSincronizarCatalogo35()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE UNIDAD DE MEDIDA
+        $this->probarParametrica(1, 'sincronizarParametricaUnidadMedida');
+    }
+
+    public function testSincronizarCatalogo36()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE UNIDAD DE MEDIDA
+        $this->probarParametrica(0, 'sincronizarParametricaUnidadMedida');
     }
 }
