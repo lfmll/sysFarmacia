@@ -130,7 +130,7 @@ class SincronizacionCatalogos extends TestCase
         // resultadoEsperado = FECHA Y HORA ACTUAL
         // nit = su NIT
         // codigoSucursal = 0 
-        $cuis = "5E20BB5C";
+        $cuis = $this->cuisVigente(1);
         $empresa = Empresa::first();
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -152,9 +152,9 @@ class SincronizacionCatalogos extends TestCase
             //Registrar Sincronizacion
             $sincronizacion = new Sincronizacion();
             $sincronizacion->nit = $empresa->nit;
-            $sincronizacion->agencia_id = 0;
-            $sincronizacion->punto_venta_id = 1;
-            $sincronizacion->cuis_id = 6;
+            $sincronizacion->agencia_id = $cuis->agencia_id;
+            $sincronizacion->punto_venta_id = $cuis->punto_venta_id;
+            $sincronizacion->cuis_id = $cuis->id;
             $sincronizacion->save();
         } else {
             $sincronizacion = $estaSincronizado;
