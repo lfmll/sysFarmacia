@@ -85,12 +85,12 @@ class SincronizacionCatalogos extends TestCase
     {
         // cuis = su CUIS
         // codigoAmbiente = 2
-        // codigoPuntoVenta = 1
+        // codigoPuntoVenta = 0
         // codigoSistema = su código de sistema
         // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES
         // nit = su NIT
         // codigoSucursal = 0 
-        $cuis = "718E252F";
+        $cuis = $this->cuisVigente(0);
         $empresa = Empresa::first();        
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -102,7 +102,7 @@ class SincronizacionCatalogos extends TestCase
                 'codigoPuntoVenta' => 0,
                 'codigoSistema' => $empresa->codigo_sistema,
                 'codigoSucursal' => 0,
-                'cuis' => $cuis,
+                'cuis' => $cuis->codigo_cuis,
                 'nit' => $empresa->nit
             )
         );
