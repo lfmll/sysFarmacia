@@ -610,5 +610,42 @@ class SincronizacionCatalogos extends TestCase
         $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
     }
 
-    
+    public function testSincronizarCatalogo15()
+    {
+        // cuis = su CUIS
+        // codigoAmbiente = 2
+        // codigoPuntoVenta = 1
+        // codigoSistema = su código de sistema
+        // resultadoEsperado = LISTADO TOTAL DE MOTIVO DE ANULACIÓN
+        // nit = su NIT
+        // codigoSucursal = 0 
+        $cuis = $this->cuisVigente(1);
+        $empresa = Empresa::first();        
+        $ajuste = Ajuste::first();
+        $token = $ajuste->token;
+        $wsdlSincronizacion = $ajuste->wsdl."/FacturacionSincronizacion?wsdl";      
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(                
+                'codigoAmbiente' => $empresa->ambiente,
+                'codigoPuntoVenta' => 1,
+                'codigoSistema' => $empresa->codigo_sistema,
+                'codigoSucursal' => 0,
+                'cuis' => $cuis->codigo_cuis,
+                'nit' => $empresa->nit
+            )
+        );
+        
+        $clienteSincronizacion = Ajuste::consumoSIAT($token, $wsdlSincronizacion);
+        $errores = [];
+        for ($i=0; $i < 50; $i++) {                       
+            $responseParametros = Catalogo::soapCatalogo($clienteSincronizacion, $parametros, $cuis->id);
+            
+            if (!$responseParametros) {
+                $errores[] = "Iteración $i: Falló la sincronización de Listado total de Motivo de Anulación";
+            }
+        }
+        // Validación final
+        $this->assertEmpty($errores, "Errores encontrados:\n" . implode("\n", $errores));
+    }
 }
