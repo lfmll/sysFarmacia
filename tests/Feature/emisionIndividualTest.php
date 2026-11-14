@@ -29,6 +29,24 @@ class emisionIndividualTest extends TestCase
     /**
      * @return void
      */
+    
+    private const SUCURSAL = 0;
+
+    private function cuisVigente(int $codigoPuntoVenta): Cuis
+    {
+        $agencia = Agencia::where('codigo', self::SUCURSAL)->first();
+        $puntoVenta = PuntoVenta::where('codigo', $codigoPuntoVenta)->first();
+
+        session ([
+            'agencia_id' => $agencia->id,
+            'punto_venta_id' => $puntoVenta->id,
+        ]);
+
+        $cuis = Cuis::obtenerCuis();
+        $this->assertNotNull($cuis, "No se encontró un CUIS vigente para el punto de venta $codigoPuntoVenta.");
+        return $cuis;
+    }
+
     public function testEmisionIndividual1()
     {
         // codigoAmbiente = 2
@@ -49,7 +67,7 @@ class emisionIndividualTest extends TestCase
         $empresa = Empresa::first();
         $agencia = Agencia::where('codigo',0)->first();
         $puntoVenta = PuntoVenta::where('codigo',1)->first();
-        $cuis = Cuis::where('codigo_cuis',"5E20BB5C")->first();
+        $cuis = $this->cuisVigente($puntoVenta->codigo);
         $cufd = Cufd::where('estado','A')
                     ->where('cuis_id',$cuis->id)
                     ->first();
@@ -65,7 +83,7 @@ class emisionIndividualTest extends TestCase
             // Construccion de entidades
             //Medicamento y Lote
             $faker = \Faker\Factory::create();
-            for ($i=0; $i < 80; $i++) { 
+            for ($i=0; $i < 125; $i++) { 
                 $cantMedicamento = Medicamento::count()+1;
                 $medicamento = Medicamento::create([
                     'codigo_actividad' => '477310',                
@@ -298,13 +316,15 @@ class emisionIndividualTest extends TestCase
             $faker = \Faker\Factory::create();
             for ($i=0; $i < 125; $i++) { 
                 $cantMedicamento = Medicamento::count()+1;
+                $codigoSin = Catalogo::where('codigo_actividad','477310')
+                        ->where('cuis_id',$cuis->id)
+                        ->inRandomOrder()
+                        ->value('codigo_producto');
+                    $this->assertNotNull($codigoSin, "No hay productos SIN para la actividad 477310 con cuis_id {$cuis->id}");
                 $medicamento = Medicamento::create([
                     'codigo_actividad' => '477310',                
                     'codigo_producto' => 'P'.str_pad($cantMedicamento, 5, "0", STR_PAD_LEFT),
-                    'codigo_producto_sin' => Catalogo::where('codigo_actividad','477310')
-                                                    ->where('cuis_id',$cuis->id)
-                                                    ->inRandomOrder()
-                                                    ->value('codigo_producto'),
+                    'codigo_producto_sin' => $codigoSin,
                     'nombre_comercial' => $faker->word(),
                     'stock' => 0,
                     'stock_minimo' => 5,
