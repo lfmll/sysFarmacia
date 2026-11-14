@@ -41,6 +41,71 @@ class SincronizacionCatalogos extends TestCase
         return $cuis;
     }
 
+    /**
+     * Prueba de sincronización de catálogo.
+     *
+     * @param int $codigoPuntoVenta Código del punto de venta a probar.
+     * @param string $tipo Tipo de sincronización a probar (actividades, fecha_hora, actividad_documento, leyendas).
+     */
+    private function probarSincronizacion(int $codigoPuntoVenta, string $tipo): void
+    {
+        $cuis = $this->cuisVigente($codigoPuntoVenta);
+        $empresa = Empresa::first();
+        $ajuste = Ajuste::first();
+        $wsdlSincronizacion = $ajuste->wsdl . "/FacturacionSincronizacion?wsdl";
+
+        $parametros = array(
+            'SolicitudSincronizacion' => array(
+                'codigoAmbiente' => $empresa->ambiente,
+                'codigoPuntoVenta' => $codigoPuntoVenta,
+                'codigoSistema' => $empresa->codigo_sistema,
+                'codigoSucursal' => self::SUCURSAL,
+                'cuis' => $cuis->codigo_cuis,
+                'nit' => $empresa->nit
+            )
+        );
+
+        $clienteSincronizacion = Ajuste::consumoSIAT($ajuste->token, $wsdlSincronizacion);
+        $errores = [];
+        for ($i = 0; $i < self::ITERACIONES; $i++) {
+            try {
+                $correcto = match ($tipo) {
+                    'actividades' => Codigo::soapActividad($clienteSincronizacion, $parametros, $cuis->id),
+                    'fecha_hora' => Sincronizacion::sincronizacionFechaHora(
+                        $clienteSincronizacion, $parametros, $this->sincronizacionDe($cuis, $empresa)->id),
+                    'actividad_documento' => ActividadDocumento::soapActividadDocumento($clienteSincronizacion, $parametros, $cuis->id),
+                    'leyendas' => Leyenda::soapLeyenda($clienteSincronizacion, $parametros, $cuis->id),
+                };
+
+                if (!$correcto) {
+                    $errores[] = "Iteración $i: SIAT respondió con error en $tipo";
+                }
+            } catch (\Throwable $e) {
+                $errores[] = "Iteración $i: " . $e->getMessage();
+            }
+        }
+        // Validación final
+        $this->assertEmpty($errores, "Errores encontrados en $tipo (punto de venta $codigoPuntoVenta):\n" . implode("\n", $errores));
+    }
+
+    /**
+     * Registro de Sincronizacion que necesita la sincronización de fecha y hora.
+     * Lo busca por agencia y punto de venta, y si no existe lo crea.
+     */
+    private function sincronizacionDe(Cuis $cuis, Empresa $empresa): Sincronizacion
+    {
+        return Sincronizacion::firstOrCreate(
+            ['agencia_id' => $cuis->agencia_id, 'punto_venta_id' => $cuis->punto_venta_id],
+            ['nit' => $empresa->nit, 'cuis_id' => $cuis->id]
+        );
+    }
+
+    /**
+     * Prueba de sincronización de parametrica.
+     *
+     * @param int $codigoPuntoVenta Código del punto de venta a probar.
+     * @param string $metodoSoap Nombre del método SOAP a invocar.
+     */
     private function probarParametrica(int $codigoPuntoVenta, string $metodoSoap): void
     {
         $cuis = $this->cuisVigente($codigoPuntoVenta);
@@ -73,6 +138,63 @@ class SincronizacionCatalogos extends TestCase
         }
         // Validación final
         $this->assertEmpty($errores, "Errores encontrados en $metodoSoap (punto de venta $codigoPuntoVenta):\n" . implode("\n", $errores));
+    }
+
+
+    public function testSincronizarCatalogo1()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES
+        $this->probarSincronizacion(1, 'actividades');
+    }
+
+    public function testSincronizarCatalogo2()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES
+        $this->probarSincronizacion(0, 'actividades');
+    }
+
+    public function testSincronizarCatalogo3()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = FECHA Y HORA ACTUAL
+        $this->probarSincronizacion(1, 'fecha_hora');
+    }
+
+    public function testSincronizarCatalogo4()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = FECHA Y HORA ACTUAL
+        $this->probarSincronizacion(0, 'fecha_hora');
+    }
+
+    public function testSincronizarCatalogo5()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES DOCUMENTO SECTOR
+        $this->probarSincronizacion(1, 'actividad_documento');
+    }
+
+    public function testSincronizarCatalogo6()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE ACTIVIDADES DOCUMENTO SECTOR
+        $this->probarSincronizacion(0, 'actividad_documento');
+    }
+
+    public function testSincronizarCatalogo7()
+    {
+        // codigoPuntoVenta = 1
+        // resultadoEsperado = LISTADO TOTAL DE LEYENDAS DE FACTURAS
+        $this->probarSincronizacion(1, 'leyendas');
+    }
+
+    public function testSincronizarCatalogo8()
+    {
+        // codigoPuntoVenta = 0
+        // resultadoEsperado = LISTADO TOTAL DE LEYENDAS DE FACTURAS
+        $this->probarSincronizacion(0, 'leyendas');
     }
 
     public function testSincronizarCatalogo9()
@@ -256,4 +378,6 @@ class SincronizacionCatalogos extends TestCase
         // resultadoEsperado = LISTADO TOTAL DE UNIDAD DE MEDIDA
         $this->probarParametrica(0, 'sincronizarParametricaUnidadMedida');
     }
+
+    /*Comando de Pruebas: php artisan test --filter='testSincronizarCatalogoXX$' */
 }
