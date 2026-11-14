@@ -8,14 +8,34 @@ use Tests\TestCase;
 use App\Models\Ajuste;
 use App\Models\Empresa;
 use App\Models\Cufd;
+use App\Models\Cuis;
+use App\Models\Agencia;
+use App\Models\PuntoVenta;
 
-class testObtencionCUFD extends TestCase
+class ObtencionCufdTest extends TestCase
 {
     /**
      * A basic feature test example.
      *
      * @return void
      */
+    private const SUCURSAL = 0;
+
+    private function cuisVigente(int $codigoPuntoVenta): Cuis
+    {
+        $agencia = Agencia::where('codigo', self::SUCURSAL)->first();
+        $puntoVenta = PuntoVenta::where('codigo', $codigoPuntoVenta)->first();
+
+        session ([
+            'agencia_id' => $agencia->id,
+            'punto_venta_id' => $puntoVenta->id,
+        ]);
+
+        $cuis = Cuis::obtenerCuis();
+        $this->assertNotNull($cuis, "No se encontró un CUIS vigente para el punto de venta $codigoPuntoVenta.");
+        return $cuis;
+    }
+
     public function testObtencionCUFD1()
     {
         // cuis = su CUIS
@@ -28,7 +48,7 @@ class testObtencionCUFD extends TestCase
         $empresa = Empresa::first();
         $agencia = 0;
         $puntoVenta = 1;
-        $cuis = "5E20BB5C";
+        $cuis = $this->cuisVigente($puntoVenta);
 
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -44,18 +64,18 @@ class testObtencionCUFD extends TestCase
                     'codigoPuntoVenta' => $puntoVenta,
                     'codigoSistema' => $empresa->codigo_sistema,
                     'codigoSucursal' => $agencia,
-                    'cuis' => $cuis,
+                    'cuis' => $cuis->codigo_cuis,
                     'nit' => $empresa->nit
                 )
             );
             //LOOP            
-            for ($i=0; $i < 50; $i++) {
+            for ($i=0; $i < 100; $i++) {
                 $responseCufd = $clienteCufd->cufd($parametrosCUFD);
                 if ($responseCufd->RespuestaCufd->transaccion==true) {
-                    Cufd::where('estado','A')
-                    ->where('cuis_id',6)
-                    ->where('agencia_id',1)
-                    ->where('punto_venta_id',1)
+                    Cufd::where('estado', 'A')
+                    ->where('cuis_id', $cuis->id)
+                    ->where('agencia_id', $cuis->agencia_id)
+                    ->where('punto_venta_id', $cuis->punto_venta_id)
                     ->update(['estado'=>'N']);
 
                     $cufd = new Cufd;
@@ -67,9 +87,9 @@ class testObtencionCUFD extends TestCase
                         'direccion' => $responseCufd->RespuestaCufd->direccion,
                         'fecha_vigencia' => $fecha,
                         'estado' => 'A',
-                        'agencia_id' => 1,
-                        'punto_venta_id' => 1,
-                        'cuis_id' => 6
+                        'agencia_id' => $cuis->agencia_id,
+                        'punto_venta_id' => $cuis->punto_venta_id,
+                        'cuis_id' => $cuis->id
                     ]);
                     $cufd->save();
                 } else {
@@ -94,7 +114,7 @@ class testObtencionCUFD extends TestCase
         $empresa = Empresa::first();
         $agencia = 0;
         $puntoVenta = 0;
-        $cuis = "718E252F";
+        $cuis = $this->cuisVigente($puntoVenta);
 
         $ajuste = Ajuste::first();
         $token = $ajuste->token;
@@ -110,7 +130,7 @@ class testObtencionCUFD extends TestCase
                     'codigoPuntoVenta' => $puntoVenta,
                     'codigoSistema' => $empresa->codigo_sistema,
                     'codigoSucursal' => $agencia,
-                    'cuis' => $cuis,
+                    'cuis' => $cuis->codigo_cuis,
                     'nit' => $empresa->nit
                 )
             );
@@ -119,9 +139,9 @@ class testObtencionCUFD extends TestCase
                 $responseCufd = $clienteCufd->cufd($parametrosCUFD);
                 if ($responseCufd->RespuestaCufd->transaccion==true) {
                     Cufd::where('estado','A')
-                    ->where('cuis_id',5)
-                    ->where('agencia_id',1)
-                    ->where('punto_venta_id',1)
+                    ->where('cuis_id', $cuis->id)
+                    ->where('agencia_id', $cuis->agencia_id)
+                    ->where('punto_venta_id', $cuis->punto_venta_id)
                     ->update(['estado'=>'N']);
 
                     $cufd = new Cufd;
@@ -133,9 +153,9 @@ class testObtencionCUFD extends TestCase
                         'direccion' => $responseCufd->RespuestaCufd->direccion,
                         'fecha_vigencia' => $fecha,
                         'estado' => 'A',
-                        'agencia_id' => 1,
-                        'punto_venta_id' => 1,
-                        'cuis_id' => 5
+                        'agencia_id' => $cuis->agencia_id,
+                        'punto_venta_id' => $cuis->punto_venta_id,
+                        'cuis_id' => $cuis->id
                     ]);
                     $cufd->save();
                 } else {
