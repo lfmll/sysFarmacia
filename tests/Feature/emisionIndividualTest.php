@@ -85,21 +85,21 @@ class emisionIndividualTest extends TestCase
             $faker = \Faker\Factory::create();
             for ($i=0; $i < 125; $i++) { 
                 $cantMedicamento = Medicamento::count()+1;
+                $codigoSin = Catalogo::where('codigo_actividad','477310')
+                        ->inRandomOrder()
+                        ->value('codigo_producto');
+                        $this->assertNotNull($codigoSin, "No hay productos SIN para la actividad 477310");
                 $medicamento = Medicamento::create([
                     'codigo_actividad' => '477310',                
                     'codigo_producto' => 'P'.str_pad($cantMedicamento, 5, "0", STR_PAD_LEFT),
-                    'codigo_producto_sin' => Catalogo::where('codigo_actividad','477310')
-                                                    ->where('cuis_id',$cuis->id)
-                                                    ->inRandomOrder()
-                                                    ->value('codigo_producto'),
+                    'codigo_producto_sin' => $codigoSin,
                     'nombre_comercial' => $faker->word(),
                     'stock' => 0,
                     'stock_minimo' => 5,
                     'codigo_clasificador' => Parametro::where('tipo_parametro_id',11)
-                                                    // ->where('cuis_id',$cuis->id)
                                                     ->whereIn('descripcion',['COMPRIMIDO','CAPSULA','FRASCO','SOBRES'])
                                                     ->inRandomOrder()
-                                                    ->value('codigo_clasificador'),
+                                                    ->value('codigo_clasificador'),                    
                     'via_id' => 1
                 ]);
                 $precio_compra = $faker->randomFloat(2,0.5,10);
