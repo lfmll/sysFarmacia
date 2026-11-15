@@ -122,9 +122,9 @@ class VentaController extends Controller
         $evento = Evento::where('estado', 'Abierto')->first();            
         $empresa = Empresa::first();
         $agencia = Agencia::where('empresa_id',$empresa->id)->first();   //ojo
-        $puntoVenta = PuntoVenta::where('agencia_id', $agencia->id)
-                                ->where('user_id', $usuario->id)
-                                ->first();
+        $puntoVenta = PuntoVenta::where('id', session('punto_venta_id'))
+                        ->where('agencia_id', $agencia->id)
+                        ->first();
         $leyenda = Leyenda::where('cuis_id',$cuis->id)
                             ->inRandomOrder()
                             ->first();

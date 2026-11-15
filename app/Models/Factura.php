@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\DetalleFactura;
+use App\Models\NotaAjuste;
+use App\Models\Venta;
+use Illuminate\Support\Facades\Log;
+
 
 class Factura extends Model
 {
@@ -281,6 +286,10 @@ class Factura extends Model
     {
         $responseFacturacionSOAP = $clienteSoap->recepcionFactura($parametrosFactura);
         $respuesta = $responseFacturacionSOAP->RespuestaServicioFacturacion;        
+        Log::info('SIAT recepcionFactura', [
+            'factura_id' => $idfactura,
+            'respuesta'  => json_encode($respuesta, JSON_UNESCAPED_UNICODE),
+        ]);
         if ($respuesta->mensajesList->codigo == 908)
         {
             //Cambiar Estado, actualizar factura

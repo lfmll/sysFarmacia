@@ -661,13 +661,7 @@
                         tr.addClass('shown');
                     }
                 });
-                // Cliente (si aplica)
-                if ($.fn.DataTable.isDataTable('#tcliente')) {
-                    $('#tcliente').DataTable().clear().destroy();
-                }
-                $('#tcliente').DataTable({
-                    language: { url: "{{ asset('js/es-ES.json') }}" }
-                });
+                
             },
             error: function (data) {
                 if (data.status==409) {
@@ -732,8 +726,7 @@
         }
 
         const descuentoGlobal = Number(document.getElementById('eDescuento').value) || 0;
-        const descuentoGiftCard = Number(document.getElementById('eGiftCard').value) || 0;
-
+        
         if (descuentoEsMayor(subTotales, descuentoGlobal)) {
             Swal.fire({
                 icon: "error",
@@ -743,18 +736,7 @@
             return;
         }
         subTotales = parseFloat(subTotales.toFixed(2));
-        totales = parseFloat((subTotales - descuentoGlobal).toFixed(2));
-        
-        if (descuentoEsMayor(totales, descuentoGiftCard)) {
-            Swal.fire({
-                icon: "error",
-                title: "Datos No Válidos",
-                text: "Error: el Descuento por GiftCard no puede exceder el Subtotal"
-            });
-            return;
-        }
-
-        const montoPagar = parseFloat((totales - descontarGiftCard).toFixed(2));
+        const totales = parseFloat((subTotales - descuentoGlobal).toFixed(2));
         
         document.getElementById('eSubTotal').value = subTotales.toFixed(2);
         document.getElementById('eTotal').value = totales.toFixed(2);
@@ -934,14 +916,7 @@
         document.getElementById("ppago_digital").readOnly = true;
         document.getElementById("ppago_tarjeta").readOnly  = false;        
     }
-    function onchkotros(){
-        limpiarMetodosPago();
-        document.getElementById("ppago_efectivo").readOnly = true;
-        document.getElementById("pcambio").readOnly        = true;
-        document.getElementById("ppago_digital").readOnly = true;
-        document.getElementById("ppago_tarjeta").readOnly  = true;
-    }
-
+    
     function limpiarMetodosPago(){
         document.getElementById("ppago_efectivo").value = "";
         document.getElementById("ppago_digital").value = "";
@@ -950,9 +925,9 @@
     }
 
     function pagar(){
-        pago=document.getElementById('ppago_efectivo').value;
-        cambio = pago - total;
-        document.getElementById('pcambio').value = cambio.toFixed(2);
+        const pago = Number(document.getElementById('ppago_efectivo').value) || 0;
+        const total = Number(document.getElementById('eTotal').value) || 0;
+        document.getElementById('pcambio').value = (pago - total).toFixed(2);
     }
 
     function descontarTotal(val){
@@ -972,20 +947,6 @@
         document.getElementById("eTotalIVA").value = sub;
     }
 
-    function descontarGiftCard(val){
-        sub=document.getElementById('eSubTotal').value;
-        if (descuentoEsMayor(sub, val)) {
-            Swal.fire({
-                icon: "error",
-                title: "Alerta",
-                text: "El descuento no puede exceder el subtotal"
-            });
-            return;
-        }
-        sub = parseFloat(sub) - parseFloat(val);
-        sub.toFixed(2);
-        document.getElementById("eMontoPagar").value = sub;
-    }
 </script>
 
 @stop
